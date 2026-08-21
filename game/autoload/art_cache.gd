@@ -49,8 +49,7 @@ const CHAPTER_BG := {
 		"prop_control_cabinet", "school_history_hall", "schoolgate_night",
 		"schoolyard_aerial", "title_school"],
 	6: ["playground_day", "schoolgate_day", "classroom_morning", "classroom_day",
-		"desk_carving_shen", "old_building_day", "old_building_gate_rain",
-		"broadcast_room_white", "broadcast_room_dark", "title_school"],
+		"desk_carving_shen", "old_building_day", "broadcast_room_white"],
 }
 
 # Sprite
@@ -63,12 +62,19 @@ const CHAPTER_CHARS := {
 	3: ["liangye", "liheng", "oldqin", "shenhe", "unknown", "zhouxu"],
 	4: ["liangye", "liheng", "oldqin", "shenhe", "xuqing", "zhouxu"],
 	5: ["liangye", "shenhe", "unknown", "xuqing", "zhouxu"],
-	6: ["liangye", "liheng", "oldqin", "xuqing", "zhouxu"],
+	# 番外（v1.4.1）：不整目录预载立绘。番外每人只用 1 个表情，按需加载即可，
+	# 避免 5 个角色约 40 张立绘（~90MB 解码内存）一次性进内存导致低配机 OOM 闪退。
 }
 
 var _cache := {}          # path -> Texture2D
+var _lru: Array[String] = []  # 稳定性（v1.4.1）：最近使用顺序，队首最旧
 var _hits := 0
 var _misses := 0
+
+## 稳定性（v1.4.1）：贴图缓存硬上限。超过后淘汰最久未用的贴图，
+## 防止长会话/多周目下缓存无限增长导致 Android 低内存设备 OOM 闪退。
+## 当前显示的场景与立绘因刚刚被访问而位于队尾，不会被误淘汰。
+const MAX_CACHE := 64
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -77,22 +83,36 @@ func _ready() -> void:
 func get_tex(path: String) -> Texture2D:
 	if _cache.has(path):
 		_hits += 1
+		_touch(path)
 		return _cache[path]
 	if not ResourceLoader.exists(path):
 		return null
 	_misses += 1
 	var t := load(path) as Texture2D
 	if t != null:
-		_cache[path] = t
+		_store(path, t)
 	return t
 
 func put(path: String, res: Resource) -> void:
 	var t := res as Texture2D
 	if t != null:
-		_cache[path] = t
+		_store(path, t)
 
 func has(path: String) -> bool:
 	return _cache.has(path)
+
+func _touch(path: String) -> void:
+	_lru.erase(path)
+	_lru.append(path)
+
+func _store(path: String, t: Texture2D) -> void:
+	_cache[path] = t
+	_touch(path)
+	while _cache.size() > MAX_CACHE:
+		var oldest := _lru.pop_front()
+		if oldest == path or oldest == "":
+			break
+		_cache.erase(oldest)
 
 func paths_for_chapter(chapter: int) -> Array[String]:
 	var out: Array[String] = []
@@ -115,8 +135,12 @@ func paths_for_chapter(chapter: int) -> Array[String]:
 
 # Cache
 func release_stale(chapter: int, keep: Array[String] = []) -> int:
+	# 稳定性（v1.4.1）：上限不再硬编码 6，跟随 CHAPTER_BG 实际键位（含番外章 6）
+	var max_ch := 0
+	for k in CHAPTER_BG:
+		max_ch = maxi(max_ch, int(k))
 	var needed := {}
-	for ch in range(chapter, 6):
+	for ch in range(chapter, max_ch + 1):
 		for p in paths_for_chapter_all(ch):
 			needed[p] = true
 	for p in keep:
@@ -127,6 +151,7 @@ func release_stale(chapter: int, keep: Array[String] = []) -> int:
 			drop.append(p)
 	for p in drop:
 		_cache.erase(p)
+		_lru.erase(p)
 	return drop.size()
 
 # Cache
@@ -151,3 +176,4 @@ func stats() -> Dictionary:
 
 func clear_all() -> void:
 	_cache.clear()
+	_lru.clear()

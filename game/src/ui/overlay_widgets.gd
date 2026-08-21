@@ -28,7 +28,7 @@ static func chapter_card(num: int, title: String) -> Control:
 	root.add_child(v)
 
 	var idx := Label.new()
-	idx.text = "第 %s 章" % ("终" if num >= 5 else str(num))
+	idx.text = ("番外" if num >= 6 else "第 %s 章" % ("终" if num >= 5 else str(num)))
 	idx.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	idx.add_theme_font_size_override("font_size", 30)
 	idx.add_theme_color_override("font_color", Color(0.29, 0.55, 1.0))

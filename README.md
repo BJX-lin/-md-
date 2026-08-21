@@ -81,7 +81,23 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.0 更新（本分支最新）
+## v1.4.1 更新（本分支最新 · 稳定性修复）
+
+- **修复多周目闪退（关键）**：游戏界面对 autoload 信号（`GameState.time_changed /
+  var_changed`、`StoryEngine.story_finished`、`Ach.unlocked`）原先用 lambda 连接，
+  旧界面销毁后连接残留，第二周目触发信号时调用已释放实例 → Android 闪退。
+  现全部改为命名方法连接，节点销毁时自动断开。
+- **修复贴图缓存无限增长（OOM 防护）**：`ArtCache` 新增 LRU 硬上限
+  `MAX_CACHE = 64`，超限淘汰最久未用贴图；`release_stale` 章节上限不再硬编码 6，
+  跟随 `CHAPTER_BG` 实际键位（含番外章）。
+- **番外开场内存减负**：番外章不再整目录预载 5 个角色约 40 张立绘
+  （~90MB 解码内存），立绘按需加载；背景预载清单收敛为实际用到的 7 张。
+  低配手机进入番外不再有 OOM 风险。
+- 章节卡片对番外章显示「番外」而非「第 终 章」。
+- 全部 28 个脚本通过 GDScript 4 语法解析校验（gdtoolkit）与静态检查；
+  版本 1.4.1（versionCode 9）。
+
+## v1.4.0 更新
 
 - **成就系统（22 项）**：新增 `autoload/achievements.gd`（autoload 名 `Ach`）。
   结局 / 周目 / 线索 / 道具 / 密码锁 / 数值阈值全程监听，解锁写入

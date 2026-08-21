@@ -193,7 +193,7 @@ func _build_top_bar() -> void:
 	fps_label.visible = bool(SaveSystem.settings.get("show_fps", false))
 	top_bar.add_child(fps_label)
 	_refresh_time()
-	GameState.time_changed.connect(func(_d, _m): _refresh_time())
+	GameState.time_changed.connect(_on_time_changed)
 
 	var vsep := ColorRect.new()
 	vsep.custom_minimum_size = Vector2(1, 22)
@@ -205,7 +205,7 @@ func _build_top_bar() -> void:
 	status_strip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_bar.add_child(status_strip)
 	_refresh_status()
-	GameState.var_changed.connect(func(_k, _o, _n): _refresh_status())
+	GameState.var_changed.connect(_on_var_changed)
 
 	for spec in [
 		["自动", "_toggle_auto"], ["快进", "_toggle_skip"], ["跳选", "_start_skip_to_choice"],
@@ -235,6 +235,12 @@ func _build_top_bar() -> void:
 			b.set_meta("role", "auto")
 		if spec[0] == "快进":
 			b.set_meta("role", "skip")
+
+func _on_time_changed(_day: int, _minute: int) -> void:
+	_refresh_time()
+
+func _on_var_changed(_key: String, _old: int, _new: int) -> void:
+	_refresh_status()
 
 func _refresh_time() -> void:
 	if time_label == null:
@@ -426,13 +432,19 @@ func _connect_engine() -> void:
 	StoryEngine.effect_requested.connect(_on_effect)
 	StoryEngine.overlay_requested.connect(_on_overlay)
 	StoryEngine.chapter_started.connect(_on_chapter)
-	StoryEngine.story_finished.connect(func(e): finished.emit(e))
+	StoryEngine.story_finished.connect(_on_story_done)
 	# Achievements（v1.4.0）：解锁时右上角 Toast 提示
-	Ach.unlocked.connect(func(id: String):
-		var toast := OW.toast("成就达成　%s" % Ach.name_of(id))
-		ui_root.add_child(toast)
-		AudioDirector.play_sfx("sfx_unlock", 0.5)
-	)
+	# 稳定性（v1.4.1）：必须用命名方法连接——lambda 连接不会随节点销毁自动断开，
+	# 旧界面的 lambda 被触发时会访问已释放实例，在 Android 上直接闪退。
+	Ach.unlocked.connect(_on_achievement_unlocked)
+
+func _on_story_done(e: String) -> void:
+	finished.emit(e)
+
+func _on_achievement_unlocked(id: String) -> void:
+	var toast := OW.toast("成就达成　%s" % Ach.name_of(id))
+	ui_root.add_child(toast)
+	AudioDirector.play_sfx("sfx_unlock", 0.5)
 
 func _on_scene(kind: String, value: String, extra: String) -> void:
 	if kind == "bg":
