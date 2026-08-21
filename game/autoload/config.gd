@@ -4,7 +4,7 @@ extends Node
 
 const GAME_TITLE := "第十三节课"
 const GAME_SUBTITLE := "THE 13TH PERIOD"
-const VERSION := "1.4.8"
+const VERSION := "1.4.9"
 
 # Integrity
 
