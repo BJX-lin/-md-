@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.24 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.25 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.24_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.24_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.24_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.25_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.25_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.25_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,15 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.24 更新（本分支最新 · 开屏居中结构性修复）
+## v1.4.25 更新（本分支最新 · 开屏总时长 10 秒）
+
+- 两段开屏合计 **10.0 秒**（合并段 6.6s + 作品标示段 3.4s）
+- 时间轴：对进 1.6s → 合并 2.2s → 放大复原 3.0s → 字幕 2.3s 起 →
+  跑马灯 3.15~5.95s 缓慢飘过、停 0.3s 淡出
+- 点击逐段前进 / Esc 跳过不变
+- 版本 1.4.25（versionCode 33）
+
+## v1.4.24 更新
 
 - **静止构图改为 CenterContainer 容器布局**：Godot 图标 + 致意字幕由引擎容器
   计算中心，结构性保证居中；入场动画的终点坐标直接取自容器实际渲染矩形，

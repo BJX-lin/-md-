@@ -4,7 +4,7 @@ extends Node
 ##     python3 tools/gen_integrity.py --write
 
 const MANIFEST := {
-	"autoload/config.gd": "2dfdfff2eb863f19f7058b4a5958eb0669014d7170bcc35ed1a14d8f1760c682",
+	"autoload/config.gd": "0751d4e418ea2e541313055e3153d7271cd18b7faf1d5850f7ae109342619a03",
 	"autoload/game_state.gd": "48597561277212cdd21e14e85acb79b38789d06fd24790be325ddd1a56cf7fa3",
 	"autoload/save_system.gd": "c10c7d20a041b82e583b96c3ed256d79e5d39992bb2e96a31db7fd4e451ecc36",
 	"autoload/story_engine.gd": "bece28c819a4cd70172f09bf827a02bdb43444237810ff364f5ef4f61a35d478",
