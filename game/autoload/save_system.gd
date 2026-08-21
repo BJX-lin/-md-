@@ -47,10 +47,19 @@ func load_settings() -> void:
 			settings["_shake_migrated"] = true
 			save_settings()
 
+## 稳定性（v1.4.5）：原子落盘——先写 .tmp 再同名替换。
+## 写入途中进程被杀（闪退/断电/系统回收）不会留下半截的坏档。
+func _atomic_write(path: String, text: String) -> bool:
+	var tmp := path + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(text)
+	f.close()
+	return DirAccess.rename_absolute(tmp, path) == OK
+
 func save_settings() -> void:
-	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(settings, "\t"))
+	_atomic_write(SETTINGS_PATH, JSON.stringify(settings, "\t"))
 	AudioDirector.apply_settings(settings)
 
 func set_setting(k: String, v) -> void:
@@ -76,9 +85,7 @@ func load_persistent() -> void:
 			GameState.persistent[k] = d[k]
 
 func save_persistent() -> void:
-	var f := FileAccess.open(PERSIST_PATH, FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(GameState.persistent, "\t"))
+	_atomic_write(PERSIST_PATH, JSON.stringify(GameState.persistent, "\t"))
 
 # Save/Load
 # Save/Load
@@ -139,20 +146,14 @@ func _preview_text() -> String:
 	return "——"
 
 func save_slot(i: int) -> bool:
-	var f := FileAccess.open(slot_path(i), FileAccess.WRITE)
-	if f == null:
-		return false
 	var payload := build_payload()
 	payload["_sig"] = _sign(payload)
-	f.store_string(JSON.stringify(payload, "\t"))
-	return true
+	return _atomic_write(slot_path(i), JSON.stringify(payload, "\t"))
 
 func autosave() -> void:
-	var f := FileAccess.open(autosave_path(), FileAccess.WRITE)
-	if f:
-		var payload := build_payload()
-		payload["_sig"] = _sign(payload)
-		f.store_string(JSON.stringify(payload, "\t"))
+	var payload := build_payload()
+	payload["_sig"] = _sign(payload)
+	_atomic_write(autosave_path(), JSON.stringify(payload, "\t"))
 
 func read_slot(i: int) -> Dictionary:
 	var p := slot_path(i)

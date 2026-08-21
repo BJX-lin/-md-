@@ -9,18 +9,18 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.4 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.5 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.4_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.4_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.4_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.5_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.5_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.5_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
-> Part 1（3.4MB）工程核心（代码/剧本/UI/图标/工具）+ `docs/` + 设计文档；
-> Part 2（71MB）`game/assets/bg` 全部背景图；
-> Part 3（30MB）`game/assets/sprites|audio` 立绘与音频（含 v1.4.4 新音频）。
+> Part 1（3.8MB）工程核心（代码/剧本/UI/图标/工具，含开屏 AI 图标）+ `docs/` + 设计文档；
+> Part 2（73.4MB）`game/assets/bg` 全部背景图；
+> Part 3（30.4MB）`game/assets/sprites|audio` 立绘与音频。
 >
 > 解压后用 Godot Engine 4.7.2 stable 打开 `game/project.godot` 即可运行 / 导出 Android。
 
@@ -82,7 +82,21 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.4 更新（本分支最新 · 创作者音频实装）
+## v1.4.5 更新（本分支最新 · 开屏与稳定性）
+
+- **开屏动画三段式重做**：Godot 引擎致意（新增「该游戏使用 Godot 4.7.2 制作」）→
+  制作信息（**塞博仓鼠 🐹 × AI 制作** + AI 生成图标）→ 作品标示
+- **新进入方式**：点击/触摸/任意键**逐段前进**（每段最短停留 0.35s 防误触连跳），
+  **Esc 一键跳过**；底部动态提示「点击进入下一段 · Esc 跳过」
+- **AI 图标**：`assets/ui/agent_hamster.png`（AI 生成的赛博仓鼠，代表参与制作的 AI，
+  512px）；缺图时代码绘制发光仓鼠回退
+- **修复：切后台音频不停**——Android 按 Home 键回桌面后 BGM/环境音继续播放
+  （漏音+耗电），现在应用暂停/失焦时全部 AudioStreamPlayer 挂起，恢复时续播
+- **加固：存档原子落盘**——设置/持久层/存档/自动存档统一「先写 .tmp 再改名」，
+  写入途中进程被杀不会留下半截坏档
+- 版本 1.4.5（versionCode 13）；28 脚本语法解析 + 静态检查 0 错误
+
+## v1.4.4 更新（创作者音频实装）
 
 - **实装 16 个替换音频**（素材来自 md 仓库 main 分支上传）：4 首 BGM（主场景/真相/
   结局坏/调查）+ 4 组环境音（白噪声/蝉鸣/雨声/光电流）+ 8 个音效，统一转码为

@@ -5,9 +5,17 @@ class_name SplashScreen
 
 # Title
 
+## 开屏（v1.4.5 三段式）：
+##   段0 Godot 引擎致意（"该游戏使用 Godot 4.7.2 制作"）
+##   段1 制作信息（塞博仓鼠 × AI 制作 + AI 仓鼠图标）
+##   段2 作品标示（标题/副标题/内容提示/版本）
+## 进入方式：点击 / 触摸 / 任意键 = 前进一段（每段最短停留 0.35s 防误触连跳）；
+##           Esc / 手柄B = 一键跳过全部。底部有动态提示文字。
+
 signal finished
 
-const STAGE_DUR := [2.4, 2.8]
+const STAGE_DUR := [2.6, 3.0, 2.8]
+const STAGE_MIN_HOLD := 0.35
 const FADE := 0.45
 
 var _t := 0.0
@@ -15,13 +23,14 @@ var _stage := 0
 var _done := false
 
 var _stage_root: Control
-var _stage0: Control
-var _stage1: Control
+var _stages: Array[Control] = []
+var _hint: Label
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	anchor_right = 1.0
 	anchor_bottom = 1.0
+
 	offset_right = 0.0
 	offset_bottom = 0.0
 
@@ -37,7 +46,6 @@ func _ready() -> void:
 	add_child(bg)
 
 	# Background
-	# Engine
 	var scene_tex := UITex.get_tex("splash_bg")
 	if scene_tex != null:
 		var scene := TextureRect.new()
@@ -60,35 +68,51 @@ func _ready() -> void:
 	_stage_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_stage_root)
 
-	_stage0 = _build_godot_stage()
-	_stage1 = _build_game_stage()
-	_stage_root.add_child(_stage0)
-	_stage_root.add_child(_stage1)
+	_stages = [_build_godot_stage(), _build_credits_stage(), _build_game_stage()]
+	for st in _stages:
+		_stage_root.add_child(st)
 	_show_stage(0)
 
-	var skip := Label.new()
-	skip.text = "点击跳过"
-	skip.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	skip.offset_left = -140
-	skip.offset_top = -34
-	skip.offset_right = -24
-	skip.add_theme_font_size_override("font_size", 15)
-	skip.add_theme_color_override("font_color", Color(0.42, 0.42, 0.46, 0.75))
-	skip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(skip)
+	_hint = Label.new()
+	_hint.text = "点击进入下一段 · Esc 跳过"
+	_hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_hint.offset_top = -34
+	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint.add_theme_font_size_override("font_size", 15)
+	_hint.add_theme_color_override("font_color", Color(0.42, 0.42, 0.46, 0.75))
+	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_hint)
 
 	gui_input.connect(func(e: InputEvent):
 		if e is InputEventMouseButton and e.pressed:
-			_skip()
+			_advance()
 	)
 
 func _unhandled_input(e: InputEvent) -> void:
+	if _done:
+		return
 	if e is InputEventKey and e.pressed and not e.echo:
-		_skip()
+		if e.keycode == KEY_ESCAPE:
+			_skip_all()
+		else:
+			_advance()
 	elif e is InputEventScreenTouch and e.pressed:
-		_skip()
+		_advance()
 
-func _skip() -> void:
+## 进入方式（v1.4.5）：普通点击/按键逐段前进；Esc 直接跳到结尾
+func _advance() -> void:
+	if _done:
+		return
+	if _t < STAGE_MIN_HOLD:
+		return  # 防止连点瞬间跳完整段
+	_t = 0.0
+	_stage += 1
+	if _stage >= _stages.size():
+		_finish()
+	else:
+		_show_stage(_stage)
+
+func _skip_all() -> void:
 	if _done:
 		return
 	_finish()
@@ -101,7 +125,7 @@ func _process(delta: float) -> void:
 	if _t >= limit:
 		_t = 0.0
 		_stage += 1
-		if _stage >= STAGE_DUR.size():
+		if _stage >= _stages.size():
 			_finish()
 			return
 		_show_stage(_stage)
@@ -111,6 +135,7 @@ func _finish() -> void:
 		return
 	_done = true
 	set_process(false)
+	_hint.text = ""
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 0.0, 0.35)
 	tw.tween_callback(func():
@@ -119,9 +144,9 @@ func _finish() -> void:
 	)
 
 func _show_stage(i: int) -> void:
-	_stage0.visible = i == 0
-	_stage1.visible = i == 1
-	var root: Control = _stage0 if i == 0 else _stage1
+	for k in _stages.size():
+		_stages[k].visible = k == i
+	var root: Control = _stages[i]
 	root.modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_property(root, "modulate:a", 1.0, FADE)
@@ -170,6 +195,13 @@ func _build_godot_stage() -> Control:
 		cap.add_theme_color_override("font_color", Color(0.80, 0.84, 0.88))
 		v.add_child(cap)
 
+	var credit := Label.new()
+	credit.text = "该游戏使用 Godot 4.7.2 制作"
+	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	credit.add_theme_font_size_override("font_size", 20)
+	credit.add_theme_color_override("font_color", Color(0.62, 0.70, 0.82))
+	v.add_child(credit)
+
 	var site := Label.new()
 	site.text = "godotengine.org"
 	site.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -198,6 +230,84 @@ func _draw_godot_fallback() -> Control:
 		c.draw_circle(head + Vector2(-r * 0.42, -r * 0.05), r * 0.11, Color(0.12, 0.16, 0.2))
 		c.draw_circle(head + Vector2(r * 0.42, -r * 0.05), r * 0.11, Color(0.12, 0.16, 0.2))
 		c.draw_rect(Rect2(head.x - r * 0.5, head.y + r * 0.42, r, r * 0.13), Color(0.16, 0.26, 0.34), true)
+	)
+	return c
+
+## 制作信息段（v1.4.5）：塞博仓鼠 × AI 制作；AI 图标缺失时回落为代码绘制的小仓鼠
+func _build_credits_stage() -> Control:
+	var c := Control.new()
+	c.set_anchors_preset(Control.PRESET_FULL_RECT)
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	c.add_child(center)
+
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 16)
+	center.add_child(v)
+
+	var icon := TextureRect.new()
+	icon.texture = UITex.get_tex("agent_hamster")
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(150, 150)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(icon)
+	if icon.texture != null:
+		var tw := create_tween()
+		tw.set_loops()
+		tw.tween_property(icon, "modulate:a", 0.86, 1.2).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(icon, "modulate:a", 1.0, 1.2).set_trans(Tween.TRANS_SINE)
+	else:
+		var fb := _draw_hamster_fallback()
+		fb.custom_minimum_size = Vector2(150, 150)
+		v.add_child(fb)
+
+	var made := Label.new()
+	made.text = "塞博仓鼠 🐹 × AI 制作"
+	made.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	made.add_theme_font_size_override("font_size", 34)
+	made.add_theme_color_override("font_color", Color(0.72, 0.84, 1.0))
+	made.add_theme_color_override("font_shadow_color", Color(0.10, 0.20, 0.40, 0.6))
+	made.add_theme_constant_override("shadow_offset_y", 2)
+	v.add_child(made)
+
+	var sub := Label.new()
+	sub.text = "CYBER HAMSTER × AI"
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.add_theme_font_size_override("font_size", 15)
+	sub.add_theme_color_override("font_color", Color(0.45, 0.52, 0.62))
+	v.add_child(sub)
+	return c
+
+## AI 仓鼠图标的代码回落绘制（无贴图时也能成立）
+func _draw_hamster_fallback() -> Control:
+	var c := Control.new()
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.draw.connect(func():
+		var s := c.size
+		var cx := s.x * 0.5
+		var cy := s.y * 0.55
+		var r := minf(s.x, s.y) * 0.30
+		var fur := Color(0.16, 0.20, 0.30)
+		var glow := Color(0.29, 0.55, 1.0)
+		# 耳朵
+		c.draw_circle(Vector2(cx - r * 0.62, cy - r * 0.92), r * 0.30, fur)
+		c.draw_circle(Vector2(cx + r * 0.62, cy - r * 0.92), r * 0.30, fur)
+		c.draw_circle(Vector2(cx - r * 0.62, cy - r * 0.92), r * 0.14, glow)
+		c.draw_circle(Vector2(cx + r * 0.62, cy - r * 0.92), r * 0.14, glow)
+		# 脸
+		c.draw_circle(Vector2(cx, cy), r, fur)
+		# 发光眼
+		c.draw_circle(Vector2(cx - r * 0.38, cy - r * 0.08), r * 0.16, glow)
+		c.draw_circle(Vector2(cx + r * 0.38, cy - r * 0.08), r * 0.16, glow)
+		# 电路纹
+		c.draw_line(Vector2(cx - r * 0.8, cy + r * 0.35), Vector2(cx + r * 0.8, cy + r * 0.35), glow * Color(1, 1, 1, 0.5), 2.0)
+		# 腮帮籽
+		c.draw_circle(Vector2(cx - r * 0.72, cy + r * 0.22), r * 0.10, Color(0.36, 0.72, 0.52))
+		c.draw_circle(Vector2(cx + r * 0.72, cy + r * 0.22), r * 0.10, Color(0.36, 0.72, 0.52))
 	)
 	return c
 

@@ -31,6 +31,21 @@ func _ready() -> void:
 		add_child(p)
 		_sfx_pool.append(p)
 
+# 稳定性（v1.4.5）：切后台暂停全部音频、回前台恢复。
+# 此前 Android 按 Home 键回桌面后 BGM/环境音会继续播放（漏音 + 耗电）。
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT:
+			_music.stream_paused = true
+			_amb.stream_paused = true
+			for p in _sfx_pool:
+				p.stream_paused = true
+		NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN:
+			_music.stream_paused = false
+			_amb.stream_paused = false
+			for p in _sfx_pool:
+				p.stream_paused = false
+
 func apply_settings(s: Dictionary) -> void:
 	master_volume = float(s.get("vol_master", 1.0))
 	bgm_volume = float(s.get("vol_bgm", 0.7))
