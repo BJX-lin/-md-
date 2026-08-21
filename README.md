@@ -9,18 +9,19 @@
 
 ## 直接下载（GitHub raw 直链）
 
-> v1.3.1 及更早的发行 ZIP 仍在游戏仓库 `BJX-lin/md` 的 `arena/01a018ff-md` 分支 `dist/` 下；
-> 本分支为 **v1.4.0 源码**（暂未打包）。打包时沿用原流程即可：
+**v1.4.0 完整工程包（单包 97MB）**
 
-**方式一：完整单包（完整单包）**
+```
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.0_full_project.zip
+```
+
+> 解压后用 Godot Engine 4.7.2 stable 打开 `game/project.godot` 即可运行 / 导出 Android。
+> 包含完整 `game/` 工程（代码/剧本/UI/美术/音频）与 `docs/` 技术文档。
+
+**历史版本（v1.3.1）** 仍在游戏仓库 `BJX-lin/md` 的 `arena/01a018ff-md` 分支 `dist/` 下：
 
 ```
 https://github.com/BJX-lin/md/raw/arena/01a018ff-md/dist/The13thPeriod_v1.3.1_full_project.zip
-```
-
-**方式二：分卷下载（两个包均 <100MB，规避 GitHub 单文件上限）**
-
-```
 https://github.com/BJX-lin/md/raw/arena/01a018ff-md/dist/The13thPeriod_v1.3.1_part1_project.zip
 https://github.com/BJX-lin/md/raw/arena/01a018ff-md/dist/The13thPeriod_v1.3.1_part2_assets.zip
 ```
@@ -28,8 +29,6 @@ https://github.com/BJX-lin/md/raw/arena/01a018ff-md/dist/The13thPeriod_v1.3.1_pa
 > 分卷使用方法：把两个 ZIP **解压到同一个文件夹**即可合并——
 > Part 1 含 `game/` 工程核心（代码/剧本/UI/图标）与 `docs/`；
 > Part 2 含 `game/assets/bg|sprites|audio` 全部美术与音频资源。
-
-解压后用 Godot Engine 4.7.1 stable 打开 `game/project.godot` 即可运行/导出 Android。
 
 ## 目录结构
 
