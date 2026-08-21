@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.6 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.7 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.6_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.6_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.6_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.7_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.7_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.7_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,16 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.6 更新（本分支最新 · 开屏合并动画 / 剧本设定调整 / 立绘更新）
+## v1.4.7 更新（本分支最新 · 全员立绘重绘）
+
+- **13 个角色立绘全部重绘**（2×2 表情表生成 → 纯白底抠透明 → 768 规格）：
+  周叙/梁野/沈禾/许清/老秦/李恒/林昼(备用)/？？？/食堂阿姨/宿管阿姨/同学×3
+- 每角色保留 4 个差分（按剧本使用频率选取，含回退根表情），全表情链校验：
+  剧本 44 种 @show 引用 0 缺失，17 种按链回退（fear→nervous、smirk→smile 等）
+- 许清新增腕表细节（呼应 22:07 停摆表设定）；unknown 保留无面影形象
+- 版本 1.4.7（versionCode 15）
+
+## v1.4.6 更新
 
 - **开屏重做（双图标合并）**：塞博仓鼠(AI) 图标从左、Godot 图标从右向中间移动
   → 合并闪光后只保留 Godot → **放大 0.5 秒后复原** → **跑马灯字幕带**扫过
