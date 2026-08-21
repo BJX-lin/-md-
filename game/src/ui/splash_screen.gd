@@ -160,15 +160,53 @@ func _show_stage(i: int) -> void:
 		_play_merge_sequence(root)
 
 ## 段0：双图标对进 → 合并 → 仅留 Godot → 放大 0.5s 复原 → 跑马灯
-## 稳定性（v1.4.20）：全部元素改为显式像素布局（_play_merge_sequence_deferred
-## 内统一按视口计算），不再依赖中心锚点 + 默认向右生长——
-## 此前文字/字幕带从中点向右展开，导致不居中。
+## v1.4.24 居中结构性修复：静止构图（Godot 图标 + 致意字幕）放进 CenterContainer，
+## 由引擎容器计算中心，不可能偏移；入场动画的终点坐标取自容器实际渲染矩形。
+## 动画用"旅行图标"与容器内"正主图标"交叉淡入完成合并。
 func _build_merge_stage() -> Control:
 	var c := Control.new()
 	c.set_anchors_preset(Control.PRESET_FULL_RECT)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	# 合并闪光（初始全透明）
+	# —— 静止构图：容器居中（结构性保证）——
+	var box := CenterContainer.new()
+	box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.name = "CenterBox"
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 26)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.name = "CenterV"
+
+	var god := TextureRect.new()
+	god.texture = UITex.get_tex("godot_mark")
+	god.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	god.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	god.size = Vector2(132, 132)
+	god.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	god.modulate.a = 0.0
+	god.name = "Godot"
+	v.add_child(god)
+	if god.texture == null:
+		var gfb := _draw_godot_fallback()
+		gfb.custom_minimum_size = Vector2(140, 140)
+		v.add_child(gfb)
+
+	var credit := Label.new()
+	credit.text = "该游戏使用 Godot 4.7.2 制作"
+	credit.name = "Credit"
+	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	credit.add_theme_font_size_override("font_size", 22)
+	credit.add_theme_color_override("font_color", Color(0.62, 0.70, 0.82))
+	credit.modulate.a = 0.0
+	credit.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(credit)
+
+	box.add_child(v)
+	c.add_child(box)
+
+	# —— 动画层（兄弟节点，手动定位，终点对齐容器中心）——
 	var flash := ColorRect.new()
 	flash.color = Color(0.55, 0.72, 1.0, 0.0)
 	flash.size = Vector2(360, 360)
@@ -176,7 +214,6 @@ func _build_merge_stage() -> Control:
 	flash.name = "Flash"
 	c.add_child(flash)
 
-	# 仓鼠（AI）图标
 	var ham := TextureRect.new()
 	ham.texture = UITex.get_tex("agent_hamster")
 	ham.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -184,40 +221,20 @@ func _build_merge_stage() -> Control:
 	ham.size = Vector2(150, 150)
 	ham.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ham.name = "Hamster"
+	ham.visible = false
 	c.add_child(ham)
-	if ham.texture == null:
-		var fb := _draw_hamster_fallback()
-		fb.name = "HamsterFallback"
-		fb.size = Vector2(150, 150)
-		c.add_child(fb)
 
-	# Godot 图标
-	var god := TextureRect.new()
-	god.texture = UITex.get_tex("godot_mark")
-	god.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	god.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	god.size = Vector2(128, 128)
-	god.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	god.name = "Godot"
-	c.add_child(god)
-	if god.texture == null:
-		var fb2 := _draw_godot_fallback()
-		fb2.name = "GodotFallback"
-		fb2.size = Vector2(140, 140)
-		c.add_child(fb2)
+	var trav := TextureRect.new()
+	trav.texture = UITex.get_tex("godot_mark")
+	trav.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	trav.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	trav.size = Vector2(132, 132)
+	trav.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	trav.pivot_offset = Vector2(66, 66)
+	trav.name = "GodotTravel"
+	trav.visible = false
+	c.add_child(trav)
 
-	# 引擎致意字幕（整幅宽，文字水平居中）
-	var credit := Label.new()
-	credit.text = "该游戏使用 Godot 4.7.2 制作"
-	credit.name = "Credit"
-	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	credit.add_theme_font_size_override("font_size", 21)
-	credit.add_theme_color_override("font_color", Color(0.62, 0.70, 0.82))
-	credit.modulate.a = 0.0
-	credit.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	c.add_child(credit)
-
-	# 跑马灯字幕带（尺寸取自身最小尺寸，位置由布局计算）
 	var band := PanelContainer.new()
 	band.name = "Marquee"
 	var sb := StyleBoxFlat.new()
@@ -239,79 +256,65 @@ func _build_merge_stage() -> Control:
 	c.add_child(band)
 	return c
 
-## 时间轴驱动（等布局稳定后启动）
 func _play_merge_sequence(root: Control) -> void:
-	var ham: Control = root.get_node_or_null("Hamster")
-	if ham == null:
-		ham = root.get_node_or_null("HamsterFallback")
-	var god: Control = root.get_node_or_null("Godot")
-	if god == null:
-		god = root.get_node_or_null("GodotFallback")
+	var god: Control = root.get_node("CenterBox/CenterV/Godot")
+	var credit: Label = root.get_node("CenterBox/CenterV/Credit")
 	var flash: ColorRect = root.get_node("Flash")
-	var credit: Label = root.get_node("Credit")
+	var ham: TextureRect = root.get_node("Hamster")
+	var trav: TextureRect = root.get_node("GodotTravel")
 	var band: PanelContainer = root.get_node("Marquee")
-	if ham == null or god == null:
-		return
+	_play_merge_sequence_deferred.call_deferred(god, credit, flash, ham, trav, band)
 
-	_play_merge_sequence_deferred.call_deferred(ham, god, flash, credit, band)
-
-func _play_merge_sequence_deferred(ham: Control, god: Control, flash: ColorRect, credit: Label, band: PanelContainer) -> void:
-	# 稳定性（v1.4.22）：等控件尺寸就绪再布局（最多 10 帧）。
-	# 此前在尺寸未传播时就计算，拿到陈旧的小尺寸 → 元素围着错误原点摆放，
-	# 表现为图标/字幕不居中。就绪失败时兜底取视口尺寸。
+func _play_merge_sequence_deferred(god: Control, credit: Label, flash: ColorRect, ham: TextureRect, trav: TextureRect, band: PanelContainer) -> void:
+	# 等控件与容器布局就绪（尺寸 + 额外一帧让 CenterContainer 完成排布）
 	var waited := 0
 	while (size.x < 100.0 or size.y < 100.0) and waited < 10:
 		await get_tree().process_frame
 		waited += 1
+	await get_tree().process_frame
+
+	# 中心取自容器内"正主图标"的实际渲染矩形——与最终视觉中心完全一致
+	var gr := god.get_global_rect()
+	var cx := gr.get_center().x
+	var cy := gr.get_center().y
 	var vw := size.x if size.x >= 100.0 else get_viewport_rect().size.x
-	var vh := size.y if size.y >= 100.0 else get_viewport_rect().size.y
-	var cx := vw * 0.5
-	var cy := vh * 0.5
-	var travel := cx + 180.0
+	var travel := vw * 0.5 + 180.0
 
-	# —— 显式像素布局（全部以画面中心为基准）——
-	flash.position = Vector2(cx - flash.size.x * 0.5, cy - flash.size.y * 0.5)
-	ham.size = Vector2(150, 150)
-	god.size = Vector2(128, 128)
-	ham.pivot_offset = ham.size * 0.5
 	god.pivot_offset = god.size * 0.5
-	credit.position = Vector2(0, cy + 96)
-	credit.size = Vector2(vw, 44)
-	var band_min := band.get_combined_minimum_size()
-	band.size = band_min
-	band.position = Vector2(vw, cy + 168)
+	flash.position = Vector2(cx - flash.size.x * 0.5, cy - flash.size.y * 0.5)
 
-	# 起始：左右屏幕外（垂直方向已按中心对齐）
-	ham.position = Vector2(cx - travel - ham.size.x * 0.5, cy - ham.size.y * 0.5)
-	god.position = Vector2(cx + travel - god.size.x * 0.5, cy - god.size.y * 0.5)
+	# 旅行图标从屏幕左右外出发，终点精确覆盖容器中的正主图标
+	ham.visible = true
+	trav.visible = true
 	ham.modulate.a = 1.0
-	god.modulate.a = 1.0
+	trav.modulate.a = 1.0
+	ham.position = Vector2(cx - travel - ham.size.x * 0.5, cy - ham.size.y * 0.5)
+	trav.position = Vector2(cx + travel - trav.size.x * 0.5, cy - trav.size.y * 0.5)
 
 	var tw := create_tween()
 	tw.set_parallel(true)
-	# 1) 双图标向中间移动（终点=画面正中）
-	tw.tween_property(ham, "position:x", cx - ham.size.x * 0.5, T_SLIDE) \
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_property(god, "position:x", cx - god.size.x * 0.5, T_SLIDE) \
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	# 2) 合并：闪光 + 仓鼠淡出（仅保留 Godot）
+	# 1) 双图标向中间移动（终点=容器中心的图标位置）
+	tw.tween_property(ham, "position:x", cx - ham.size.x * 0.5, T_SLIDE) .set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(trav, "position:x", cx - trav.size.x * 0.5, T_SLIDE) .set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	# 2) 合并：闪光；旅行图标淡出、容器内正主图标交叉淡入（结构性居中生效）
 	tw.tween_property(flash, "color:a", 0.85, 0.12).set_delay(T_SLIDE)
 	tw.tween_property(flash, "color:a", 0.0, 0.35).set_delay(T_SLIDE + 0.12)
 	tw.tween_property(ham, "modulate:a", 0.0, T_MERGE).set_delay(T_SLIDE)
 	tw.tween_property(ham, "scale", Vector2(1.25, 1.25), T_MERGE).set_delay(T_SLIDE)
-	# 3) Godot 放大 0.5s 后复原（以自身中心缩放）
-	tw.tween_property(god, "scale", Vector2(1.35, 1.35), T_PULSE).set_delay(T_SLIDE + T_MERGE) \
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(trav, "modulate:a", 0.0, 0.25).set_delay(T_SLIDE)
+	tw.tween_property(god, "modulate:a", 1.0, 0.25).set_delay(T_SLIDE)
+	# 3) 正主图标放大 0.5s 后复原（容器子节点仅做视觉缩放，不影响布局）
+	tw.tween_property(god, "scale", Vector2(1.35, 1.35), T_PULSE).set_delay(T_SLIDE + T_MERGE) .set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(god, "scale", Vector2.ONE, T_PULSE_BACK).set_delay(T_SLIDE + T_MERGE + T_PULSE)
-	# 4) 字幕淡入（停留至本段结束）
+	# 4) 致意字幕淡入（容器内，天然与图标对齐）
 	tw.tween_property(credit, "modulate:a", 1.0, 0.4).set_delay(T_SLIDE + T_MERGE + 0.1)
-	# 5) 跑马灯：从右向左扫过屏幕（3 秒慢速，扫完多停 1 秒再淡出）
+	# 5) 跑马灯：以容器中心为基准横扫
+	var band_min := band.get_combined_minimum_size()
+	band.size = band_min
+	band.position = Vector2(vw, cy + 170)
 	tw.tween_property(band, "modulate:a", 1.0, 0.2).set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK)
-	tw.tween_property(band, "position:x", -band_min.x - 60.0, T_MARQUEE) \
-		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + 0.15) \
-		.set_trans(Tween.TRANS_LINEAR)
-	tw.tween_property(band, "modulate:a", 0.0, 0.25) \
-		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + T_MARQUEE + 1.0)
+	tw.tween_property(band, "position:x", -band_min.x - 60.0, T_MARQUEE) .set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + 0.15) .set_trans(Tween.TRANS_LINEAR)
+	tw.tween_property(band, "modulate:a", 0.0, 0.25) .set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + T_MARQUEE + 1.0)
 	tw.set_parallel(false)
 
 ## AI 仓鼠图标的代码回落绘制（无贴图时也能成立）

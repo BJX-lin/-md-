@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.23 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.24 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.23_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.23_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.23_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.24_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.24_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.24_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,19 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.23 更新（本分支最新 · 移除跳选 + 代码审计）
+## v1.4.24 更新（本分支最新 · 开屏居中结构性修复）
+
+- **静止构图改为 CenterContainer 容器布局**：Godot 图标 + 致意字幕由引擎容器
+  计算中心，结构性保证居中；入场动画的终点坐标直接取自容器实际渲染矩形，
+  不再有独立的手动中心计算
+- **合并改为交叉淡入**：屏幕外飞入的"旅行图标"到达中心后淡出，容器内
+  "正主图标"同时淡入——最终停留位置 100% 由容器决定
+- **背景图重绘为左右对称构图**（旧图视觉重心偏右带偏整体）：新 splash_bg
+  正面对称校门+镜像楼群，左右亮度偏差仅 1.3%
+- 时长参数不变（合并段 7.6s / 标示段 7.2s）
+- 版本 1.4.24（versionCode 32）
+
+## v1.4.23 更新
 
 - **移除「跳选」功能**：顶栏按钮、快进到选项的引擎机制（fast_mode 全套）、
   相关冒烟测试全部删除；自动播放与快进保留不变
