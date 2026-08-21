@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.13 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.14 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.13_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.13_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.13_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.14_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.14_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.14_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,16 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.13 更新（本分支最新 · 场景图重绘第 6 批，累计 55/104）
+## v1.4.14 更新（本分支最新 · 场景图重绘第 7 批，累计 65/104）
+
+- 道具特写 10 张：109 页残片（焦边+铅笔痕）/ 借书卡（名字描到笔压透纸）/
+  日志残页 / 广播值班登记册（同名渐淡）/ 核心名单页（一页全是同一个名字）/
+  值日表（层层修正液）/ 寻人启事（照片晕成空白）/ 车票 / 铁皮文具盒 /
+  录像带（编号过百）
+- 所有文字均以"模糊不可读"处理，避免 AI 生成乱码字
+- 版本 1.4.14（versionCode 22）
+
+## v1.4.13 更新
 
 - 校史馆与档案系 7 张：校史馆大厅 / 黄昏 / 门厅 / 毕业照墙（中间一框全班
   面目褪成模糊）/ 档案内门（转盘锁）/ 监控雪花墙 / 监控画面墙
