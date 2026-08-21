@@ -14,16 +14,16 @@ class_name SplashScreen
 
 signal finished
 
-const STAGE_DUR := [4.8, 3.0]
+const STAGE_DUR := [6.6, 3.6]
 const STAGE_MIN_HOLD := 0.35
 const FADE := 0.45
 
-## 合并动画时间轴（秒）
-const T_SLIDE := 1.1      # 双图标向中间移动
-const T_MERGE := 0.45     # 仓鼠淡出/合并闪光
-const T_PULSE := 0.5      # Godot 图标放大
-const T_PULSE_BACK := 0.3 # 放大后复原
-const T_MARQUEE := 1.3    # 跑马灯扫过
+## 合并动画时间轴（秒）· v1.4.21 按反馈放缓：对进更慢、字幕停留更久
+const T_SLIDE := 1.5      # 双图标向中间移动（原 1.1）
+const T_MERGE := 0.6      # 仓鼠淡出/合并闪光（原 0.45）
+const T_PULSE := 0.5      # Godot 图标放大（按分镜保持 0.5）
+const T_PULSE_BACK := 0.35 # 放大后复原（原 0.3）
+const T_MARQUEE := 2.4    # 跑马灯扫过（原 1.3，放慢近一倍便于阅读）
 
 var _t := 0.0
 var _stage := 0
@@ -296,15 +296,15 @@ func _play_merge_sequence_deferred(ham: Control, god: Control, flash: ColorRect,
 	tw.tween_property(god, "scale", Vector2(1.35, 1.35), T_PULSE).set_delay(T_SLIDE + T_MERGE) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(god, "scale", Vector2.ONE, T_PULSE_BACK).set_delay(T_SLIDE + T_MERGE + T_PULSE)
-	# 4) 字幕淡入
+	# 4) 字幕淡入（停留至本段结束）
 	tw.tween_property(credit, "modulate:a", 1.0, 0.4).set_delay(T_SLIDE + T_MERGE + 0.1)
-	# 5) 跑马灯：从右向左扫过屏幕（整条带完全越过左右边缘）
+	# 5) 跑马灯：从右向左扫过屏幕（v1.4.21 放慢近一倍，扫完多停 0.6s 再淡出）
 	tw.tween_property(band, "modulate:a", 1.0, 0.2).set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK)
 	tw.tween_property(band, "position:x", -band_min.x - 60.0, T_MARQUEE) \
 		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + 0.15) \
 		.set_trans(Tween.TRANS_LINEAR)
 	tw.tween_property(band, "modulate:a", 0.0, 0.25) \
-		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + T_MARQUEE)
+		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + T_MARQUEE + 0.6)
 	tw.set_parallel(false)
 
 ## AI 仓鼠图标的代码回落绘制（无贴图时也能成立）
