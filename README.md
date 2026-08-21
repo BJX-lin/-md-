@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.18 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.19 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.18_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.18_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.18_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.19_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.19_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.19_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,18 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.18 更新（本分支最新 · 🏁 场景图 105/105 全部重绘完成）
+## v1.4.19 更新（本分支最新 · 立绘差分扩展 40 张）
+
+- **差分扩展**：10 个角色各 +4 表情（共 40 张，累计 92 张立绘），全部以第一代
+  中性表情作参考图生成，保证同脸同画风；表情保持克制自然系
+- 核心角色补回高频表情：周叙 angry/flat/terrified/soft、梁野 fear/sad/fragile/smile、
+  沈禾 angry/smirk/hurt/tired、许清 tired/empty/sad/displeased、
+  老秦 flat/nervous/sad/serious；配角补通用差分
+- 复验：剧本 44 种 @show 引用 0 缺失，走回退 17 → **2**（几乎全部直出）
+- 老秦 flat/nervous 两张生成时带入暗色底带，已做行级背景清除修复并复验
+- 版本 1.4.19（versionCode 27）
+
+## v1.4.18 更新
 
 - 最终批 10 张：广播门开启缝 / 广播室全景 / 307 湿地板（水不知从哪来）/
   门房全景 / 实验楼走廊 / 挂钟特写（玻璃里映着空街）/ 白天空走廊 /
