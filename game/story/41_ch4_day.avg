@@ -1,0 +1,937 @@
+-- 第四章 · 白天：最后一个平常的上午
+-- 定位：第四章是全篇转折点，但此前只有 5433 字，节点密而内容薄。
+-- 这一段补的是「暴风雨前的最后一段日常」——
+-- 主角已经知道自己是补位，知道循环第 109 次正在进行，
+-- 却还要照常上课、照常被点名、照常和这些人相处。
+-- 恐怖来自「明知道结局却什么都不能改变」的日常感。
+--
+-- 结构：早读点名（主线必经）→ 三条并行观察线 → 收束进 ch4_prep_hub
+
+== ch4_day_start
+@time 4 07:05
+@bg classroom day
+@bgm bgm_day_class
+@amb amb_classroom_day
+@clearchars
+@advtime 5
+第四天早上。
+@wait 0.8
+雨停了一夜，天没亮的时候又下起来。
+@wait 0.6
+你几乎没睡。躺在床上听了一整夜的雨，中间起来两次，两次都看见周叙也睁着眼。
+@wait 1.0
+@set sanity -1
+@if death:梁野
+-- 梁野已在旧楼失踪：不能让他若无其事地坐在床沿穿鞋。
+-- 空床本身就是最好的演出。
+第三次醒来的时候天已经蒙蒙亮。
+@wait 0.8
+你侧过头，看见对面那张床。
+被子叠得很整齐——整齐得不像高中生叠的。
+@wait 1.2
+> 昨天早上他还坐在那儿穿鞋。
+@fx heartbeat 1.0
+@set sanity -2
+@set memory_echo +3
+@set truth +2
+@wait 1.0
+@clearchars
+@else
+第三次醒来的时候天已经蒙蒙亮，梁野正坐在床沿穿鞋。
+@wait 0.8
+@show liangye nervous left
+liangye(nervous)：这么早？
+me：睡不着。
+liangye(nervous)：我也是。
+@wait 1.0
+他系鞋带的手停了一下。
+@wait 0.6
+liangye(nervous)：昨晚谢了。
+@wait 1.2
+> 他不记得具体发生了什么。他只记得有人按住了他。
+@set truth +2
+@set memory_echo +2
+@wait 0.8
+liangye(nervous)：我今天想跟你说个事。
+liangye(nervous)：等下课再说吧。
+@wait 1.0
+@clearchars
+@set truth +2
+@flag flag_liangye_has_something
+@endif
+@goto ch4_day_rollcall
+
+-- ================================================= 早读点名（主线必经）
+== ch4_day_rollcall
+@time 4 07:30
+@bg classroom rollcall_day
+@bgm bgm_rollcall
+@amb amb_classroom_day
+@clearchars
+@advtime 25
+早读铃响。
+@sfx sfx_bell
+@wait 0.8
+@show xuqing neutral right
+许清抱着名册进来，赤脚，没有声音。
+@wait 1.0
+她走上讲台，翻开名册。
+@sfx sfx_page
+@wait 0.6
+> 这是你在这所学校听的第四次早读点名。
+@wait 0.8
+> 前三次你都在数人。
+> 这一次你在听停顿。
+@set truth +3
+@wait 1.0
+xuqing(neutral)：陈——
+@wait 0.4
+> 到。
+xuqing(neutral)：崔——
+@wait 0.4
+> 到。
+@wait 0.8
+声音一个接一个，很整齐。有人应得含糊，有人应得响亮，有人一边应一边打哈欠。
+@wait 1.0
+> 很正常。
+> 正常得让你有一瞬间怀疑这四天是不是自己编的。
+@wait 0.8
+@set sanity +5
+@wait 1.0
+@if flag_zhouxu_answered_once
+念到第七个的时候，你屏住了呼吸。
+@wait 1.2
+@fx heartbeat 1.2
+xuqing(neutral)：周——
+@wait 1.0
+> 停顿。
+@wait 0.8
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+很短。短到全班没有第二个人察觉。
+@wait 0.6
+但你在等它，所以你听见了。
+@wait 1.2
+zhouxu(tired)：到。
+@wait 0.8
+他应得很快，几乎是抢在停顿结束之前。
+@wait 1.0
+@set truth +4
+@set save_route_score +2
+> 三年来那个停顿一直在第四十二个位置。
+> 昨晚之后，它挪到了第七个。
+@wait 0.8
+> 而他自己在给自己补位。
+@set memory_echo +3
+@wait 1.2
+@else
+念到第七个的时候，一切正常。
+@wait 0.8
+xuqing(neutral)：周——
+zhouxu(neutral)：到。
+@wait 1.0
+> 没有停顿。
+@set truth +1
+@wait 0.8
+@endif
+@wait 1.0
+点名继续。
+@wait 0.6
+> 你在心里跟着数。
+@wait 0.8
+> 三十八。三十九。四十。四十一。
+@wait 1.2
+@fx heartbeat 1.0
+然后是那个位置。
+@wait 1.0
+@set sanity -1
+@set truth +3
+@set shenhe_focus +2
+许清的嘴唇动了。
+@wait 0.6
+她念了一个名字。
+@wait 0.8
+> 但那个名字没有声音。
+@wait 1.2
+@fx names 0.8
+@set memory_echo +3
+不是她念得小声——是那两个字发出来的时候，
+教室里的空气把它吃掉了。
+@wait 1.0
+你看见她的口型。你能读出来。
+@wait 0.8
+> 沈禾。
+@wait 1.2
+@set shenhe_focus +3
+@set truth +4
+她停了一秒。
+@wait 0.6
+没有人应。
+@wait 1.0
+她合上名册。
+@sfx sfx_page
+@wait 0.8
+xuqing(neutral)：人数不对。
+@wait 1.2
+@set truth +2
+> 第四次了。
+> 前三次你以为她在挑刺。
+@wait 0.8
+> 现在你知道她是在做记录。每天一次，说给这个空教室听。
+@set truth +3
+@set route_empathy +2
+@wait 1.0
+@clearchars
+* [lock flag_shenhe_name_full] 举手 -> ch4_day_answer
+    @set truth +5
+    @set shenhe_focus +4
+    @set save_route_score +4
+* 什么都不做 -> ch4_day_hub
+    @set route_obedience +2
+
+-- ================================================= 举手（重大分支）
+== ch4_day_answer
+@bg classroom day
+@bgm bgm_final
+@clearchars
+@advtime 3
+你举起了手。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+不是慢慢举的。是那种自己都没想清楚，手就已经在半空的举法。
+@wait 1.0
+@show xuqing neutral right
+许清正要下讲台。她停住了。
+@wait 0.8
+xuqing(neutral)：林昼。
+@wait 0.6
+xuqing(neutral)：什么事。
+@wait 1.2
+全班回头。四十只眼睛。
+@wait 0.8
+> 你忽然意识到自己没想好要说什么。
+@wait 1.0
+> 你只是想让那个停顿不要是空的。
+@set truth +3
+@set memory_echo +2
+@wait 1.2
+me：老师。
+@wait 0.8
+me：您刚才念的最后一个。
+@wait 1.4
+@fx heartbeat 1.6
+@set sanity -1
+教室里安静得能听见日光灯的电流声。
+@wait 1.0
+许清看着你，很久。
+@wait 0.6
+她的表情没有变，但你看见她抱着名册的那只手，指节发白。
+@wait 1.2
+@set truth +4
+xuqing(neutral)：……你听见了。
+me：我看见口型了。
+@wait 1.0
+@set truth +3
+@set shenhe_focus +3
+她慢慢走回讲台。
+@wait 0.8
+她没有再打开名册。
+@wait 1.0
+xuqing(neutral)：全班安静一下。
+@wait 0.6
+她的声音很平，和平时上课一样。
+@wait 1.2
+xuqing(neutral)：我重新点一次名。
+@wait 1.0
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+教室里响起一片抱怨声。有人说老师都点过了。
+@wait 0.8
+xuqing(neutral)：点过了也点。
+@wait 1.0
+她重新翻开名册，从第一个开始。
+@sfx sfx_page
+@wait 1.2
+> 这一次她念得很慢。
+@wait 0.8
+> 慢到每一个名字都留出了足够长的空隙。
+@set truth +3
+@wait 1.0
+一个一个应过去。三十八，三十九，四十，四十一。
+@wait 1.2
+然后她念到了那个位置。
+@wait 0.8
+这一次她的声音出来了。
+@wait 1.4
+@fx flash 0.6
+@sfx sfx_low_boom
+@set sanity -1
+@set truth +5
+@set shenhe_focus +4
+@set memory_echo +3
+xuqing(neutral)：沈禾。
+@wait 1.2
+两个字，清清楚楚，全班都听见了。
+@wait 1.0
+> 五年来第一次，这个名字在这间教室里被完整地念出声。
+@wait 0.8
+@set truth +5
+然后是那一秒的停顿。
+@wait 1.2
+* 应「到」 -> ch4_day_answer_yes
+    @set truth +6
+    @set shenhe_focus +5
+    @set save_route_score +5
+    @set sanity -2
+* 忍住不出声 -> ch4_day_answer_no
+    @set truth +3
+    @set route_obedience +2
+
+== ch4_day_answer_yes
+@bg classroom day
+@bgm bgm_final
+@clearchars
+你张开嘴。
+@wait 1.4
+@fx heartbeat 1.8
+> 你知道这意味着什么。
+> 镜子里那个人告诉过你。宿管告诉过你。李恒告诉过你。
+@wait 1.0
+> 别替我答到。
+@wait 0.8
+> 你还是应了。
+@wait 1.4
+@fx flash 0.8
+@sfx sfx_low_boom
+me：到。
+@wait 1.6
+@set sanity -2
+@set truth +6
+@set memory_echo +4
+一个字。
+@wait 1.0
+教室里什么都没有发生。
+@wait 0.8
+没有停电，没有怪声，没有人尖叫。
+@wait 1.2
+> 日光灯还在响。窗外还在下雨。前排有人打了个哈欠。
+@wait 1.0
+@set sanity -1
+> 一切正常得可怕。
+@wait 0.8
+@show xuqing neutral right
+许清站在讲台上，看着你。
+@wait 1.2
+她的眼睛红了。
+@wait 0.6
+但她没有哭，她只是很快地眨了两下，然后低头在名册上写了什么。
+@wait 1.0
+@set truth +4
+@set route_empathy +3
+@sfx sfx_write
+@wait 0.8
+xuqing(neutral)：好。
+@wait 0.6
+xuqing(neutral)：人数对了。
+@wait 1.4
+@fx heartbeat 1.4
+@set truth +5
+@set shenhe_focus +4
+@set memory_echo +3
+@wait 1.0
+> 「人数对了。」
+@wait 0.8
+> 她说这句话说了五年。今天是第一次说成陈述句。
+@wait 1.2
+@set save_route_score +4
+@flag flag_answered_for_shenhe
+下课铃响了。
+@sfx sfx_bell
+@wait 0.8
+@clearchars
+@goto ch4_day_after_answer
+
+== ch4_day_answer_no
+@bg classroom day
+@clearchars
+你张了张嘴。
+@wait 1.2
+> 一秒钟。
+@wait 0.8
+> 一秒钟够说一个字。
+@wait 1.0
+@fx heartbeat 1.2
+你没有说。
+@wait 1.4
+@set sanity -1
+@set truth +3
+停顿过去了。
+@wait 0.8
+@show xuqing neutral right
+许清合上名册。
+@wait 0.6
+xuqing(neutral)：好。
+@wait 1.0
+xuqing(neutral)：人数不对。
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+她说这句话的时候看着你。
+@wait 0.8
+> 不是责怪。
+> 是「我知道你刚才在犹豫」。
+@wait 1.0
+@set route_empathy +1
+xuqing(neutral)：下课。
+@wait 0.6
+@clearchars
+@wait 0.8
+> 你坐在座位上，手心全是汗。
+@wait 1.0
+> 你告诉自己：忍住是对的。答了就是替补，这是三个人告诉过你的。
+@wait 0.8
+> 这个判断没有错。
+@wait 1.2
+@set truth +3
+> 但你还是很清楚地知道——刚才有一个机会，你放过去了。
+@set memory_echo +2
+@flag flag_declined_for_shenhe
+@goto ch4_day_after_answer
+
+== ch4_day_after_answer
+@bg hallway day
+@bgm bgm_unease
+@amb amb_hallway
+@clearchars
+@advtime 8
+下课后，许清在走廊上叫住你。
+@wait 0.8
+@show xuqing tired right
+她把名册夹在腋下，两只手插在开衫口袋里。
+@wait 1.0
+@if flag_answered_for_shenhe
+xuqing(tired)：你知道你刚才做了什么吗。
+me：知道。
+@wait 0.8
+xuqing(tired)：说说看。
+@wait 1.0
+me：我替她应了一次到。
+me：按规矩，我现在欠一轮。
+@wait 1.2
+@set truth +3
+她点点头。
+@wait 0.6
+xuqing(tired)：那你为什么还要应。
+@wait 1.4
+me：因为您念了五年，没有人应过。
+@wait 1.0
+@set route_empathy +3
+@set save_route_score +3
+她沉默了很久。
+@wait 0.8
+xuqing(tired)：我十九岁开始教书。
+xuqing(tired)：教书这件事，说到底就是每天记住四十几个名字，然后叫出来。
+@wait 1.0
+xuqing(tired)：叫了名字，有人答应——这件事本身就是全部意义。
+@wait 1.2
+@set truth +4
+xuqing(tired)：五年来我每天叫一个不会答应的名字。
+xuqing(tired)：我以为我早就麻木了。
+@wait 0.8
+@fx heartbeat 1.0
+@set memory_echo +3
+xuqing(tired)：刚才你应的时候，我差点在讲台上哭出来。
+@wait 1.4
+@set truth +3
+@set route_empathy +3
+> 一个把「已故」两个字重打了五份的人。
+@wait 0.8
+> 她要的从来不是真相，是一句回答。
+@set save_route_score +4
+@set truth +3
+@flag flag_xuqing_ally_deep
+@else
+xuqing(tired)：刚才你举手，本来想说什么。
+@wait 1.0
+me：……我也不知道。
+@wait 0.8
+xuqing(tired)：想不清楚就别说。
+@wait 0.6
+xuqing(tired)：这地方，话说出口是要负责的。
+@wait 1.2
+@set truth +3
+她转身要走，又停下。
+@wait 0.8
+xuqing(tired)：不过——
+xuqing(tired)：谢谢你举那个手。
+@wait 1.0
+@set route_empathy +2
+@set truth +2
+xuqing(tired)：五年了，第一次有人在那个位置抬手。
+@wait 0.8
+> 哪怕你什么都没说出来。
+@set memory_echo +2
+@endif
+@wait 1.0
+@clearchars
+@goto ch4_day_hub
+
+-- ================================================= 白天中枢
+== ch4_day_hub
+@timeat 4 09:40
+@bg hallway day
+@bgm bgm_day_class
+@amb amb_hallway
+@clearchars
+@advtime 5
+课间。走廊上都是人。
+@wait 0.8
+@if visited:ch4_day_hub
+> 上午还剩两节课。
+@endif
+@if !visited:ch4_day_hub
+> 今天下午你要进校史馆。
+@wait 0.6
+> 但现在是上午九点四十，你还得上完两节课。
+@wait 1.0
+> 这大概是这个故事里最荒谬的部分——
+> 你知道今晚可能会死，而你现在得去上数学。
+@set truth +2
+@set sanity -1
+@endif
+* [if flag_liangye_has_something and !visited:ch4_day_liangye and !death:梁野] 梁野说要跟你说件事 -> ch4_day_liangye
+    @set trust_liangye +2
+* [if !visited:ch4_day_class] 回教室上课 -> ch4_day_class
+    @set truth +2
+* [if !visited:ch4_day_window] 站在走廊尽头看旧楼 -> ch4_day_window
+    @set truth +3
+    @set shenhe_focus +2
+* 下午了，去找人 -> ch4_day_end
+    @set route_investigate +1
+
+-- ================================================= 梁野要说的事
+== ch4_day_liangye
+@bg hallway day
+@bgm bgm_unease
+@clearchars
+@advtime 10
+你在楼梯拐角找到梁野。他一个人靠在墙上，等你。
+@wait 0.8
+@show liangye fragile left
+liangye(fragile)：我想了一早上怎么说。
+@wait 1.0
+liangye(fragile)：算了，直说吧。
+@wait 0.6
+liangye(fragile)：我昨天晚上，看见我自己了。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+me：什么意思。
+@wait 0.8
+liangye(fragile)：你按住我的时候。
+liangye(fragile)：我挣扎，对吧。
+me：对。
+@wait 1.0
+liangye(fragile)：我挣扎的时候，眼睛是睁着的。
+@wait 0.8
+liangye(fragile)：我看见门口站着一个人。
+@wait 1.2
+@set truth +4
+@set memory_echo +3
+me：谁。
+@wait 1.4
+liangye(fragile)：我。
+@wait 1.0
+@fx glitch 0.9
+@sfx sfx_sting
+@set sanity -2
+@set truth +6
+@wait 0.8
+liangye(fragile)：穿着我的校服，拉链拉到顶。
+liangye(fragile)：他站在门里边，不是外边。
+@wait 1.2
+@set memory_echo +3
+liangye(fragile)：他在等我过去。
+@wait 1.0
+@set truth +4
+> 门是关着的。
+> 而他在门里边。
+@wait 0.8
+@set sanity -1
+@wait 1.2
+liangye(fragile)：林昼，我问你个事。
+liangye(fragile)：你老实回答我。
+@wait 1.0
+liangye(fragile)：昨晚周叙替我应了那一声，是不是等于……
+liangye(fragile)：是不是等于我该走的，他替我走了。
+@wait 1.4
+@fx heartbeat 1.2
+@set truth +4
+* 「不是。他是自愿的。」 -> ch4_day_ly_a
+    @set save_route_score +3
+    @set route_empathy +3
+* 「是。」说实话 -> ch4_day_ly_b
+    @set truth +4
+    @set trust_liangye +3
+
+== ch4_day_ly_a
+me：不是。
+me：他是自愿的。他知道自己在做什么。
+@wait 1.2
+liangye(fragile)：那不还是我欠他的。
+@wait 0.8
+me：欠了就还。
+@wait 1.0
+me：等这事完了，你请他吃一年食堂。
+@wait 1.2
+@set trust_liangye +2
+他愣了一下，然后笑了。笑得很难看，但确实是笑。
+@wait 0.8
+liangye(fragile)：一年啊。
+liangye(fragile)：那我得省着点吃。
+@wait 1.0
+@set sanity +5
+@set save_route_score +2
+> 你们两个站在楼梯拐角，笑了大概三秒。
+@wait 0.6
+> 这三秒是这四天里最正常的三秒。
+@set truth +2
+@set memory_echo +2
+@wait 1.0
+liangye(fragile)：诶。
+liangye(fragile)：万一我今晚没了——
+@wait 0.8
+me：不会。
+liangye(fragile)：我说万一。
+@wait 1.2
+liangye(fragile)：万一我没了，你记得我。
+@wait 1.0
+@fx heartbeat 1.0
+@set truth +4
+@set memory_echo +3
+@set save_route_score +3
+liangye(fragile)：不用记多好，记住我烦人就行。
+@wait 0.8
+me：这个不用你说。
+@wait 1.2
+@set trust_liangye +3
+@flag flag_liangye_promise
+@clearchars
+@goto ch4_day_hub
+
+== ch4_day_ly_b
+me：是。
+@wait 1.4
+你没有给他留余地。
+@wait 0.8
+me：昨晚它要一个应答。周叙给了。
+me：所以现在欠着的是他。
+@wait 1.2
+@set truth +4
+liangye(fragile)：……
+@wait 1.0
+他蹲了下去，两只手抱着头。
+@wait 0.8
+liangye(fragile)：我就知道。
+liangye(fragile)：我早上看见他脸色，我就知道。
+@wait 1.2
+@set sanity -1
+@set memory_echo +2
+你也蹲下来。
+@wait 0.8
+me：梁野。
+me：我告诉你这个，不是让你内疚。
+@wait 1.0
+me：是让你知道这事有多重。
+@wait 1.2
+@set truth +3
+me：今晚不管发生什么，你都要活着出去。
+me：不然他那一声就白应了。
+@wait 1.4
+@set save_route_score +4
+@set trust_liangye +3
+他抬起头。
+@wait 0.8
+liangye(fragile)：……好。
+@wait 0.6
+liangye(fragile)：我记住了。
+@wait 1.0
+@set truth +3
+> 说实话比安慰更狠，但也更有用。
+> 他现在有了一个非活下去不可的理由。
+@set save_route_score +2
+@set memory_echo +2
+@flag flag_liangye_promise
+@clearchars
+@goto ch4_day_hub
+
+-- ================================================= 最后一节课
+== ch4_day_class
+@timeat 4 10:00
+@bg classroom day
+@bgm bgm_day_class
+@amb amb_classroom_day
+@clearchars
+@advtime 45
+第三节是数学。
+@wait 0.8
+老师在讲台上讲立体几何，粉笔敲黑板的声音很响。
+@wait 1.0
+> 你听不进去。
+@wait 0.6
+> 但你也没有走神——你在做一件更奇怪的事。
+@wait 1.2
+@set truth +2
+你在认真地看每一个人。
+@wait 0.8
+> 前排那个女生在偷偷吃话梅。
+> 靠门那个男生在桌下玩手机，玩到一半被老师瞪了一眼。
+> 后面有人在传纸条。纸条经过你的桌角，你没有拦。
+@wait 1.2
+@set memory_echo +2
+> 数学老师讲到一个公式，讲错了，被前排的人指出来，他挠着头改了。
+> 全班笑了。
+@wait 1.0
+@set sanity +5
+> 你也笑了。
+@wait 0.8
+@set truth +3
+> 然后你意识到一件事，笑就卡住了。
+@wait 1.2
+@fx heartbeat 0.9
+@set sanity -1
+> 这四十一个人里，明年会少几个。
+@wait 0.8
+> 而他们现在都在笑。
+@wait 1.0
+@set truth +4
+@set memory_echo +3
+你低下头，在数学书的空白处写了一行字。
+@sfx sfx_write
+@wait 0.8
+你写的不是公式。
+@wait 1.0
+@fx names 0.6
+@note 高二（3）班　四十一人\n三月十七日　上午第三节　数学\n他们都在
+@wait 1.4
+@set truth +4
+@set save_route_score +3
+@set memory_echo +3
+> 你不知道自己为什么要写这个。
+@wait 0.8
+> 后来你会明白——
+> 你在做老秦做的事，做许清做的事，做李恒做的事。
+@wait 1.2
+@set truth +4
+> 在这个地方待久了，每个人最后都会开始记账。
+@wait 1.0
+@set memory_echo +2
+@flag flag_wrote_class_note
+@item +item_class_note
+下课铃响。
+@sfx sfx_bell
+@wait 0.8
+@goto ch4_day_hub
+
+-- ================================================= 走廊尽头看旧楼
+== ch4_day_window
+@bg hallway day
+@bgm bgm_horror
+@clearchars
+@advtime 8
+你走到走廊最东头。
+@wait 0.8
+这里的窗正对着旧楼。
+@wait 1.0
+雨小了，能看清楼的轮廓。三层，红砖，窗户全部钉死。
+@wait 0.6
+@set truth +2
+> 第一天你在教室窗口看过它。
+> 那时候你数出二十三扇横钉、一扇竖钉。
+@wait 1.0
+你现在再数一遍。
+@wait 1.2
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+两扇竖钉。
+@wait 0.8
+三楼从左数第三扇，和三楼从左数第七扇。
+@wait 1.0
+@set memory_echo +3
+> 第七扇昨天还是横的。
+@wait 0.8
+> 你确定。因为你昨天下午特意看过。
+@wait 1.2
+@set truth +4
+> 有人在夜里换了木条。
+> 从里面。
+@wait 1.0
+@fx glitch 0.7
+@set sanity -1
+@set shenhe_focus +3
+你盯着那扇窗看。
+@wait 0.8
+木条之间有缝。缝里是黑的。
+@wait 1.2
+然后缝里的黑动了一下。
+@wait 1.0
+@fx heartbeat 1.4
+@set sanity -1
+@set shenhe_focus +3
+不是布料，不是反光。
+@wait 0.6
+是一只眼睛。
+@wait 1.4
+@fx redflash 0.6
+@sfx sfx_sting
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+它在看你。
+@wait 1.0
+你和它对视了大概两秒。
+@wait 0.8
+然后它眨了一下。
+@wait 1.2
+@set truth +4
+> 眨眼。
+> 鬼不眨眼。眨眼是活人的动作。
+@wait 1.0
+@set shenhe_focus +4
+@fx heartbeat 1.2
+> 那栋楼里有一个活着的人。
+@wait 0.8
+> 断电五年，窗户钉死，警戒带围着。
+> 而里面有一个活人，从里面钉木条，在白天从缝里往外看。
+@wait 1.2
+@set truth +5
+@set memory_echo +3
+@flag flag_saw_eye
+@clue clue_old_building
+@wait 1.0
+你退了一步。
+@wait 0.6
+@if death:老秦
+-- 老秦已死于值班室那场火：这里不能再让他活着出现。
+-- 改为只留声音，且明确点出他已经不在了——把 bug 变成伏笔。
+身后有人说话，你吓了一跳。
+@wait 1.0
+> "别看了。"
+@fx glitch 0.6
+@sfx sfx_whisper
+你回头。走廊是空的。
+@wait 1.0
+> 那是老秦的声音。
+> 老秦已经不在了。
+@set sanity -2
+@set memory_echo +3
+@set truth +4
+@set end_cycle_score +2
+@flag flag_qin_fifth_warning
+@clearchars
+@goto ch4_day_hub
+@endif
+身后有人说话，你吓了一跳。
+@wait 1.0
+@show oldqin warning right
+oldqin(warning)：别看了。
+@wait 0.8
+me：秦师傅。
+@wait 0.6
+oldqin(warning)：你刚才看见的，别跟人说。
+@wait 1.2
+me：您也看见过。
+@wait 1.4
+@set truth +4
+他没有回答。他从口袋里摸出烟，又放回去——学校不让抽。
+@wait 1.0
+oldqin(warning)：十九年，我看见过四次。
+@wait 0.8
+oldqin(warning)：四次都是白天。四次都是那个位置。
+@wait 1.0
+@set truth +4
+@set memory_echo +2
+me：是同一个人吗。
+@wait 1.4
+oldqin(warning)：不知道。
+@wait 0.8
+oldqin(warning)：但每次看见之后不到一个星期，学校就会少一个学生。
+@wait 1.2
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set end_cycle_score +2
+@wait 1.0
+oldqin(warning)：这是第五次。
+@wait 0.6
+oldqin(warning)：你自己保重。
+@wait 1.2
+@set truth +3
+@flag flag_qin_fifth_warning
+@clearchars
+@goto ch4_day_hub
+
+-- ================================================= 收束
+== ch4_day_end
+@timeat 4 14:50
+@bg schoolyard rain
+@bgm bgm_investigate
+@amb amb_rain
+@clearchars
+@advtime 30
+中午吃完饭，雨又大了。
+@wait 0.8
+下午第一节是自习。班主任不在，教室里乱哄哄的。
+@wait 1.0
+你收拾了书包，从后门出去。
+@wait 0.6
+没有人拦你。
+@wait 1.2
+> 你走到教学楼门口，停下来回头看了一眼。
+@wait 0.8
+@set truth +2
+> 三楼最东边那间是你们班。窗户开着，能听见里面的说话声和笑声。
+@wait 1.0
+@if flag_wrote_class_note
+> 你口袋里揣着一张纸，上面写着「四十一人，他们都在」。
+@wait 0.8
+@set memory_echo +2
+@endif
+@if flag_answered_for_shenhe
+> 今天早上，你在那间教室里替一个死了五年的人应了一声到。
+@wait 0.8
+@set truth +3
+@set shenhe_focus +2
+@endif
+@wait 1.0
+> 这四天你一直想弄清楚这所学校在做什么。
+@wait 0.8
+> 今天上午你忽然想通了另一件事。
+@wait 1.2
+@set truth +4
+> 它不需要藏。
+@wait 0.6
+> 上课、点名、值日、吃饭、考试——这些事本来就在把人变成数字。
+> 它只是接管了这套现成的东西。
+@wait 1.2
+@set truth +5
+@set memory_echo +3
+> 它甚至不需要伪装成正常。它本来就是正常的一部分。
+@wait 1.0
+@set truth +3
+雨打在伞上，很响。
+@wait 0.8
+你朝校史馆走。
+@wait 1.0
+@fx heartbeat 0.8
+> 现在是下午两点五十。
+@wait 0.6
+> 距离最后一次点名，还有七小时十七分钟。
+@set truth +2
+@wait 1.2
+@goto ch4_afternoon

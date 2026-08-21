@@ -1,0 +1,343 @@
+-- 第四章 支线：校史馆展厅细查
+-- 在进入内档室之前的可选探索，深化"重复的你"与许清身份两条线
+
+== ch4_hall_explore
+@advtime 10
+@bg history_hall dusk
+@bgm bgm_investigate
+@amb amb_hallway
+@clearchars
+你没有立刻往里走。
+校史馆的展厅比想象中大，两层挑高，中间是天井。
+雨水的光从高窗照进来，落在一排排玻璃展柜上，把灰尘照成悬浮的颗粒。
+@wait 0.6
+> 你有时间。
+> 或者说，你觉得自己应该看看。
+@if visited:ch4_hall_explore
+> 还有一样东西你没看。
+@endif
+* [if !visited:ch4_hall_photos] 看毕业照墙 -> ch4_hall_photos
+* [if !visited:ch4_hall_teachers] 看教师名录 -> ch4_hall_teachers
+* [if !visited:ch4_hall_trophy] 看荣誉展柜 -> ch4_hall_trophy
+* [if !visited:ch4_hall_radio] 看角落那台旧广播设备 -> ch4_hall_radio
+* 够了，往里走 -> ch4_sc3
+    @set route_obedience +1
+
+== ch4_hall_photos
+@bg history_hall dark
+毕业照墙占了整整一面。
+从建校那年开始，一届一届往下排，每张照片下面钉着一块小铜牌，刻着年份和班级。
+@wait 0.6
+你沿着墙慢慢走。
+八十年代的照片是黑白的，学生穿的还是的确良衬衫。九十年代开始有彩色，颜色偏黄。
+两千年之后就清晰了。
+@wait 0.8
+你走到五年前那一栏。
+高二（三）班。
+@fx heartbeat 0.8
+照片是有的。四十一个人，站成四排，后排站在长凳上。
+但照片正中间——第二排最中间的位置——有一个空。
+@wait 1.0
+不是有人被抠掉了。
+如果是抠掉的，纸面会有痕迹，边缘会毛。
+这个空是原本就空着的：左边那个人的肩膀和右边那个人的肩膀之间，隔着一个人的宽度，两边的人都自然地朝那个空隙微微侧身，像在给谁让位置。
+@set truth +3
+@set memory_echo +2
+@clue clue_self_repeat
+@wait 0.8
+* [if !visited:ch4_photo_faces] 仔细看照片上的每一张脸 -> ch4_photo_faces
+    @set truth +3
+    @set sanity -1
+* [if !visited:ch4_photo_names] 看照片下方的名字栏 -> ch4_photo_names
+    @set truth +3
+* [if !visited:ch4_photo_others] 看看别的年份有没有一样的空 -> ch4_photo_others
+    @set truth +4
+    @set memory_echo +3
+    @set sanity -1
+* 回展厅 -> ch4_hall_explore
+    @set route_investigate +1
+
+== ch4_photo_others
+你退后两步，把整面墙一起看。
+然后你开始一张一张找。
+@wait 1.0
+六年前那届：满的。四十二个人，排得密密麻麻。
+七年前：满的。
+八年前：满的。
+@wait 0.8
+你往回走，看五年前之后的。
+四年前：中间有一个空。
+三年前：中间有一个空。
+两年前：中间有一个空。
+去年：中间有一个空。
+@fx glitch 0.8
+@sfx sfx_sting
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.0
+五张照片，五个空。
+位置完全一样——第二排正中间。
+每一张里，空隙两边的人都朝中间侧着身。
+@wait 0.8
+> 学校每年都会拍毕业照。
+> 每年都会有人负责排位置、数人头、洗照片、装裱、挂上墙。
+> 这中间至少经过五个人的手。
+> 五年，二十五个人次。
+> 没有一个人说过一句"这儿怎么空着"。
+@set truth +2
+@wait 1.0
+你伸手摸了摸去年那张照片的玻璃。
+玻璃是干净的。
+> 有人在擦。
+> 有人每周都在擦这面墙。
+@set truth +1
+@goto ch4_hall_explore
+
+== ch4_photo_faces
+你把脸贴近玻璃，一张一张看过去。
+第一排，从左到右。第二排。第三排。
+> 都是陌生的脸。十七八岁，表情僵硬，有几个在笑，大部分只是看着镜头。
+@wait 1.0
+第三排左起第七个。
+@fx flash 0.8
+@sfx sfx_sting
+@wait 0.8
+那是你。
+@fx glitch 1.0
+穿着五年前的校服——款式不一样，白色的，袖口两道蓝杠。
+站在那儿，表情有点僵，嘴唇微微张着，像是刚被人叫到名字，正要答。
+@set sanity -1
+@set memory_echo +4
+@flag flag_saw_self_repeat
+@clue clue_self_repeat
+@set truth +3
+@wait 1.2
+五年前你在江城读初二。
+你没有来过南栖中学。你确定。
+> 你确定吗？
+@set sanity -1
+@if !death:梁野
+@show liangye terrified left
+liangye(terrified)：这……这是你？
+me：不知道。
+liangye(terrified)：什么叫不知道！这明明就是——
+me：我说我不知道。
+@wait 0.8
+liangye(terrified)：那你至少告诉我，你是哪年转来的。
+你张开嘴。
+@wait 1.2
+你想不起来。
+不是记不清具体日期那种想不起来——是"转学"这件事本身，在你脑子里没有过程。
+你记得坐了七个小时车。你记得车站的泥。
+但你想不起来是谁送你上的车。
+@fx heartbeat 1.4
+@set sanity -1
+@set memory_echo +2
+@endif
+@goto ch4_hall_explore
+
+== ch4_photo_names
+照片下方有一条横排的名字栏，用小字印着那届学生的名字，按排序。
+你从头看到尾。
+@fx names 1.0
+@wait 0.8
+数了两遍。
+> 四十个名字。
+照片上有四十一个人的位置——包括那个空着的。
+@set truth +3
+@wait 0.6
+名字里没有"沈禾"。
+@if flag_shenhe_name_full
+> 名字被删掉了，位置却留着。
+> 这就是"删除未完成"。
+> 删除一个人要走两步：抹掉名字，然后填上空缺。
+> 他们只做了第一步。
+@clue clue_terms
+@set truth +2
+@endif
+@wait 0.8
+名字里也没有"林昼"。
+@wait 0.6
+但在最末尾，标点之后，有一个名字。
+它和前面四十个不在一行——是单独加在最后的，字号一样，但墨色比其他都新。
+@note 　林昼（补）
+@set memory_echo +3
+@set sanity -1
+@flag flag_saw_self_repeat
+@clue clue_self_repeat
+@set truth +2
+@wait 1.0
+> 印刷厂不会印"（补）"。
+> 这两个字是后来有人用同样的字体，一个字一个字贴上去的。
+@goto ch4_hall_explore
+
+== ch4_hall_teachers
+@bg history_hall dark
+教师名录在展厅东侧，是一块很大的木板，上面按年份钉着一排排小照片和名牌。
+你找到五年前那一栏。
+@wait 0.8
+高二年级组，一共十一个老师。
+你从左往右看名牌。
+@sfx sfx_page
+第七个是许清。
+照片上的她比现在年轻一些，头发短，笑着——是那种拍工作照时挤出来的、有点僵的笑。
+@wait 1.0
+名牌下面有一行小字，是后来贴上去的白色标签：
+@note 　已故
+@fx heartbeat 1.4
+@sfx sfx_sting
+@set sanity -1
+@set truth +4
+@clue clue_xuqing_dead
+@flag flag_xuqing_identity_revealed
+@state xuqing_state revealed
+@wait 1.2
+你往后翻年份。
+四年前的名录：没有许清。
+三年前：没有。
+两年前：没有。
+去年：没有。
+@wait 0.8
+今年的名录挂在最右边，是新做的亚克力板。
+高二年级组，十一个老师。
+第七个是许清。
+@fx glitch 0.9
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+@wait 1.0
+> 她在五年前的名录上，标着"已故"。
+> 她不在中间四年的任何一份名录上。
+> 她在今年的名录上。
+@wait 0.8
+你伸手摸了摸今年那块亚克力板上她的照片。
+照片是新的。是她现在的样子。
+> 是谁给她拍的？
+> 是谁把照片洗出来、贴上去、挂上墙的？
+@set truth +2
+@goto ch4_hall_explore
+
+== ch4_hall_trophy
+@bg history_hall dark
+荣誉展柜是一排玻璃柜，里面放着奖杯、锦旗、证书。
+大部分是体育和文艺类的：运动会团体第三、合唱比赛优秀奖、书法展入围。
+@wait 0.6
+你在中间一格停下。
+那里放着一个小小的银色奖杯，底座上刻着字。
+@sfx sfx_page
+@note 南栖中学第十八届校园广播主持人大赛\\n一等奖\\n高一（三）班　沈禾
+@set truth +3
+@set shenhe_focus +1
+@clue clue_shenhe_name
+@flag flag_shenhe_name_full
+@wait 1.0
+奖杯是干净的。
+柜子里其他的东西都蒙着一层灰——玻璃柜密封不严，五年下来该有的灰。
+只有这一个是亮的，能照出你的脸。
+@fx heartbeat 0.8
+@set sanity -1
+@set truth +1
+@wait 0.8
+你顺着奖杯往下看，底座和柜面之间有一张对折的纸，压在下面，露出一角。
+你用指甲把它抠出来。
+@sfx sfx_page
+@wait 0.6
+是一张获奖感言的草稿，铅笔写的，划改了很多次。
+@note （划掉）感谢老师和同学们的支持……\\n（划掉）我从小就喜欢广播……\\n\\n（保留的部分）\\n我想在广播里念完每一个人的名字。\\n我们班有四十二个人，我一个都不想漏。
+@wait 1.4
+@set truth +3
+@set save_route_score +2
+@set memory_echo +2
+> 四十二个。
+> 她那年的班上有四十二个人。
+> 五年前那张毕业照上，是四十一个人加一个空。
+@set truth +2
+@wait 1.0
+你把纸重新折好，塞回原位。
+@goto ch4_hall_explore
+
+== ch4_hall_radio
+@bg history_hall dark
+展厅最里面的角落，靠墙放着一台旧广播设备。
+落地式的，一人高，铁皮外壳刷着军绿色的漆，掉了大半。
+旁边立着一块说明牌：
+@note 　本校首台校园广播机（1978年购入，2015年退役）
+@wait 0.8
+你绕到它背面。
+后面板拆掉了，露出里面的电子管和线路。大部分零件都锈死了，电线的胶皮开裂发硬。
+@wait 0.6
+> 退役。
+> 2015年。
+> 五年前。
+@set truth +2
+@wait 0.8
+说明牌下面还有一行更小的字，是手写的，写在标签纸上，字迹和展厅其他说明牌不一样：
+@note 　注：本机于2015年5月17日停止工作。原因不明。
+@fx heartbeat 1.0
+@set truth +3
+@clue clue_fire_truth
+@wait 1.0
+"原因不明"。
+那天旧楼着火，供电局来剪了线。
+可这台机器在校史馆，不在旧楼。
+@set truth +2
+@wait 0.8
+* 打开电源试试 -> ch4_radio_power
+    @set taboo_count +1
+    @set truth +3
+    @set sanity -1
+* 不碰它 -> ch4_hall_explore
+    @set route_obedience +1
+
+== ch4_radio_power
+机器侧面有个旋钮开关，黑色胶木的，上面刻着"开／关"。
+现在指着"关"。
+@wait 0.8
+你伸手，把它拧到"开"。
+@sfx sfx_click
+@wait 1.2
+什么都没发生。
+> 当然。它退役五年了，电源线的插头就挂在旁边的墙上，根本没插。
+你笑了一下，觉得自己傻。
+@wait 1.0
+然后机器亮了。
+@fx flash 0.9
+@sfx sfx_broadcast_static
+@fx static 1.0
+面板上的电子管一个一个亮起来，橙红色，从左到右。
+喇叭里传出电流声。
+@set sanity -1
+@set truth +3
+@wait 1.0
+你去看插头。
+插头还挂在墙上的钉子上，离插座半米远。
+@fx glitch 1.0
+@set sanity -1
+@wait 0.8
+电流声里浮出一个声音。
+很远，很模糊，像隔着几层墙。
+@sfx sfx_whisper
+voice：……高二三班……
+voice：……点名……
+@fx heartbeat 1.6
+@set shenhe_focus +2
+@set memory_echo +2
+你伸手去关。
+@wait 0.6
+旋钮已经在"关"的位置上了。
+@fx glitch 0.8
+@set sanity -1
+@set truth +2
+你后退了几步。
+机器又暗了下去，一个一个，从右到左。
+电流声消失。
+@wait 1.0
+展厅里恢复安静。
+> 你在原地站了一会儿，然后做了一件事：
+> 你把手放在机器外壳上。
+@wait 0.8
+是温的。
+@set truth +2
+@set sanity -1
+@goto ch4_hall_explore

@@ -1,0 +1,379 @@
+-- 第二章 支线：值班室之夜 / 广播登记册深挖 / 老秦的结局
+-- 对应 e.md 第二章 Scene 3《老秦》支线死亡回流主线
+
+== ch2_night_duty
+@timeat 3 01:00
+@bg duty_room night
+@bgm bgm_horror
+@amb amb_hallway
+@clearchars
+@autosave
+凌晨一点。你决定把钥匙还回去——或者说，你想再问老秦一件事。
+值班室的灯还亮着。窗玻璃上糊着一层烟油，从外面只能看见一个人形的黑影，坐得笔直。
+@fx heartbeat 0.8
+你敲门。
+@sfx sfx_knock_soft
+* 直接推门进去 -> ch2_nd_in
+    @set route_hostility +1
+* 先隔着窗看一会儿 -> ch2_nd_watch
+    @set truth +2
+    @set route_investigate +1
+* 喊他一声 -> ch2_nd_call
+    @set truth +1
+
+== ch2_nd_watch
+你贴在窗边，用袖子擦开一小块。
+老秦坐在椅子上，背对着你，面前是那台小电视。电视是雪花屏。
+他一动不动。
+@wait 1.2
+两分钟里，他一次都没有眨眼——你看不见他的眼睛，但你能看见他的肩膀。
+人呼吸的时候，肩膀会动。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +2
+@goto ch2_nd_in
+
+== ch2_nd_call
+me：秦师傅？
+里面的人应了一声。
+oldqin(flat)：进来。
+声音是对的。语调也是对的。
+只是那一声“进来”，和你上一次听见的一模一样——连中间那个很轻的停顿都在同一个位置。
+@set truth +1
+@set memory_echo +1
+@goto ch2_nd_in
+
+== ch2_nd_in
+@bg duty_room night
+@clearchars
+@show oldqin flat center
+你推门进去。老秦转过椅子，看见你，愣了一下。
+oldqin(flat)：这个点，你不睡觉？
+me：还钥匙。
+oldqin(flat)：……我没给你钥匙啊。
+@fx glitch 0.7
+@sfx sfx_sting
+@set sanity -1
+@set truth +2
+* “你下午给我的。” -> ch2_nd_a
+    @set truth +2
+* “那我拿的这把是谁的？” -> ch2_nd_b
+    @set truth +3
+    @set memory_echo +2
+* 什么都不说，把钥匙放桌上 -> ch2_nd_c
+    @set route_obedience +1
+
+== ch2_nd_a
+老秦看着你，眼神一点点空下去，像有人把他背后的插头拔了。
+oldqin(flat)：下午。
+oldqin(flat)：下午我在睡觉。我这两天上大夜，白天都在睡。
+他忽然又笑了一下，笑得很正常，像刚才那三秒钟不存在。
+oldqin(smile)：你是不是搞错人了。这学校保安三个，都姓秦。
+@set sanity -1
+@set truth +2
+@set memory_echo +2
+@goto ch2_nd_fire
+
+== ch2_nd_b
+me：那我拿的这把是谁的？
+你把黄铜钥匙放在桌上。
+老秦低头看了很久，然后伸出手指，隔着几厘米在钥匙上方虚虚地点了一下——他没有碰它。
+oldqin(sad)：这把是旧楼的。
+oldqin(sad)：五年前那晚，锁门的人拿的就是这把。
+oldqin(sad)：后来它在门锁里插了三天，第四天早上，自己回到钥匙板上了。
+@fx heartbeat 1.2
+@set truth +4
+@set sanity -1
+@clue clue_fire_truth
+@goto ch2_nd_fire
+
+== ch2_nd_c
+你把钥匙轻轻放在桌角。老秦看了一眼，没有伸手去拿。
+oldqin(flat)：放着吧。
+oldqin(flat)：反正明天早上它还会回去。
+@set truth +2
+@goto ch2_nd_fire
+
+== ch2_nd_fire
+@bg duty_room night
+@bgm bgm_horror
+@wait 0.6
+桌上那台小电视忽然不是雪花了。
+@fx static 1.0
+@sfx sfx_broadcast_static
+屏幕上是旧楼三楼的走廊。黑白，俯角。
+监控画面右下角的时间戳，是五年前的那一天。
+@show oldqin terrified center
+老秦猛地站起来，椅子倒在地上。
+@sfx sfx_chair
+oldqin(terrified)：关掉。
+oldqin(terrified)：这台电视没接线！它连天线都没有！
+@set sanity -1
+@set truth +3
+画面里，一个女生抱着工具箱走进广播室。
+门关上。
+然后，从门缝里开始冒烟。
+* 看下去 -> ch2_nd_watch_tape
+    @set truth +4
+    @set sanity -1
+* 拔掉电视电源 -> ch2_nd_unplug
+    @set route_obedience +1
+* 看老秦 -> ch2_nd_look_qin
+    @set truth +2
+    @set trust_oldqin +2
+
+== ch2_nd_watch_tape
+你盯着屏幕。
+门被从里面撞了七下。第七下之后，画面里那扇门，安静了。
+@fx heartbeat 1.6
+然后有一个人跑上楼，扑到门上。
+你能看清他的侧脸。是周叙——十六岁的周叙。
+@set truth +4
+@clue clue_fire_truth
+@set sanity -1
+画面里的周叙喊了什么。屏幕没有声音，但值班室里，有声音。
+@sfx sfx_scream
+@fx bigshake 0.8
+> “沈禾——！”
+声音是从电视里出来的。也是从老秦的嘴里出来的。他张着嘴，眼睛却是茫然的。
+@fx glitch 1.0
+@set sanity -1
+@set memory_echo +3
+@goto ch2_nd_burn
+
+== ch2_nd_unplug
+你伸手去够电视后面的插头。
+@sfx sfx_click
+插座是空的。电视线圈在你手指下面发烫。
+@fx shake 0.8
+@set sanity -1
+@set truth +2
+画面继续。
+@goto ch2_nd_burn
+
+== ch2_nd_look_qin
+老秦没有看电视。他在看自己的手。
+oldqin(terrified)：我那天，就是这只手，把总闸推下去的。
+oldqin(terrified)：推下去以后，广播就不响了。她敲门我也听不见了。
+oldqin(sad)：我以为是学生在闹。
+@set truth +3
+@set trust_oldqin +1
+@clue clue_fire_truth
+@goto ch2_nd_burn
+
+== ch2_nd_burn
+@bg duty_room night
+@bgm bgm_chase
+@fx redflash 0.8
+值班室的日光灯忽然全灭。
+不是跳闸那种"啪"一下——是一根一根灭的，从门口那根开始，往里，像有什么东西走进来，把光一盏一盏关掉。
+@wait 0.8
+只剩电视屏幕在亮。
+屏幕上，那扇门里的火，越烧越大。画面是黑白的，但你能感觉到那个亮度在升高，白得刺眼。
+@wait 0.6
+然后你闻到了味道。
+@fx heartbeat 1.4
+不是电视里的。
+是真的——烧焦的电线味，就在这间十平米的屋子里。
+@sfx sfx_fire_burst
+@amb amb_fire
+@fx bloodburst 0.5
+@set sanity -1
+你回头看。
+墙上的电线开始冒烟。老式的明线，钉在墙上，外皮鼓起来一个一个泡，然后爆开，溅出火星。
+火星落在堆着的旧报纸上。
+@sfx sfx_lighter
+@wait 0.8
+报纸烧起来的速度比你想的快得多。
+两秒，火苗就窜到了半人高。
+@show oldqin shocked center
+老秦站在原地没动。
+他在看火。不是惊恐地看，是那种……认出来了的看。
+oldqin(shocked)：一模一样。
+me：什么？
+oldqin(shocked)：那年也是这个味儿。
+@set truth +2
+@wait 0.6
+火已经封住了门口一半。
+* 拉老秦一起跑 -> ch2_nd_save
+    @set route_empathy +2
+    @set trust_oldqin +3
+    @set save_route_score +1
+* 自己先出去 -> ch2_nd_flee
+    @set route_obedience +1
+    @set control_route_score +1
+* 先抢钥匙板上剩下的钥匙 -> ch2_nd_keys
+    @set route_investigate +2
+    @set taboo_count +1
+* 抓起电视往窗外砸 -> ch2_nd_smash
+    @set route_hostility +2
+    @set truth +2
+
+== ch2_nd_smash
+你不知道自己为什么要这么做。
+可能是因为那个画面——那个还在烧的、五年前的画面。
+你抓起那台十四寸的老彩电。
+@wait 0.6
+它比想象中重得多，而且烫。外壳烫得能听见皮肤的"嗤"声。
+@fx bloodburst 0.4
+@sfx sfx_flesh
+你抱着它转身，砸向窗户。
+@sfx sfx_glass
+@fx bigshake 1.0
+玻璃碎了。电视摔在外面的水泥地上，显像管炸开，"砰"的一声。
+@wait 0.8
+火苗被涌进来的空气一激，猛地窜高。
+但窗户开了。
+@sfx sfx_fire_burst
+me：秦师傅！从这儿走！
+@show oldqin shocked center
+老秦看着碎掉的窗户，又看看你。
+oldqin(shocked)：……你这孩子。
+@wait 0.6
+@if gore>=1
+你的手掌整个是红的。抱电视的那两秒，掌心的皮已经起泡了，有几块粘在了电视外壳上，扯下来的时候连着丝。
+@fx bloodburst 0.6
+@set sanity -1
+@else
+你的手掌被烫伤了，火辣辣地疼。
+@set sanity -1
+@endif
+@set truth +2
+@set trust_oldqin +2
+你把老秦推向窗口。他年纪大了，翻不利索，你在下面托了他一把。
+@wait 0.8
+他落地的时候崴了脚，"哎哟"了一声。
+> 但他出来了。
+@flag flag_oldqin_survived
+@state oldqin_state alive
+@set save_route_score +2
+你自己也翻出去，滚在湿草地上。
+回头看——整间值班室已经全红了。
+@wait 1.0
+@bg schoolyard night
+@stopamb
+@amb amb_rain
+@clearchars
+@show oldqin shocked center
+你们俩坐在草地上，谁都没说话。
+过了很久，老秦从怀里摸出烟盒——已经被压扁了，烟全断了。
+他抽出半根，用打火机点着。手抖得点了三次才着。
+@sfx sfx_lighter
+oldqin(sad)：五年前那天晚上。
+oldqin(sad)：我要是也这么冲一下，就好了。
+@wait 0.8
+me：您那天做了什么？
+@wait 1.2
+oldqin(sad)：我把广播总闸关了。
+@set truth +3
+@clue clue_fire_truth
+oldqin(sad)：她在里面喊救命。喊得整栋楼都听得见。
+oldqin(sad)：值班室有个总闸，一拉，全校广播就断。
+oldqin(sad)：我以为是学生恶作剧。晚自习嘛，总有人闹。
+@wait 1.0
+oldqin(sad)：我拉下去，世界就清净了。
+oldqin(sad)：清净了十一分钟。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +2
+他把烟按灭在湿草地上。
+oldqin(sad)：后来我天天上夜班。二十三年，我要求上夜班。
+me：为什么？
+oldqin(sad)：因为夜里那栋楼要是再响，我能听见。
+@wait 0.8
+oldqin(sad)：可它一直没响。
+oldqin(sad)：一直到你来的这几天。
+@set truth +2
+@item +item_lighter
+他把打火机塞进你手里。
+oldqin(sad)：拿着。
+oldqin(sad)：你要是哪天用得上——
+他没说完。
+@goto ch2_nd_after
+
+== ch2_nd_save
+你抓住老秦的胳膊往门口拽。
+他比你想的轻，轻得不像一个成年男人。
+@fx bigshake 1.0
+me：走！
+oldqin(sad)：我走不了。
+oldqin(sad)：小同学，我这五年，一直坐在这间屋子里等这场火。
+@fx bloodburst 0.7
+@sfx sfx_flesh
+你手上一空。
+@set sanity -1
+你摔出门外的时候，回头看了一眼。
+屋里没有人。椅子端端正正地摆着，电视黑了，墙上的火苗一寸一寸地爬。
+@flag flag_oldqin_burndeath
+@death 老秦 值班室起火
+@set truth +3
+@state oldqin_state burned
+@if item:item_admin_key
+你手里还攥着那把黄铜钥匙。它是凉的。
+@else
+你什么都没带出来。
+@endif
+@goto ch2_nd_after
+
+== ch2_nd_flee
+你转身冲出门。
+身后传来一声很闷的响，像什么东西倒了。
+@sfx sfx_slam
+@fx bigshake 1.0
+你没有回头。
+@flag flag_oldqin_burndeath
+@death 老秦 值班室起火
+@set sanity -1
+@set control_route_score +1
+@set truth +1
+@state oldqin_state burned
+> 你跑出去二十米才敢停下。
+> 这一次你跑得很快。跑得比五年前那个从旧楼一楼跑出来的人还快。
+@set memory_echo +2
+@goto ch2_nd_after
+
+== ch2_nd_keys
+你扑到钥匙板前，把还挂着的钥匙全部撸下来塞进口袋。
+@sfx sfx_click
+@item +item_admin_key
+@flag flag_admin_key
+@fx redflash 1.0
+火已经烧到门框了。
+@show oldqin terrified center
+oldqin(terrified)：钥匙没用！
+oldqin(terrified)：门是从里面锁的，你懂不懂——从里面！
+@set truth +3
+@clue clue_rule_gap
+你从火里钻出去，衣服后背燎了一大片。
+@if gore>=1
+小臂上起了一串水泡，破了几个，黏在袖子上。
+@fx bloodburst 0.5
+@endif
+@set sanity -1
+@flag flag_oldqin_burndeath
+@death 老秦 值班室起火
+@state oldqin_state burned
+@goto ch2_nd_after
+
+== ch2_nd_after
+@bg schoolyard night
+@bgm bgm_unease
+@amb amb_rain
+@stopamb
+@amb amb_rain
+@clearchars
+消防车没有来。
+你在操场上站了很久，等着有人发现，等着警报响。
+@wait 1.2
+什么都没有。
+你回头看值班室——灯亮着，窗玻璃上糊着一层烟油，从外面只能看见一个人形的黑影，坐得笔直。
+@fx heartbeat 1.4
+@set sanity -1
+@set memory_echo +3
+@set truth +2
+@if gore>=1
+你低头看自己的手臂。水泡还在。所以刚才那场火是真的。
+@endif
+@clue clue_fire_truth
+> 这栋楼里，有些事已经发生过了，但还在继续发生。
+@goto ch2_settle

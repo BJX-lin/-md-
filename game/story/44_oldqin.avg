@@ -1,0 +1,757 @@
+-- 第四章 · 老秦
+-- 定位：他是唯一一个"知道全部、但选择只做维护"的人。
+-- 他给出这套系统的运行机制：待定 / 删除 / 补位，以及"大门 0"的原因。
+-- 接入：ch4 主线（值班室）
+
+== oldqin_hub
+@timeat 4 21:05
+@bg duty_room night
+@bgm bgm_unease
+@amb amb_rain
+@clearchars
+@advtime 8
+值班室的门开着一条缝，里面亮着灯，有电视的声音。
+@wait 0.8
+你敲了敲门框。
+@sfx sfx_knock_soft
+@wait 1.0
+@show oldqin normal right
+oldqin(normal)：进。
+@wait 0.6
+老秦坐在那张旧躺椅上，搪瓷缸放在腿边。电视在放一个很吵的综艺节目，
+但他没在看——他在看墙上的监控屏。
+@wait 1.0
+oldqin(normal)：这个点了，不回宿舍？
+me：想跟您聊聊。
+@wait 0.8
+他看了你一眼，把电视关了。
+@sfx sfx_click
+@wait 1.0
+oldqin(normal)：坐吧。那把椅子腿松，别往后靠。
+@wait 0.6
+你坐下。屋里一股陈年烟味。
+@set truth +1
+@if visited:oldqin_hub
+> 他还在等你问。
+@endif
+* [if !visited:oldqin_q_keys] 问钥匙板上那几个空钩子 -> oldqin_q_keys
+    @set truth +3
+* [if !visited:oldqin_q_terms] 问「待定」是什么意思 -> oldqin_q_terms
+    @set truth +4
+* [if !visited:oldqin_q_gate] 问校门口的记录 -> oldqin_q_gate
+    @set truth +4
+* [if !visited:oldqin_q_why] 问他为什么不走 -> oldqin_q_why
+    @set route_empathy +2
+* 不打扰了 -> oldqin_leave
+    @set route_obedience +1
+
+-- ================================================= 钥匙
+== oldqin_q_keys
+@bg keyboard night
+me：您那个钥匙板，有几个钩子是空的。
+@wait 1.2
+他顺着你的目光看过去。
+@wait 0.8
+oldqin(normal)：眼神不错。
+@wait 1.0
+墙上挂着二十来把钥匙，每把底下贴着标签。
+有四个钩子是空的，标签被黑色记号笔涂了，涂得很用力，笔道叠了好几层。
+@wait 0.6
+@set truth +2
+me：那四把钥匙呢？
+@wait 1.2
+oldqin(normal)：丢了。
+me：四把都丢了？
+@wait 0.8
+oldqin(normal)：不是一起丢的。
+@wait 1.0
+他拿起搪瓷缸，喝了一口。
+@wait 0.6
+oldqin(normal)：一年丢一把。
+@wait 1.2
+@fx heartbeat 0.9
+@set truth +3
+me：您为什么把标签涂了？
+@wait 0.8
+oldqin(normal)：因为不涂，第二天钥匙就回来了。
+@wait 1.4
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+@wait 1.0
+me：……回来不是好事吗？
+@wait 0.8
+oldqin(normal)：回来的不是原来那把。
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+oldqin(normal)：形状一样，齿口一样，挂在同一个钩子上。
+oldqin(normal)：但插进去不转。
+@wait 1.0
+oldqin(normal)：我试过三次。第三次我就明白了。
+@wait 0.6
+me：明白什么？
+@wait 1.2
+oldqin(normal)：它不是在还我钥匙。
+@wait 0.8
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+oldqin(normal)：它是在补一个位。
+@wait 1.4
+@set truth +3
+@set memory_echo +3
+oldqin(normal)：钩子上少了一把，它就放一把上去。
+oldqin(normal)：它不管那把能不能用，它只管钩子上得有东西挂着。
+@wait 1.0
+@set truth +4
+> 补位。
+@wait 0.8
+> 这是你第一次听到这个词。后面你会一直听到。
+@wait 1.2
+me：那四把是哪儿的钥匙？
+@wait 0.8
+oldqin(normal)：东楼三楼。广播室、器材室、还有两间空教室。
+@wait 1.0
+@set shenhe_focus +2
+@set truth +3
+oldqin(normal)：现在那几个门，谁都开不了。
+oldqin(normal)：不是锁死了。是钥匙都变成了假的。
+@wait 1.2
+@set truth +2
+@flag flag_keys_replaced
+@clue clue_replacement
+@goto oldqin_hub
+
+-- ================================================= 待定
+== oldqin_q_terms
+me：我想问一个词。
+me：「待定」。
+@wait 1.4
+@fx heartbeat 1.0
+搪瓷缸停在半空。
+@wait 0.8
+oldqin(normal)：谁跟你说的这个词。
+me：档案室的日志上写着。
+@wait 1.0
+oldqin(normal)：你进去了。
+@wait 0.6
+他把缸子放下，看了你很久。
+@wait 1.2
+oldqin(normal)：那我跟你说明白。
+@wait 0.8
+@set truth +3
+他从抽屉里拿出一支笔和一张废纸。
+@sfx sfx_write
+@wait 1.0
+oldqin(normal)：这套东西，一共三种状态。
+@wait 0.6
+他在纸上写。
+@wait 1.2
+@note 在册\n待定\n删除
+@wait 1.4
+@set truth +2
+oldqin(normal)：在册，就是正常人。名字在名单上，人在教室里，有人记得你。
+@wait 0.8
+oldqin(normal)：删除，就是没了。名字被划掉，所有人的记忆里都没有你。
+@wait 1.0
+oldqin(normal)：包括你爹妈。
+@wait 0.6
+@set sanity -1
+@set truth +3
+me：那待定呢？
+@wait 1.4
+oldqin(normal)：待定最麻烦。
+@wait 1.0
+oldqin(normal)：待定的意思是：名字还在，人也还在，但两边对不上号了。
+@wait 0.8
+@fx glitch 0.6
+@set truth +4
+@set memory_echo +2
+oldqin(normal)：别人看得见你，跟你说话，但记不住你说了什么。
+oldqin(normal)：你交的作业老师会批，但发下来的时候不知道该发给谁。
+@wait 1.2
+oldqin(normal)：你还在。你只是不算数了。
+@wait 1.0
+@set truth +4
+@set memory_echo +3
+me：待定会持续多久？
+@wait 0.8
+oldqin(normal)：不一定。
+@wait 1.0
+oldqin(normal)：短的几天，长的能拖几个月。
+@wait 0.6
+oldqin(normal)：拖着拖着，有两个去处。
+@wait 1.2
+@set truth +2
+* 「哪两个？」 -> oldqin_q_terms_a
+    @set truth +5
+* 「我现在是哪种状态。」 -> oldqin_q_terms_b
+    @set truth +4
+    @set sanity -1
+
+== oldqin_q_terms_a
+me：哪两个？
+@wait 1.2
+oldqin(normal)：一个是回去。
+@wait 0.8
+oldqin(normal)：有人替你说话，替你作证，替你答到。次数够了，你就回在册。
+@wait 1.0
+@set truth +3
+@set save_route_score +3
+me：另一个呢？
+@wait 1.4
+oldqin(normal)：另一个是被顶掉。
+@wait 0.8
+@fx heartbeat 1.0
+@set truth +4
+oldqin(normal)：你待定的时候，你那个位置是空的——名单上有名字，位置上没有能对上号的人。
+@wait 1.0
+oldqin(normal)：空着就会有人来补。
+@wait 0.6
+@set truth +4
+@set memory_echo +3
+me：补进来的是谁？
+@wait 1.2
+oldqin(normal)：不知道。
+@wait 0.8
+oldqin(normal)：反正补上来以后，那个名字就归他了。
+oldqin(normal)：然后你就成了多余的那个。
+@wait 1.4
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+oldqin(normal)：多余的东西，会被删掉。
+@wait 1.0
+@set truth +3
+> 所以顺序是：待定 → 位置空出来 → 被补位 → 你变成多余 → 删除。
+@wait 0.8
+> 不是有人被杀。
+> 是这个系统始终维持"每个位置上有一个人"，
+> 而当你和你的位置失去对应关系的时候，你就是那个可以被替换的部件。
+@wait 1.2
+@set truth +4
+@set memory_echo +2
+me：那被补进来的那些，他们本来是什么？
+@wait 1.0
+oldqin(normal)：……
+@wait 1.4
+oldqin(normal)：也是待定过的。
+@wait 0.8
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+oldqin(normal)：每一个补位的，都是上一轮被顶掉的。
+@wait 1.2
+@set memory_echo +3
+> 不是有一个鬼在吃人。
+> 是一条队。
+@wait 0.8
+> 每个人都被前面的人顶掉，然后去顶后面的人。
+> 队伍最前面是谁，没有人知道。
+@wait 1.0
+@set truth +4
+@flag flag_rule_terms_complete
+@flag flag_can_meet_liheng
+@clue clue_replacement
+@goto oldqin_hub
+
+== oldqin_q_terms_b
+me：我现在是哪种状态。
+@wait 1.4
+他没有马上回答。
+@wait 0.8
+他站起来，走到墙边，从钉着的一堆纸里抽出一张。
+@sfx sfx_page
+@wait 1.0
+是一张学生信息表，复印件。
+@wait 0.6
+oldqin(normal)：这是今年新生和转学生的表。门卫室要留一份，防止陌生人混进来。
+@wait 1.2
+他把表递给你。
+@wait 0.8
+@set truth +2
+你从上往下看。
+@wait 1.0
+每一行是一个学生：姓名、班级、学号、照片。
+@wait 0.6
+你找自己那一行。
+@wait 1.2
+@fx names 0.7
+> 林昼　　高二（3）　　0041
+@wait 1.0
+名字在，班级在，学号在。
+@wait 0.8
+照片那一格是空白的。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+me：为什么没有照片？
+@wait 1.0
+oldqin(normal)：你自己看看别人的。
+@wait 0.6
+你往上翻，往下翻。
+@wait 1.2
+一百多行，每一行都有照片。只有你这一行是空的。
+@wait 0.8
+@set sanity -1
+@set truth +3
+me：可能是漏印了。
+@wait 1.0
+oldqin(normal)：那你去教务处看原件。
+@wait 0.6
+oldqin(normal)：我看过了。原件上也是空的。
+@wait 1.4
+@fx glitch 0.8
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+oldqin(normal)：报到那天照的相，机器响了，闪光灯闪了，照片没出来。
+oldqin(normal)：又照了一次，还是没出来。
+@wait 1.0
+oldqin(normal)：教务处那个小姑娘说是设备问题，先录上，回头补。
+@wait 0.8
+oldqin(normal)：这话我听过四次了。
+@wait 1.2
+@set truth +4
+@wait 0.6
+房间里很安静。雨还在下。
+@wait 1.0
+me：所以我是待定。
+@wait 1.4
+oldqin(normal)：你从进这个门开始，就是待定。
+@wait 0.8
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+oldqin(normal)：不是你做错了什么。
+oldqin(normal)：是这个位置本来就有人。你是被塞进来的那个。
+@wait 1.2
+@set truth +4
+> 你坐的那张桌子，抽屉里有一摞不属于你的书。
+> 值日表上你的名字盖在别人的修正液上。
+> 门牌名单上你的名字写在李恒的印刷体上面。
+@wait 1.0
+> 你不是转学生。
+> 你是补位。
+@wait 0.8
+@fx redflash 0.6
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.2
+me：那我顶掉的是谁。
+@wait 1.4
+oldqin(normal)：这个你得自己去查。
+@wait 0.8
+oldqin(normal)：我只能告诉你，那个人现在也在待定。
+@wait 1.0
+oldqin(normal)：他还在学校里。他每天还来上课。
+@wait 0.6
+@set truth +4
+oldqin(normal)：只是没有人叫他的名字了。
+@wait 1.2
+@set shenhe_focus +2
+@set memory_echo +2
+> 李恒。
+@set truth +3
+@flag flag_true_linday_status_known
+@flag flag_can_meet_liheng
+@flag flag_rule_terms_complete
+@flag flag_can_meet_liheng
+@clue clue_liheng
+@goto oldqin_hub
+
+-- ================================================= 校门
+== oldqin_q_gate
+me：您在门卫室，进出的人都要登记吧。
+@wait 1.0
+oldqin(normal)：外来人员登记。学生刷卡。
+me：刷卡记录能查吗？
+@wait 1.2
+oldqin(normal)：能。机器里存着。
+@wait 0.8
+他指了指桌角一台很旧的读卡机，接着一根线通到电脑。
+@wait 1.0
+oldqin(normal)：你想查谁。
+@wait 0.6
+me：查我自己。
+@wait 1.2
+@set truth +2
+他愣了一下，然后点点头，好像觉得这个要求很合理。
+@wait 0.8
+oldqin(normal)：学号。
+me：0041。
+@wait 1.0
+他敲了几下键盘。屏幕很旧，字是绿的。
+@sfx sfx_click
+@wait 1.2
+oldqin(normal)：有了。
+@wait 0.8
+他把屏幕转过来。
+@wait 1.0
+@note 学号 0041　林昼\n入校记录：4 条\n出校记录：0 条
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+@wait 0.8
+入校四次。出校零次。
+@wait 1.0
+me：这不对。我这四天每天下午都出去过。
+@wait 0.6
+me：我去过便利店，去过邮局。
+@wait 1.2
+oldqin(normal)：那你出去的时候刷卡了吗。
+@wait 0.8
+me：刷了。每次都刷。
+@wait 1.0
+@set truth +3
+oldqin(normal)：机器响了吗？
+@wait 1.4
+你想了想。
+@wait 0.6
+@set memory_echo +2
+每次出校刷卡，闸机都会"嘀"一声。
+@wait 1.0
+你确定听到过。
+@wait 0.8
+但你回忆的时候，发现自己想不起来任何一次"嘀"完之后的画面。
+@wait 1.2
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+你记得走向闸机，记得刷卡，记得听到响声。
+@wait 0.8
+然后下一个记忆就是走在街上。
+@wait 1.0
+中间那一秒——闸门打开、你走过去——你想不起来。
+@wait 1.4
+@set truth +4
+oldqin(normal)：想不起来了吧。
+@wait 0.8
+oldqin(normal)：我查过全校的记录。
+@wait 1.0
+@set truth +3
+oldqin(normal)：这五年，一共有一百零九个学号，入校记录有，出校记录是零。
+@wait 1.2
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 0.8
+一百零九。
+@wait 1.0
+> 档案室的日志写着「第 109 次」。
+> 图书馆那本书永远缺第 109 页。
+@wait 0.6
+> 现在你知道 109 是什么了。
+@wait 1.2
+@set truth +4
+me：那这一百零九个人，现在在哪儿？
+@wait 1.4
+oldqin(normal)：在学校里。
+@wait 0.8
+@fx redflash 0.5
+@set sanity -1
+@set truth +4
+oldqin(normal)：从来没出去过。
+@wait 1.0
+oldqin(normal)：所以他们还在。
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+> 校门口的记录是最诚实的东西。
+> 它不记得人，它只记数字。
+@wait 0.8
+> 而数字说：进来了一百零九个，没有一个出去。
+@set truth +4
+@flag flag_gate_records
+@clue clue_gate
+@goto oldqin_hub
+
+-- ================================================= 他自己
+== oldqin_q_why
+me：秦师傅，您知道这么多。
+me：为什么不走？
+@wait 1.4
+他笑了一下，露出被烟熏黄的牙。
+@wait 0.8
+oldqin(normal)：走去哪儿。
+me：辞职。换个学校，换个城市。
+@wait 1.0
+oldqin(normal)：我今年五十八。
+@wait 0.6
+oldqin(normal)：在这儿看了十九年大门。
+@wait 1.2
+@set truth +2
+oldqin(normal)：我要是走了，谁来涂那几个标签。
+@wait 1.0
+me：涂标签有什么用？
+@wait 0.8
+oldqin(normal)：没用。
+@wait 1.2
+@set truth +3
+oldqin(normal)：但涂了以后，那几把假钥匙就不会挂上来。
+@wait 0.8
+oldqin(normal)：钩子空着，就说明那几个门的钥匙是丢了，不是有了。
+@wait 1.0
+@set truth +4
+@set memory_echo +2
+oldqin(normal)：这两件事在纸上是一样的，在我这儿不一样。
+@wait 1.4
+@set route_empathy +2
+@set save_route_score +2
+> 涂掉一个标签，是在拒绝承认补位。
+@wait 0.8
+> 就像许清每年重打一份「已故」。
+> 就像有人每年去贴一张寻人启事。
+@wait 1.0
+@set truth +3
+me：这些您都做了十九年？
+@wait 0.6
+oldqin(normal)：也不是十九年。
+@wait 1.2
+oldqin(normal)：头十四年我什么都不知道。
+@wait 0.8
+oldqin(normal)：我就是个看门的。学生进进出出，我记个数。
+@wait 1.0
+me：那后来呢？
+@wait 1.4
+他沉默了很久。
+@wait 0.8
+oldqin(normal)：后来有一年，学校让我加班。
+@wait 1.0
+oldqin(normal)：高考那两天，让我在门口清点考生。
+@wait 0.6
+@set truth +3
+oldqin(normal)：一个一个数，进去几个，出来几个，报给教务处。
+@wait 1.2
+oldqin(normal)：第一天，进去四百一十二个，出来四百一十二个。
+@wait 0.8
+oldqin(normal)：第二天，进去四百一十二个。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+oldqin(normal)：出来四百一十一个。
+@wait 1.0
+@wait 0.8
+me：您报上去了吗？
+@wait 1.2
+oldqin(normal)：报了。
+@wait 0.8
+oldqin(normal)：教务处让我重数。我说数了三遍。
+@wait 1.0
+oldqin(normal)：他们说那就是你数错了。
+@wait 0.6
+@set truth +3
+oldqin(normal)：我说那你们查考场登记。
+@wait 1.2
+oldqin(normal)：查了。登记上是四百一十一个考生。
+@wait 1.4
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+oldqin(normal)：进去的时候我数了四百一十二个。
+oldqin(normal)：登记上从头到尾就是四百一十一个。
+@wait 1.0
+@set truth +4
+oldqin(normal)：那多出来的一个，是我数错了，还是他进去了？
+@wait 0.8
+oldqin(normal)：这个问题我想了五年。
+@wait 1.2
+@set truth +3
+oldqin(normal)：想通了以后，我就开始记东西。
+@wait 1.0
+他弯腰，从躺椅底下拖出一个纸箱。
+@sfx sfx_page
+@wait 0.8
+箱子里全是纸。
+@wait 1.2
+@fx heartbeat 1.0
+@set truth +4
+最上面是一叠寻人启事，印好了，从来没贴出去过。
+@wait 0.8
+@set shenhe_focus +3
+下面是手抄的名单，一页一页，密密麻麻。
+@wait 1.0
+每一页最上面写着年份，下面是名字，名字后面画着勾或者叉。
+@wait 0.6
+@set truth +3
+me：这些勾和叉是什么意思？
+@wait 1.2
+oldqin(normal)：勾是我还记得脸的。
+@wait 0.8
+oldqin(normal)：叉是我只记得名字了。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@set save_route_score +3
+@wait 1.0
+你翻了翻。
+@wait 0.6
+越往后的年份，叉越多。
+@wait 1.2
+最新那一页上，勾只剩三个。
+@wait 0.8
+@set truth +3
+me：这一页是今年的？
+oldqin(normal)：嗯。
+@wait 1.0
+me：这三个勾是谁？
+@wait 1.4
+oldqin(normal)：一个是许老师班上那个女孩，沈禾。
+@wait 0.8
+oldqin(normal)：一个是那个每天数座位表的男生。
+@wait 1.0
+oldqin(normal)：还有一个是你。
+@wait 1.2
+@fx heartbeat 1.6
+@set sanity -1
+@set truth +5
+@set save_route_score +3
+@set memory_echo +2
+@wait 0.8
+me：我？我才来四天。
+@wait 1.0
+oldqin(normal)：我知道。
+@wait 0.6
+oldqin(normal)：所以我特意画了个勾。
+@wait 1.2
+oldqin(normal)：趁我还记得。
+@wait 1.4
+@set truth +4
+@set save_route_score +3
+> 一个五十八岁的看门人，在纸上给你画了一个勾。
+@wait 0.8
+> 这是这所学校里，有人为你做过的最重要的一件事。
+@wait 1.0
+@set truth +3
+@item +item_qin_list
+@flag flag_qin_ally
+@clue clue_qin_records
+@goto oldqin_hub
+
+-- ================================================= 离开
+== oldqin_leave
+@bg duty_room night
+@bgm bgm_truth
+@clearchars
+@advtime 5
+@show oldqin normal right
+你站起来。
+@wait 0.8
+@if flag_rule_terms_complete or flag_gate_records or flag_qin_ally or flag_keys_replaced
+oldqin(normal)：等会儿。
+@wait 1.0
+他从抽屉里摸出一样东西，放在桌上。
+@sfx sfx_click
+@wait 0.6
+是一把钥匙。很旧，黄铜的，齿口磨得发亮。
+@wait 1.2
+@set truth +3
+me：这是什么？
+@wait 0.8
+oldqin(normal)：东楼一楼后门。
+@wait 1.0
+oldqin(normal)：这把是真的。我一直没挂上去，就是怕它被换掉。
+@wait 0.6
+@set truth +4
+@set save_route_score +3
+me：您为什么给我？
+@wait 1.2
+oldqin(normal)：因为我进不去。
+@wait 0.8
+oldqin(normal)：我试过。走到门口，人就转身往回走了。
+@wait 1.0
+oldqin(normal)：不是害怕。是身体自己转的。
+@wait 1.4
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+oldqin(normal)：待定的人才进得去。
+@wait 0.8
+oldqin(normal)：这是这套东西唯一的漏洞——它防在册的人，不防待定的。
+@wait 1.2
+@set truth +4
+@set memory_echo +2
+oldqin(normal)：因为在它看来，待定的人已经算不上人了。
+@wait 1.0
+@set truth +3
+你把钥匙握在手里。很凉，很沉。
+@wait 0.8
+@item +item_backdoor_key
+@flag flag_has_backdoor_key
+@wait 1.0
+oldqin(normal)：还有件事。
+@wait 0.6
+oldqin(normal)：你要是真进去了，看见有人坐在椅子上。
+@wait 1.2
+oldqin(normal)：别喊她的名字。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set shenhe_focus +3
+me：为什么？
+@wait 0.8
+oldqin(normal)：喊名字就是点名。
+@wait 1.0
+oldqin(normal)：点了名，她就得答。
+@wait 0.6
+oldqin(normal)：她答了，就又欠一轮。
+@wait 1.2
+@set truth +5
+@set save_route_score +3
+@set memory_echo +3
+> 这是整个第四章最重要的一句提示。
+> 而它来自一个看门的老头。
+@wait 0.8
+@flag flag_qin_warning
+@else
+oldqin(normal)：早点睡。
+@wait 0.8
+oldqin(normal)：明天早读别迟到。
+@wait 1.0
+me：为什么特意说这个？
+@wait 1.2
+oldqin(normal)：点名的时候人不在，就是缺席。
+@wait 0.8
+oldqin(normal)：缺席多了，就会有人替你答。
+@wait 1.0
+@set truth +3
+@set memory_echo +2
+oldqin(normal)：替你答的次数够了，那个位置就归他了。
+@set truth +2
+@endif
+@wait 1.0
+你出了值班室。
+@wait 0.8
+雨小了一点。你走了几步，回头看。
+@wait 1.0
+老秦重新打开了电视，音量很小。他没有看电视，还是在看监控屏。
+@wait 0.6
+@set truth +2
+十二块屏，五块在放走廊，四块是雪花，三块黑着。
+@wait 1.2
+他看的是黑着的那三块。
+@wait 0.8
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+> 他每天晚上都这么看。
+> 看那三块什么都没有的屏幕。
+@wait 1.0
+> 因为如果哪天那三块亮了，说明有人还在那儿。
+@set truth +3
+@flag flag_oldqin_done
+@clearchars
+@goto ch4_prep_hub

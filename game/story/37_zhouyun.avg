@@ -1,0 +1,682 @@
+-- 支线：周芸（周叙的姐姐）
+-- 结构层：把"少一个人"从校园扩展到校园之外。
+-- 前置：flag_zhouxu_sister（第三章深夜听周叙说过周芸）
+-- 影响：truth / trust_zhouxu / save_route_score，并解锁终章"车票"选项
+
+== zhouyun_hub
+@bg dorm night
+@bgm bgm_truth
+@amb amb_dorm_night
+@clearchars
+@advtime 20
+周叙说完周芸的事之后，很久没再开口。
+你以为他睡了。
+@wait 1.0
+然后你听见他从床上坐起来，摸黑翻书包。
+@sfx sfx_page
+@wait 0.8
+@show zhouxu tired right
+zhouxu(tired)：林昼。
+zhouxu(tired)：你要是真想查，我给你看点东西。
+@wait 0.6
+他递下来一个牛皮纸信封，很旧，边角磨白了。
+zhouxu(tired)：我姐的东西。当年警察给的，说查不下去了。
+@wait 1.0
+me：你一直带在身上？
+zhouxu(tired)：一直放书包夹层。
+zhouxu(tired)：我怕哪天我也忘了她。
+@set truth +2
+@set trust_zhouxu +2
+@wait 0.8
+你借着窗外的光把信封打开。
+里面不多：一张车票、一个笔记本、几张照片、一部老手机。
+@set truth +1
+@if visited:zhouyun_hub
+> 还有东西没看。
+@endif
+* [if !visited:zhouyun_ticket] 那张车票 -> zhouyun_ticket
+    @set route_investigate +2
+* [if !visited:zhouyun_note] 笔记本 -> zhouyun_note
+    @set route_investigate +2
+* [if !visited:zhouyun_photo] 几张照片 -> zhouyun_photo
+    @set truth +1
+* [if !visited:zhouyun_phone] 那部旧手机 -> zhouyun_phone
+    @set sanity -1
+* 还给他 -> zhouyun_end
+    @set trust_zhouxu +1
+
+-- ================================================= 车票
+== zhouyun_ticket
+@bg dorm dark
+@bgm bgm_investigate
+@clearchars
+@advtime 10
+@bg prop ticket
+一张长途汽车票。硬纸，热敏打印，字迹已经淡了，但还能认。
+@sfx sfx_page
+@wait 0.8
+> 临川汽车客运站　→　省城东站
+> 发车：06月28日 08:00
+> 座位号：42
+@wait 1.2
+@fx heartbeat 0.9
+@set truth +3
+座位号 42。
+@wait 0.8
+> 周叙说：司机说全程 41 人，卖出 42 张票。
+> 这张就是第 42 张。
+@set truth +2
+@wait 1.0
+* 翻到背面 -> zhouyun_ticket_a
+    @set truth +5
+    @set memory_echo +2
+* 看检票口的剪痕 -> zhouyun_ticket_b
+    @set truth +4
+    @set route_investigate +2
+
+== zhouyun_ticket_a
+你把票翻过来。
+@wait 0.8
+背面是印刷的乘车须知，小字，密密麻麻。
+@wait 0.6
+但在须知的空白处，有人用圆珠笔写了一行字。
+@wait 1.0
+@fx names 0.6
+@note 　如果到站没人接，就在原地等。\n　别自己走。
+@wait 1.2
+@set truth +3
+是周叙的字。你今天在座位表上见过——横折的收笔一模一样。
+@wait 0.8
+me：这是你写的？
+上铺很久没声音。
+@wait 1.4
+zhouxu(tired)：嗯。
+zhouxu(tired)：她走那天早上，我把票给她的时候写的。
+@wait 0.8
+zhouxu(tired)：我们家那时候没人有手机能实时联系。我就怕她一个人在陌生地方。
+@wait 1.0
+me："别自己走"。
+@wait 0.6
+zhouxu(tired)：……
+@wait 1.2
+zhouxu(tired)：这四个字我后来想了五年。
+zhouxu(tired)：她要是真在原地等了呢。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+@set trust_zhouxu +2
+@wait 1.0
+> 一个在原地等的人。
+> 一个不肯走、也走不了的人。
+@wait 0.8
+> 这个学校里还有一个这样的人。她坐在播音椅上，等了五年。
+@set truth +3
+@set shenhe_focus +1
+@flag flag_zhouyun_ticket
+@item +item_bus_ticket
+@goto zhouyun_hub
+
+== zhouyun_ticket_b
+你对着光看检票口的剪痕。
+@wait 1.0
+长途车票检票时会用剪票钳在票根打一个缺口。
+@wait 0.6
+这张票上有缺口。
+@set truth +2
+@wait 0.8
+> 说明她上了车。
+> 监控也证明她上了车。
+@wait 1.0
+你翻到票的另一角，那里应该有下车站的核销章。
+@wait 1.2
+没有。
+@wait 0.8
+你又看了一遍。
+@wait 0.6
+> 上车有剪口。
+> 下车没有核销。
+> 中途三个站的监控里，她没有下车。
+> 终点站的监控里，她也没有下车。
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+@wait 1.0
+me：周叙。
+me：那辆车最后开到终点站了吗？
+@wait 1.2
+zhouxu(tired)：开到了。
+zhouxu(tired)：司机、乘务、四十一个乘客，全部下车。
+@wait 0.8
+me：车里清过吗？
+zhouxu(tired)：清过。终点站要清车，保洁上去扫的。
+@wait 1.0
+zhouxu(tired)：保洁说车上没人。
+@wait 0.6
+zhouxu(tired)：但她说，最后一排靠窗那个位置，坐垫是热的。
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.2
+> 最后一排靠窗。
+> 坐垫是热的。
+@wait 0.8
+> 你现在坐的那个位置，第一天下午，椅子是凉的。
+> 现在你知道为什么值得注意了——因为它本来应该是热的。
+@set truth +3
+@flag flag_zhouyun_ticket
+@item +item_bus_ticket
+@goto zhouyun_hub
+
+-- ================================================= 笔记本
+== zhouyun_note
+@bg dorm dark
+@bgm bgm_investigate
+@clearchars
+@advtime 15
+一本很普通的软抄本，封面是那种五毛钱的塑料皮。
+@sfx sfx_page
+@wait 0.8
+前面大半是高三的复习笔记——数学公式、英语单词、政治大题。
+字很小，写得很密，纸都被笔压出了印子。
+@wait 1.0
+你翻到中间，笔记突然断了。
+@wait 0.6
+后面十几页是空白。
+@wait 0.8
+再往后，从倒数第七页开始，又有字了。
+@wait 1.0
+但那些字和前面完全不一样——不是复习笔记，是日记。
+@set truth +2
+* 从头看这几页日记 -> zhouyun_note_a
+    @set truth +5
+    @set memory_echo +2
+    @set sanity -1
+* 直接翻到最后一页 -> zhouyun_note_b
+    @set truth +4
+    @set sanity -1
+
+== zhouyun_note_a
+你从第一篇看起。
+@sfx sfx_page
+@wait 1.0
+@note 6月20日\n还有八天走。妈已经在收拾行李了，收了三遍。\n弟弟这两天很奇怪，老问我到底几点的车。问了六七遍。\n我说了六七遍。他还是记不住。
+@wait 1.2
+@set truth +2
+@wait 0.6
+@note 6月23日\n弟弟今天问我，如果他忘了我，我会不会怪他。\n我说你才十五岁，怎么会忘。\n他说他们班有个人不见了，全班都不记得那人叫什么。\n我说别乱说。他就不说了。
+@fx heartbeat 0.9
+@set truth +3
+@set memory_echo +2
+@wait 1.2
+@note 6月26日\n去学校拿毕业证。\n经过东边那栋楼，木条中间有缝，缝里有光。\n我站着看了一会儿。\n有人在里面喊了一声。我听不清喊的什么，但那个声音很年轻，像学生。\n我去传达室说了，值班的说那楼断电五年了，让我别多事。
+@wait 1.4
+@set truth +4
+@set shenhe_focus +2
+@wait 0.8
+@note 6月27日\n昨晚做梦，梦见有人点名。\n念到我名字，我答了"到"。\n然后就醒了。\n醒了以后一直睡不着，总觉得答错了什么。
+@fx glitch 0.8
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.4
+> 她答过"到"。
+> 在梦里。
+> 而这所学校的规则，从来没说过梦里不算。
+@set truth +3
+@set shenhe_focus +2
+@wait 1.0
+你翻到最后一页。
+@goto zhouyun_note_b
+
+== zhouyun_note_b
+最后一页只有三行。
+@sfx sfx_page
+@wait 1.0
+字迹和前面不一样——歪，抖，像是在颠簸的地方写的。
+@wait 0.8
+@note 6月28日 09:40\n车上人不对。\n上车前数过，四十一个。刚才又数了一遍，四十二个。\n多出来那个坐在我旁边。我不敢转头。
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.4
+> 09:40。发车是 08:00。
+> 她在车上写的。
+@wait 0.8
+> "多出来那个坐在我旁边。"
+> 她的座位号是 42。
+> 42 号旁边是 41 号。
+@wait 1.2
+@fx glitch 0.9
+@set sanity -1
+@set truth +3
+> 也就是说，她坐在最后一排靠窗，而"多出来的那个"坐在她里侧。
+> 保洁后来说：最后一排靠窗那个位置，坐垫是热的。
+@wait 1.0
+> 不是她留下的余温。
+> 是那个"多出来的"留下的。
+@set truth +4
+@set memory_echo +2
+@flag flag_zhouyun_note
+@clue clue_missing_one
+@wait 0.8
+你合上本子，手有点抖。
+@wait 0.6
+@show zhouxu tired right
+zhouxu(tired)：你看到最后一页了。
+me：嗯。
+zhouxu(tired)：警察说这是考前压力大，写的胡话。
+zhouxu(tired)：我信了五年。
+@wait 1.0
+zhouxu(tired)：直到你转学来那天，许老师在讲台上说了一句"人数不对"。
+@set trust_zhouxu +2
+@set truth +2
+@clearchars
+@goto zhouyun_hub
+
+-- ================================================= 照片
+== zhouyun_photo
+@bg dorm dark
+@bgm bgm_unease
+@clearchars
+@advtime 10
+三张照片。
+@sfx sfx_page
+@wait 0.8
+第一张是全家福。周叙十五岁的样子，站在姐姐旁边，个子还没她高。
+父母站在后面。四个人都在笑。
+@wait 1.0
+第二张是周芸的毕业照单人像——就是那种贴在毕业证上的一寸照。
+@wait 0.6
+第三张是一张合影。
+@wait 1.0
+高三（2）班，全班合影，彩色的。
+@set truth +1
+@wait 0.8
+* 数第三张上的人数 -> zhouyun_photo_a
+    @set truth +4
+    @set memory_echo +2
+* 看第二张的背面 -> zhouyun_photo_b
+    @set truth +4
+    @set sanity -1
+
+== zhouyun_photo_a
+你把第三张凑到窗前，借光数人头。
+@wait 1.2
+> 前排蹲着的：十四个。
+> 中排坐着的：十六个。
+> 后排站着的：十五个。
+> 一共四十五个。
+@wait 0.8
+你数了三遍，都是四十五。
+@wait 1.0
+me：周叙，你姐他们班多少人？
+@wait 1.2
+zhouxu(tired)：四十六。
+@fx heartbeat 1.0
+@set truth +3
+@wait 0.8
+me：这张照片上是四十五个。
+@wait 1.0
+上铺沉默了很久。
+@wait 0.6
+zhouxu(tired)：我知道。
+zhouxu(tired)：我数过不下一百遍。
+@wait 0.8
+zhouxu(tired)：一直少一个。
+zhouxu(tired)：但我对着名册一个一个点，四十六个人的脸我都能在照片上找到。
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.2
+me：什么意思？
+zhouxu(tired)：意思是，我能找到四十六张脸。
+zhouxu(tired)：但数总数的时候，永远是四十五。
+@wait 1.0
+> 你又数了一遍。
+> 四十五。
+@wait 0.8
+> 然后你试着一个一个点着数，用手指按着。
+@wait 1.2
+> 四十六。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +3
+@wait 0.6
+> 你把手指拿开，重新扫一眼。
+> 四十五。
+@set memory_echo +3
+@flag flag_zhouyun_photo
+@goto zhouyun_hub
+
+== zhouyun_photo_b
+你把毕业证照片翻过来。
+@wait 0.8
+背面用铅笔写着一行小字，是学校照相馆的编号。
+@wait 0.6
+> 2015届 高三2班 学号 4602
+@wait 1.0
+你盯着那个学号。
+@wait 0.8
+> 46 是班级人数编码，02 是……
+@wait 0.6
+不对。
+@wait 1.0
+你想起今天下午在教务处看到的学号规则：前四位年份，中间两位班级，后四位序号。
+这个 4602 只有四位。
+@set truth +2
+@wait 0.8
+me：周叙，你姐的学号是多少？
+@wait 1.2
+zhouxu(tired)：十位数。你说的那个格式。
+me：那这个 4602 是什么？
+@wait 1.4
+zhouxu(tired)：……什么 4602？
+@wait 0.8
+他从上铺探下头。你把照片递上去。
+@wait 1.0
+zhouxu(tired)：这张照片我看过一百遍。
+zhouxu(tired)：背面从来没有字。
+@fx glitch 0.9
+@sfx sfx_sting
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.2
+你把照片拿回来。
+铅笔字还在。很淡，但确实在。
+@wait 0.8
+> 46 02。
+> 或者念成：四十六，零二。
+> 四十六个人里，第零二号。
+@wait 1.0
+> 而"零号"这个说法，你在第一天夜里听过。
+> 门外那个东西说：我是零号。没有登记。
+@fx heartbeat 1.4
+@set truth +4
+@set shenhe_focus +2
+@flag flag_zhouyun_photo
+@goto zhouyun_hub
+
+-- ================================================= 旧手机
+== zhouyun_phone
+@bg dorm dark
+@bgm bgm_horror
+@clearchars
+@advtime 15
+一部很老的按键手机，屏幕只有两寸，外壳磨得发亮。
+@wait 0.8
+zhouxu(tired)：没电了。充电器早找不到了。
+me：现在的充电线插不上？
+zhouxu(tired)：老式圆孔的。
+@wait 1.0
+你翻来覆去看这部手机。
+@wait 0.6
+* 试着按开机键 -> zhouyun_phone_a
+    @set truth +5
+    @set sanity -1
+    @set shenhe_focus +2
+* 拆开后盖看看 -> zhouyun_phone_b
+    @set truth +4
+    @set route_investigate +2
+
+== zhouyun_phone_a
+你按住开机键。
+@wait 1.2
+没反应。
+@wait 0.8
+你又按了一次，按了大概五秒。
+@wait 1.4
+@fx flash 0.6
+@sfx sfx_click
+屏幕亮了。
+@fx heartbeat 1.2
+@set sanity -1
+@wait 0.8
+惨绿色的背光，像老式计算器。
+@wait 0.6
+@show zhouxu terrified right
+zhouxu(terrified)：不可能。
+zhouxu(terrified)：这手机五年没电了。我试过无数次。
+@wait 1.0
+屏幕上显示待机界面。
+信号格：无服务。
+电量：满格。
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@wait 1.2
+时间显示：
+> 06月28日　09:40
+@wait 1.0
+@fx heartbeat 1.4
+@set truth +4
+@set memory_echo +3
+> 和笔记本最后一页的时间，一模一样。
+> 这部手机的时间，停在她写下那三行字的那一刻。
+@wait 0.8
+* 翻短信 -> zhouyun_phone_sms
+    @set truth +5
+    @set sanity -1
+* 立刻关机 -> zhouyun_phone_off
+    @set route_obedience +2
+    @set sanity +5
+
+== zhouyun_phone_sms
+你按方向键，进到短信箱。
+@sfx sfx_click
+@wait 1.0
+收件箱：3 条。
+发件箱：1 条。
+@wait 0.8
+你先看发件箱。
+@wait 1.0
+@note 收件人：弟弟\n发送时间：06月28日 09:38\n\n车上多了一个人。\n我不敢回头。\n如果我没到，你别来找我。\n别自己一个人来。
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.4
+@show zhouxu terrified right
+zhouxu(terrified)：我没收到过这条。
+zhouxu(terrified)：我手机里没有。我翻了五年，一条都没有。
+@wait 1.0
+状态栏显示：
+> 发送失败
+@wait 0.8
+@set truth +3
+> 发送失败。
+> 但它一直存在发件箱里，等着有信号的那一天。
+@wait 1.0
+> 而这五年，这部手机一直没电。
+@set memory_echo +2
+@wait 0.8
+你又看了收件箱。
+@wait 0.6
+三条都是运营商的广告。
+@wait 1.0
+你正要退出，屏幕闪了一下。
+@fx glitch 1.0
+@sfx sfx_broadcast_static
+@wait 0.8
+收件箱变成了 4 条。
+@fx heartbeat 1.6
+@set sanity -1
+@set truth +3
+@wait 1.0
+新的那条，发件人显示是一串空白。
+接收时间：现在。
+@wait 1.2
+你按开。
+@wait 0.8
+@note 　到了吗
+@fx redflash 0.8
+@sfx sfx_sting
+@set sanity -1
+@set shenhe_focus +3
+@set memory_echo +3
+@set truth +3
+@wait 1.4
+屏幕黑了。
+@wait 0.6
+你再按开机键，没有任何反应。
+@wait 1.0
+@show zhouxu terrified right
+你们两个在黑暗里坐了很久，谁都没说话。
+@wait 0.8
+zhouxu(terrified)：它问的是我姐，还是问的我们。
+@wait 1.2
+me：不知道。
+@wait 0.6
+> 但你注意到一件事：它问"到了吗"。
+> 不是"你是谁"，不是"在哪儿"。
+> 是"到了吗"。
+@wait 1.0
+> 这是点名的语法。
+@set truth +4
+@flag flag_zhouyun_phone
+@clearchars
+@goto zhouyun_hub
+
+== zhouyun_phone_off
+你按住挂断键，把手机关了。
+@sfx sfx_click
+@wait 1.0
+屏幕暗下去的那一瞬间，你好像看见有个新消息的图标闪了一下。
+@wait 0.8
+但你没有确认。
+@set sanity +5
+@set truth +1
+@wait 0.6
+@show zhouxu tired right
+zhouxu(tired)：……为什么关了。
+me：因为它亮起来的时候，是有信号在找它的。
+me：找它的东西，也会找到我们。
+@wait 1.0
+zhouxu(tired)：……
+zhouxu(tired)：谢谢。
+@set trust_zhouxu +2
+@set truth +2
+@flag flag_zhouyun_phone
+@clearchars
+@goto zhouyun_hub
+
+== zhouyun_phone_b
+你把后盖抠开。
+@wait 0.8
+电池是那种老式的方块锂电，已经鼓包了，外皮胀起来一个包。
+@wait 0.6
+你把电池取下来。
+@wait 1.0
+电池仓底下压着一张纸片，折成很小的方块，塞在卡槽旁边。
+@sfx sfx_page
+@set truth +2
+@wait 0.8
+你把它展开。
+@wait 1.0
+是一张车票的票根——不是周芸那张，是另一张。
+@wait 0.6
+@note 临川汽车客运站　→　省城东站\n发车：06月28日 08:00\n座位号：41
+@fx heartbeat 1.2
+@set truth +4
+@set memory_echo +2
+@wait 1.2
+座位号 41。
+@wait 0.8
+> 周芸是 42 号。
+> 41 号就在她旁边。
+> 她在日记里写："多出来那个坐在我旁边。"
+@wait 1.0
+> 这张 41 号票根，在她的手机电池底下。
+@wait 0.8
+> 也就是说，她把它藏起来了。
+@set truth +3
+@wait 1.0
+你把票根翻过来。
+@wait 0.6
+背面是空白的。
+@wait 0.8
+你对着窗外的光斜过去看。
+@wait 1.2
+@fx names 0.6
+纸的纤维里有压痕——有人在这张票根上写过字，后来擦掉了，但笔压还在。
+@wait 0.8
+你辨认了很久。
+@wait 1.0
+@note 　她　让　我　坐　这　儿　的
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.4
+> "她让我坐这儿的。"
+@wait 0.8
+> 写这句话的人，是那个"多出来的"。
+> 而它在为自己辩解。
+@wait 1.0
+> 向谁辩解？
+@set truth +3
+@flag flag_zhouyun_phone
+@item +item_seat41_stub
+@goto zhouyun_hub
+
+-- ================================================= 收束
+== zhouyun_end
+@bg dorm dark
+@bgm bgm_truth
+@clearchars
+@advtime 10
+你把东西一样一样放回信封，递上去。
+@wait 0.8
+@show zhouxu tired right
+周叙接过去，塞回书包夹层，拉链拉好。
+@wait 0.6
+@if flag_zhouyun_ticket or flag_zhouyun_note or flag_zhouyun_photo or flag_zhouyun_phone
+zhouxu(tired)：现在你知道了。
+me：知道什么？
+@wait 1.0
+zhouxu(tired)：知道这事不只在学校里。
+@fx heartbeat 0.8
+@set truth +3
+@wait 0.8
+zhouxu(tired)：我一直以为是旧楼的问题。是那栋楼有问题，离开就好了。
+zhouxu(tired)：可我姐已经上车了。她走了两百公里。
+@wait 1.0
+zhouxu(tired)：还是少了一个。
+@wait 0.8
+me：不是学校的问题。
+me：是"少一个人"这件事本身，会跟着人走。
+@set truth +4
+@set memory_echo +2
+@wait 1.0
+zhouxu(tired)：所以我没转学。
+zhouxu(tired)：转了也没用。
+@set trust_zhouxu +2
+@flag flag_zhouyun_known
+@else
+zhouxu(tired)：不看了？
+me：……先不看了。
+zhouxu(tired)：也好。
+@wait 0.8
+zhouxu(tired)：有些东西看了就得管。
+zhouxu(tired)：我一个人管了五年，挺累的。
+@set trust_zhouxu +1
+@set truth +1
+@endif
+@wait 1.0
+他躺回去，很久没有动静。
+@wait 0.8
+天快亮的时候，你听见他说了一句。声音很小，像是说给自己听的。
+@wait 1.0
+zhouxu(tired)：她那天穿的白衬衫。
+zhouxu(tired)：我记得。我一直记得。
+@wait 0.8
+> 他在确认自己还记得。
+> 就像李恒每天数座位表，就像梁野每天描名字。
+@set truth +2
+@set memory_echo +1
+@clearchars
+@goto ch3_deep_hub

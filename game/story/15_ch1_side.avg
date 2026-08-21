@@ -1,0 +1,368 @@
+-- 第一章 支线：自由调查（可选场景，影响真相与关系）
+-- 对应 d.md「轻探索 / 轻线索收集」与 f.md ch1_sc3「午休走廊」
+
+== ch1_free_hub
+@timeat 1 16:10
+@bg hallway day
+@bgm bgm_investigate
+@amb amb_hallway
+@clearchars
+午休还有四十分钟。校园很大，但你能去的地方不多。
+@if visited:ch1_free_hub
+> 你还有一点时间。
+@endif
+* [if !visited:ch1_day_hub] 留在教室，慢慢熟悉一下 -> ch1_day_hub
+    @set route_investigate +1
+* [if !visited:ch1_side_wash] 去盥洗室洗把脸 -> ch1_side_wash
+* [if !visited:ch1_side_board] 去操场后面的公告栏 -> ch1_side_board
+    @set route_investigate +1
+* [if !visited:ch1_side_lost] 去女生宿舍楼下的失物招领箱 -> ch1_side_lost
+* [if !visited:ch1_side_office] 去教师办公室外面的走廊 -> ch1_side_office
+* 回教室 -> ch1_free_end
+
+== ch1_side_wash
+@bg mirror day
+@amb amb_hallway
+@bgm bgm_unease
+@clearchars
+盥洗室在走廊尽头，男女各一间，中间隔着一堵贴白瓷砖的墙。
+瓷砖缝里是黑的，擦不掉那种黑。
+水龙头一共八个，一字排开。你试了前两个，都不出水。第三个出。
+@sfx sfx_water
+水是凉的，带一点铁锈味。
+你捧起来拍在脸上。
+@wait 0.8
+抬头的时候，镜子里的自己慢了一点点。
+很轻微。轻微到可以解释成眼花，或者水珠挂在睫毛上造成的视差。
+@set memory_echo +1
+* 再看一次 -> ch1_wash_again
+    @set truth +2
+    @set sanity -1
+* 擦干脸就走 -> ch1_wash_leave
+    @set route_obedience +1
+* 数镜子里的人数 -> ch1_wash_count
+    @set truth +2
+    @set shenhe_focus +1
+* 看镜子里自己的校服 -> ch1_wash_uniform
+    @set truth +3
+    @set memory_echo +2
+
+== ch1_wash_uniform
+你没有看自己的脸。
+你看的是镜子里那件校服。
+@wait 0.8
+蓝白两色，拉链，袖口两道白杠。和你身上这件一样。
+> 但领口的标签。
+你低头看自己的领口——新校服的标签还在，白色的小布条，从领子后面翘出来一点。
+你再看镜子。
+@fx heartbeat 0.8
+镜子里那件的标签，已经被剪掉了。
+剪口是毛的，剪得不太齐，像是自己动手剪的。
+@fx glitch 0.7
+@set sanity -1
+@set memory_echo +2
+@set truth +2
+你伸手到脖子后面，摸到那片还在的标签。
+硬的。扎手。
+@wait 1.0
+> 你打算今晚回宿舍就把它剪了。
+> 你是这么打算的。
+> 镜子里那个人，已经剪了。
+@goto ch1_free_hub
+
+== ch1_wash_again
+你盯着镜子，故意抬起右手。
+镜子里的人也抬起了右手。同时。
+@wait 1.0
+你把手放下。它也放下。同时。
+@wait 0.8
+你松了口气，正要转身——
+@fx glitch 0.8
+@sfx sfx_sting
+它又抬了一次。
+@set sanity -1
+@set memory_echo +2
+@set truth +1
+你的手还垂在身侧。
+镜子里那只手举在半空，停了大概两秒，然后慢慢放下去。
+@wait 1.0
+你退出盥洗室的时候没有转身，一直退到走廊上。
+走廊里有人经过，撞了你一下，骂了句"走路不看路啊"。
+你没有回嘴。
+你只是很感激这一撞——因为它证明走廊上是有人的。
+@goto ch1_free_hub
+
+== ch1_wash_leave
+你用袖子擦了脸，转身出去。
+走出门的时候，身后传来一声水响。
+@sfx sfx_water
+你回头看。
+@bg washroom faucet
+@sfx sfx_water_drip
+第三个水龙头在滴水。
+你关紧了的——你记得很清楚，你拧到底，还多拧了半圈。
+@wait 0.8
+你走回去，又拧了一次。这次拧到拧不动为止。
+水停了。
+你数到十，没有再响。
+@set truth +1
+你出去了。
+> 走到楼梯口的时候，你听见身后"嗒"的一声。
+@sfx sfx_water_drip
+> 你没有回头。
+@goto ch1_free_hub
+
+== ch1_wash_count
+镜子很长，能照到你，和你身后那排隔间。
+隔间一共五个。
+镜子里也是五个。你数了两遍，确认没错。
+@wait 0.8
+然后你低头，看隔间门下面的缝。
+> 每个隔间门离地大概二十公分。
+> 你能看见地面，也能看见有没有人站在里面。
+@wait 1.0
+你数脚。
+> 第一间：空的。
+> 第二间：空的。
+> 第三间：空的。
+> 第四间：一双脚。白球鞋，鞋头朝外。
+> 第五间：空的。
+@fx heartbeat 0.9
+一双脚。有人在里面，很正常。
+你正要收回视线——
+@wait 0.8
+> 第四间的门下面，还有一双。
+> 在第一双的正后方，鞋头也朝外。
+> 两双脚，一前一后，站在同一个隔间里。
+@fx glitch 0.6
+@set truth +2
+@set sanity -1
+@clue clue_headcount
+隔间只有半平米。两个人站进去，得贴着。
+你等了一会儿。
+没有说话声，没有动静，也没有水声。
+@wait 1.0
+你走了。
+> 走到门口的时候，你听见第四间的插销"啪"地弹开。
+> 你没有回头。
+@set sanity -1
+@goto ch1_free_hub
+
+== ch1_side_board
+@bg schoolyard day
+@bgm bgm_investigate
+@clearchars
+操场后面有一块生了锈的公告栏，上面贴的东西一层压一层，最上面是这学期的卫生检查表。
+你把边角掀起来往下看。
+@sfx sfx_page
+* 一层层往下揭 -> ch1_board_deep
+    @set truth +3
+    @set route_investigate +1
+* 只看最上面那张 -> ch1_board_top
+    @set route_obedience +1
+
+== ch1_board_deep
+你揭到第七层的时候，摸到一张比其他都硬的纸——是打印的，纸质发脆。
+@note 关于旧教学楼暂停使用的通知\n经研究决定，自即日起东教学楼（旧）暂停使用，全体师生不得入内。\n原广播站临时迁至行政楼二层。\n特此通知。\n（落款日期被撕掉了）
+@set truth +3
+通知背面有铅笔写的一行小字，字迹很急：
+@note 广播站没有迁。晚上还在响。
+@set truth +2
+@set memory_echo +1
+@clue clue_first_rollcall
+@goto ch1_free_hub
+
+== ch1_board_top
+卫生检查表。高二（三）班这个月三次不合格，扣分理由都是同一条：教室内有一处灰尘长期未清理。
+备注栏写着：最后一排靠窗课桌。
+@set truth +2
+@clue clue_erased_seat
+@goto ch1_free_hub
+
+== ch1_side_lost
+@bg hallway day
+@bgm bgm_unease
+@clearchars
+女生宿舍楼下摆着一个失物招领箱。
+纸箱做的，泡过雨，四个角都软塌了，用透明胶缠了好几圈才没散架。
+箱子上贴着一张纸，字迹已经被雨泡糊了，只能认出"失物"两个字。
+@wait 0.6
+里面是些没人认领的东西。
+水杯、发绳、一只手套、几本练习册、半包餐巾纸、一个掉了链子的钥匙扣。
+> 都是些丢了也不会有人找的东西。
+> 或者说——是些丢了之后，没有人还能来找的东西。
+@set truth +1
+* 翻一翻 -> ch1_lost_dig
+    @set truth +2
+    @set route_investigate +1
+* 看箱子上有没有登记本 -> ch1_lost_log
+    @set truth +2
+    @set memory_echo +1
+* 算了 -> ch1_free_hub
+    @set route_obedience +1
+
+== ch1_lost_log
+@bg prop register
+箱子旁边的墙上钉着一块木板，上面挂着一个活页本，用尼龙绳拴着。
+本子封面写着"失物登记"。
+你翻开。
+@sfx sfx_page
+格式很简单：日期、物品、拾得人、认领人、认领日期。
+大部分行的"认领人"那一栏是空的。
+@wait 0.8
+你往前翻。一年，两年，三年。
+纸越来越黄。
+翻到五年前那几页的时候，你停下了。
+@fx names 0.6
+有一整页，"物品"栏写的都是同一类东西：
+> 校服外套（旧款）
+> 铁皮文具盒
+> 借书证
+> 值日表（手抄）
+> 校服外套（旧款）
+认领人栏，全部空白。
+@set truth +2
+@set memory_echo +1
+最后一行的"拾得人"那一栏，写着两个字：
+> 许清
+@wait 1.0
+> 五年前她就在这所学校了。
+> 而且是她一件一件捡回来的。
+@set truth +2
+@clue clue_xuqing_barefoot
+@goto ch1_free_hub
+
+== ch1_lost_dig
+你把手伸进去翻。
+纸箱底部是潮的，手指碰到一层滑腻的东西。
+在最底下，你摸到一个硬的、方的东西。
+@sfx sfx_page
+@bg prop pencil_case
+拿出来看——是一个铁皮文具盒。
+老式的那种，长方形，盖子上原本贴着贴纸，现在只剩下一圈胶印和褪色的轮廓。
+盒子有点变形，一角凹进去了。
+@wait 0.8
+你打开。
+里面很整齐——整齐得不像被丢弃的东西。
+一支钢笔，笔帽扣着。一块橡皮，用剩下小半。一把塑料尺，边缘磨圆了。
+还有一支中性笔，笔杆上的漆掉了一半。
+@wait 0.6
+你把钢笔拿起来。笔杆侧面用刀刻着两个字，刻得很浅，但认得出。
+@fx names 0.6
+> 沈禾
+@set truth +2
+@set shenhe_focus +2
+@set memory_echo +1
+@clue clue_shenhe_name
+@flag flag_shenhe_name_full
+你握着那支笔，站在原地站了一会儿。
+> 一个人丢了文具盒，会来找。
+> 一个人丢了文具盒五年没来找，只有一个原因。
+@wait 1.0
+* 把笔盒放回去 -> ch1_lost_back
+    @set route_obedience +1
+* 把笔拿走 -> ch1_lost_take
+    @set shenhe_focus +2
+    @set truth +1
+* 把盒子里的东西数一遍 -> ch1_lost_count
+    @set truth +3
+    @set sanity -1
+
+== ch1_lost_count
+你把盒子里的东西一件一件拿出来，摆在箱子盖上。
+> 钢笔（刻"沈禾"）。
+> 橡皮。
+> 塑料尺。
+> 中性笔（掉漆）。
+四件。
+@wait 0.8
+你把盒子翻过来，抖了抖。
+从夹层里掉出来一张对折的纸。
+@sfx sfx_page
+展开是一张手抄的值日表，用铅笔写的，字很工整。
+@note 值日表\n本周五：沈禾\n下周五：沈禾\n下下周五：沈禾\n\n（旁边有另一个人的字迹，圆珠笔，写得很用力）\n为什么每周都是你？\n\n（铅笔字回复）\n因为没人跟我换。
+@wait 1.2
+@set truth +3
+@set sanity -1
+@set memory_echo +2
+你把纸重新折好，放回夹层。
+把四件东西一件一件放回去，位置和刚才一模一样。
+盖上盒子。
+@wait 0.8
+> 那支掉漆的中性笔不是她的。
+> 那个笔迹也不是她的。
+> 有人跟她换过班——至少，有人问过。
+@set truth +1
+@goto ch1_lost_after
+
+== ch1_lost_back
+你把笔放回盒子，盖上盖，塞回箱子最底下，用几本练习册压好。
+@wait 0.8
+走出去十几步之后，你听见身后纸箱里有轻微的响动。
+很轻。像有人在里面翻找。
+@sfx sfx_page
+@set sanity -1
+你没有回头。
+@goto ch1_free_hub
+
+== ch1_lost_take
+你把那支钢笔插进口袋。
+它比看上去凉。
+@fx heartbeat 0.7
+@set sanity -1
+走出去几步，你把手插进口袋摸了摸——想确认它还在。
+它在。
+> 在这里，把写着别人名字的东西带在身上，叫什么来着。
+@wait 0.8
+> 你想不起来。
+> 但你觉得应该有个说法。
+@set memory_echo +1
+@goto ch1_free_hub
+
+== ch1_lost_after
+你把箱子恢复原样，站起来拍了拍手上的灰。
+@wait 0.6
+> 铁皮文具盒。
+> 你记住了它的样子——盖子上褪色的贴纸轮廓，凹进去的那一角。
+> 后来你会在另一个地方再见到它。
+@set truth +1
+@goto ch1_free_hub
+
+== ch1_side_office
+@bg office day
+@bgm bgm_investigate
+@clearchars
+教师办公室外面的走廊上挂着一排值班表，每周一换。
+你走过去看今晚的值班安排。
+@sfx sfx_page
+> 周四晚：值班教师　许清
+> 周四晚（旧楼）：值班教师　许清
+@set truth +2
+旧楼那一栏本该是空的——那栋楼封了五年。
+但每一周，每一栏，写的都是同一个名字。
+@set truth +2
+@set memory_echo +1
+* 数一数这张表用了多少年 -> ch1_office_count
+    @set truth +3
+* 走开 -> ch1_free_hub
+    @set route_obedience +1
+
+== ch1_office_count
+值班表的角上有编号：第 261 周。
+一学年按四十周算，261 周是六年半。
+但许清来这所学校，档案上写的是三年。
+@fx glitch 0.6
+@set truth +3
+@set memory_echo +2
+@clue clue_xuqing_barefoot
+@goto ch1_free_hub
+
+== ch1_free_end
+@bg classroom day
+@bgm bgm_day_class
+@clearchars
+预备铃响了。你回到教室，坐进最后一排靠窗那个位置。
+@sfx sfx_bell
+桌面被人擦过了。擦得很干净，干净得能看见桌下那个“沈”字的刻痕里，积的灰也被抠掉了。
+@set truth +1
+@goto ch1_sc4_hub

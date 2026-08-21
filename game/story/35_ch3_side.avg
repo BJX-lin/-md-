@@ -1,0 +1,356 @@
+-- 第三章 支线：熄灯后的走廊 / 水房 / 天台
+-- 高压夜间自由探索，对应 d.md 第三章「宿舍规则实战」
+
+== ch3_night_hub
+@advtime 20
+@bg dorm dark
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+查寝过去了。宿舍里三个人都醒着，但没有人说话。
+离天亮还有四个小时。
+@if visited:ch3_night_hub
+> 你还可以再做一件事。但每多待一分钟，走廊上的声音就更近一点。
+@endif
+* [if !visited:ch3_dorm_hub] 不出去，就待在屋里 -> ch3_dorm_hub
+    @set route_empathy +1
+* [if !visited:ch3_side_water] 去水房接水（顺便看看走廊） -> ch3_side_water
+    @set route_investigate +1
+* [if !visited:ch3_side_roof] 上天台 -> ch3_side_roof
+* [if !visited:ch3_side_lock] 检查宿舍门锁 -> ch3_side_lock
+* 留意李恒 -> liheng_hub
+* 熬到后半夜再说 -> ch3_deep_hub
+    @set truth +1
+* 躺下，撑到天亮 -> ch3_night_end
+
+== ch3_side_water
+@bg hallway dark
+@bgm bgm_horror
+@amb amb_hallway
+@clearchars
+水房在走廊尽头。声控灯坏了三盏，你得摸着墙走。
+@sfx sfx_step
+@fx fog 0.8
+走到一半，你听见前面有水声。
+不是水龙头没关紧的那种滴答，是有人在洗东西——搓布料的声音。
+@fx heartbeat 1.0
+* 继续往前 -> ch3_water_go
+    @set truth +2
+    @set sanity -1
+* 退回宿舍 -> ch3_water_back
+    @set route_obedience +1
+* 出声问“谁在那儿” -> ch3_water_ask
+    @set taboo_count +1
+    @set shenhe_focus +2
+
+== ch3_water_go
+@bg washroom mirror
+你贴着墙往前挪。
+水房门开着，里面没有开灯。最里面那个水槽前，有一个人背对着你，在洗一件校服。
+@show shenhe hollow center
+@fx glitch 0.5
+水是黑的。
+@if gore>=1
+不是脏，是那件校服在往外渗东西。渗出来的东西比水沉，一坨一坨沉在槽底。
+@fx bloodburst 0.6
+@endif
+@set sanity -1
+@set truth +2
+她没有回头。但她开口了。
+shenhe(hollow)：洗不掉。
+shenhe(hollow)：烧过的东西，洗多少次都还是那个味。
+* 不说话，慢慢退 -> ch3_water_retreat
+    @set truth +1
+* “那件衣服是你的？” -> ch3_water_ask2
+    @set truth +3
+    @set shenhe_focus +2
+* [if item:item_page109] 把109页残片放在门口 -> ch3_water_offer
+    @set save_route_score +2
+    @set truth +2
+
+== ch3_water_retreat
+你一步一步往后退，退到走廊上，然后转身走。
+水声跟了你三步，就停了。
+@set sanity -1
+@clearchars
+@goto ch3_night_hub
+
+== ch3_water_ask2
+shenhe(hollow)：不是我的。
+shenhe(hollow)：是替我坐过那把椅子的人的。
+shenhe(hollow)：一共八件。这是第八件。
+@fx names 0.8
+@set truth +3
+@set memory_echo +2
+@set sanity -1
+me：第九件呢。
+她终于转过来一点点，只转了一半。
+shenhe(hollow)：第九件还在你身上。
+@fx heartbeat 1.6
+@set shenhe_focus +2
+@clearchars
+@goto ch3_night_hub
+
+== ch3_water_offer
+你把那块三角形的纸角放在水房门口的地上，然后后退。
+@sfx sfx_page
+水声停了。
+@wait 1.2
+shenhe(sad)：……你看懂了。
+me：看懂了。所以我不会替你答。
+shenhe(sad)：那你比前面几个都强。
+@set save_route_score +2
+@set truth +2
+@item -item_page109
+@flag flag_shenhe_softened
+@set shenhe_focus +1
+@clearchars
+@goto ch3_night_hub
+
+== ch3_water_back
+你转身回宿舍，一路没有回头。
+背后的水声一直响到你关上门。
+@set truth +1
+@goto ch3_night_hub
+
+== ch3_water_ask
+me：谁在那儿？
+水声停了。
+@wait 1.2
+@sfx sfx_whisper
+@fx bigshake 0.8
+一个声音贴着你的耳朵回答。它在你身后，不在水房里。
+unknown(flat)：查寝。
+@set sanity -1
+@set shenhe_focus +2
+@set taboo_count +1
+你没有敢回头。你一路小跑回宿舍，把门反锁。
+@sfx sfx_steps_run
+@goto ch3_night_hub
+
+== ch3_side_roof
+@bg rooftop overlook
+@bgm bgm_unease
+@amb amb_hallway
+@clearchars
+宿舍楼的天台门锁着，但锁扣是坏的——螺丝松了，用力一推，整个锁扣连着木头一起转。
+你侧身挤出去。
+@sfx sfx_door
+天台上风很大。
+雨停了，云散开一点，能看见几颗星。地面还是湿的，积水映着天。
+@wait 0.8
+从这里能看见半个校园。
+教学楼、操场、食堂、传达室。还有东边那栋楼。
+三层最左边那扇窗，还亮着。
+@set truth +1
+你在天台边缘站了一会儿，风把校服吹得鼓起来。
+> 这是你三天以来，第一次觉得空气是干净的。
+* 数一数整个校园还有几盏灯 -> ch3_roof_count
+    @set truth +3
+* 在天台边缘坐一会儿 -> ch3_roof_sit
+    @set sanity +6
+* 找找有没有人来过的痕迹 -> ch3_roof_trace
+    @set truth +2
+    @set route_investigate +1
+* 看看能不能看见广播室里面 -> ch3_roof_watch
+    @set truth +3
+    @set shenhe_focus +2
+    @set sanity -1
+
+== ch3_roof_watch
+你眯起眼睛，看向东边那栋楼的三层。
+太远了，大概两百米，而且只有一扇窗有光。
+@wait 0.8
+你摸出手机，打开相机，把镜头拉到最大。
+画面很糊，抖得厉害。你把手肘撑在天台的水泥围栏上，稳住。
+@wait 1.0
+屏幕上是那扇窗。
+木条钉得很密，但中间那道缝——大概两指宽——能看进去一点。
+缝里是暗红色的，一闪一闪。
+@fx heartbeat 1.0
+你调整角度，想看清里面。
+@wait 1.2
+@fx glitch 0.6
+有东西从缝前面经过。
+不是走过——是"经过"，速度均匀，没有起伏，像被什么东西平移过去的。
+从左到右，用了大概两秒。
+@set sanity -1
+@set truth +2
+你屏住呼吸，继续拍。
+@wait 1.0
+它又经过了一次。
+这次是从右到左。同样的速度，同样的高度。
+@wait 0.8
+第三次。从左到右。
+> 它在来回走。
+> 在一间十几平米的屋子里，来回走了五年。
+@set truth +2
+@set shenhe_focus +2
+@set memory_echo +1
+你放下手机。
+手机屏幕暗下去之前，你瞥见了拍摄时长：00:03:47。
+> 你以为自己只看了十几秒。
+@fx glitch 0.7
+@set sanity -1
+@goto ch3_night_hub
+
+== ch3_roof_count
+你数：
+> 教师宿舍两盏。
+> 传达室一盏。
+> 旧楼一盏。
+一共四盏。
+@wait 0.8
+你又数了一遍，怕自己数漏。
+@wait 1.0
+五盏。
+@fx heartbeat 1.4
+多出来的那一盏，在你正下方——
+你们宿舍那一层。307的窗。
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+307此刻应该是黑的。熄灯两个小时了。
+你趴在围栏上往下看，但角度不对，看不见自己宿舍的窗。
+@wait 1.0
+你跑下楼。
+@sfx sfx_steps_run
+推开307的门——
+@sfx sfx_door
+灯是灭的。
+三个人都在床上。呼吸声很平稳。
+@wait 0.8
+你站在门口，等眼睛适应黑暗。
+> 没有人起来开过灯。
+> 而且从里面看，窗户是黑的。
+@set sanity -1
+你上床躺下。躺了很久也睡不着。
+> 你在想一个问题：如果从上面看是亮的，从里面看是黑的——
+> 那么亮着的那盏灯，照的是什么？
+@set truth +1
+@goto ch3_night_hub
+
+== ch3_roof_sit
+你在天台边缘坐下，两条腿垂在外面。
+下面是四层楼的高度，水泥地。
+风很凉，吹在脸上，把这三天堵在脑子里的东西吹散了一点。
+@wait 1.0
+你想起今天早上刷牙的时候，镜子里的自己是同步的。
+抬手，它抬手。张嘴，它张嘴。一点延迟都没有。
+> 一整天里，这是唯一一件正常的事。
+> 而你居然要靠这个来安慰自己。
+@set sanity +5
+@wait 0.8
+你想起妈妈送你来的那天。
+她只送到校门口就走了，说要赶最后一班车。
+她走的时候你在后面喊了一声，她回头挥了挥手。
+@wait 1.0
+> 你想不起来她那天穿的什么衣服。
+> 你想得起来校门口挂钟慢了四分钟，想得起来传达室老秦躺椅的颜色。
+> 但你想不起来你妈那天穿的什么。
+@fx heartbeat 0.6
+@set memory_echo +1
+@set sanity -1
+> 你告诉自己这很正常。人不会记住所有细节。
+> 然后你在天台上又坐了十分钟，一直在努力回想。
+@wait 1.0
+最后你站起来，拍了拍裤子上的灰，回宿舍去了。
+> 你需要这样的时刻。
+> 不然撑不到最后。
+@goto ch3_night_hub
+
+== ch3_roof_trace
+天台角落堆着一些旧课桌，摞成两摞，用篷布盖着，篷布被风掀开了一角。
+你把篷布掀开。
+@sfx sfx_page
+桌面上刻满了字。
+大多数是名字加名字，中间画一个心，或者"XX必胜""距高考还有XX天"。
+有的刻得很深，有的只是圆珠笔写的，已经快看不清了。
+@wait 0.8
+你一张一张看过去。
+在最下面那张桌子上，你看见一行刻得很深的字。
+@sfx sfx_write
+@note 我不想再替人答到了。
+@wait 1.0
+底下还有一行，字更小：
+@note ——五年级三班？不对，是高二三班。
+最后是一个字，刻到一半断了：
+> 沈
+@set truth +3
+@set memory_echo +2
+@clue clue_dont_answer
+@flag flag_shenhe_name_full
+@clue clue_shenhe_name
+刀口很新。
+你用指甲刮了一下——木屑是浅色的，没有氧化发黑。
+@wait 0.8
+> 这行字是最近刻的。
+> 可它写的是五年前的事。
+> 而且写的人搞错了自己在哪个年级——"五年级三班"是小学的说法。
+@fx glitch 0.5
+@set sanity -1
+@set truth +1
+你把篷布盖回去。
+@goto ch3_night_hub
+
+== ch3_side_lock
+@bg dorm_door dark
+@bgm bgm_horror
+@clearchars
+你走到门边，检查门锁。
+插销是插好的。你亲手插的。
+@wait 0.8
+但门把手上，有一圈很浅的水渍——从外面握过的形状。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +2
+* 再插一道椅子顶住 -> ch3_lock_chair
+    @set route_obedience +2
+* 擦掉水渍 -> ch3_lock_wipe
+    @set taboo_count +1
+* 把手按在同一个位置比一比 -> ch3_lock_compare
+    @set truth +3
+    @set sanity -1
+
+== ch3_lock_chair
+你把椅子搬过来，椅背卡在门把手下面。
+做完这件事，你心里踏实了一点点。
+@set truth +1
+> 但你知道，昨天晚上那扇门，是被从外面拧到底的。椅子只能挡住会用力的东西。
+@goto ch3_night_hub
+
+== ch3_lock_wipe
+你用袖子把水渍擦掉。
+擦完之后，把手上又慢慢渗出一圈新的。
+@fx glitch 0.7
+@sfx sfx_water
+@set sanity -1
+@set truth +1
+@goto ch3_night_hub
+
+== ch3_lock_compare
+你把自己的手按在那圈水渍上。
+大小一样。指节的位置一样。虎口的宽度一样。
+@fx heartbeat 1.6
+@fx names 0.6
+@set sanity -1
+@set memory_echo +3
+@set truth +3
+@flag flag_true_linday_status_hint
+@clue clue_self_repeat
+> 是你自己的手印。
+> 从门外按上去的。
+@goto ch3_night_hub
+
+== ch3_night_end
+@bg dorm dark
+@bgm bgm_unease
+@clearchars
+你躺下，把被子拉到下巴。
+天亮之前，你一共听见十一次脚步声经过门口。第七次的时候，脚步停了很久。
+@set sanity -1
+@if truth>=999
+> 你现在能听出来了：那不是一个人在走。是同一个人，走了十一遍。
+@set truth +1
+@endif
+@goto ch3_sc9

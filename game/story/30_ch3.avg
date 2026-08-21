@@ -1,0 +1,1426 @@
+-- 第三章《熄灯》—— 宿舍的倒影
+-- 场景：回宿舍 / 307规则纸 / 梁野状态回流 / 查寝前对话 / 许清残页 / 第一次正式查寝 / 名单夜间改写 / 救或弃 / 周叙坦白 / 收束
+
+== ch3_start
+@chapter 3 熄灯
+@time 3 16:30
+@set sanity +6
+@bg dorm_door night
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@autosave
+第三天。
+整个白天都在下雨。不是暴雨，是那种没完没了的、细密的雨，下得人心里发霉。
+教学楼的走廊积了一层水。不是漏雨——是湿气重到墙面凝水，顺着墙根淌下来，在地砖上摊成薄薄一层。
+踩上去有回声。你走一步，回声跟一步，但慢半拍。
+@set truth +1
+@wait 0.6
+你一整天都在想同一件事。
+> 昨晚推车的轮子停在你门口之后，就再没响过。
+> 不是走远了。是停了。
+> 一个推着车的人，停在你门口，然后就那样一直站着，直到天亮。
+@set sanity -1
+你今天上课几乎没听进去。第二节课的时候，物理老师叫你回答问题，你站起来，忘了自己要说什么。
+全班都在看你。梁野在后面小声提醒了一句，你才反应过来。
+坐下的时候，你听见前排两个女生在小声说话。
+classmate：他撑不过这个月。
+classmate：上次那个也是这样，先是上课发呆……
+她们没有恶意。这才是最糟的——她们只是在陈述一个见过很多次的规律。
+@set truth +2
+@set sanity -1
+@wait 0.8
+晚自习提前结束了。
+广播里通知：因雷雨天气，今晚晚自习提前至九点结束，请同学们尽快回宿舍。
+@sfx sfx_broadcast_click
+最后加了一句：
+radio：今晚不点名。
+@fx heartbeat 0.8
+> 广播说不点名。
+> 这句话本身就意味着——本来是要点的。
+> 而且意味着，"点名"这件事是有人在安排的。有人可以决定今晚点，或者不点。
+@set truth +2
+@goto ch3_day_hub
+
+-- ================================================= Scene 2 307规则纸
+== ch3_sc2
+@timeat 3 21:20
+@bg dorm night
+@amb amb_dorm_night
+@clearchars
+你们回到宿舍的时候是九点二十。
+走廊上比平时热闹——晚自习提前结束，大家都在洗漱、打水、串门。这种嘈杂让人安心。
+307的门是关着的。
+周叙先到，推门进去，然后停在门口没动。
+@show zhouxu cold right
+me：怎么了？
+他侧身让开。
+你走进去。
+屋里黑着。窗没开，却有一股潮得发霉的风在床铺之间慢慢转——你能感觉到它擦过你的小腿。
+@fx fog 0.5
+李恒摸到开关，把灯打开。
+@sfx sfx_click
+桌上多了一张纸。
+就在四张桌子拼起来的公共桌面正中间，压在一个空搪瓷缸下面。
+字迹很新。墨还泛潮——你伸手碰了一下，指腹沾上一点湿。
+@sfx sfx_page
+@note 【307 夜间查寝注意事项】\n一、听见敲门，先数影子。\n二、若门外人数多于影子数，不要回答。\n三、若影子数多于人数，不要开门。\n四、若有人用熟人的声音叫你，先确认床位。\n五、点名时若听见被删除者姓名，保持沉默。\n六、查寝结束前，不要照镜子。
+@flag flag_dorm_rule_known
+@set truth +3
+@clue clue_terms
+四个人围着那张纸看了很久。
+李恒——那个一直不说话的室友——第一个开口。
+classmate：这是谁写的。
+没有人回答。
+他把纸拿起来，翻过来看背面。背面是空白的。
+他又把纸放回原位，压回搪瓷缸下面，位置摆得和刚才一模一样。
+然后他去洗漱了，从头到尾没再说一个字。
+@set truth +1
+@if !death:梁野
+@show liangye nervous left
+liangye(nervous)：这字……像刚写的。
+@endif
+zhouxu(cold)：不是宿管写的。
+* “像谁的字？” -> ch3_s2_a
+    @set truth +1
+* “这是不是她在提醒我们？” -> ch3_s2_b
+    @set route_empathy +1
+    @set shenhe_focus +1
+* “你以前见过这张纸？” -> ch3_s2_c
+    @set truth +2
+* “第六条为什么是镜子？” -> ch3_s2_d
+    @set truth +2
+    @set sanity -1
+
+== ch3_s2_a
+@if flag_library_page109
+你把纸凑近窗口的月光。
+横折的收笔、竖钩最后那一点点回锋——和109页残片上那五个字一模一样。
+me：像图书馆那页残字。
+@set truth +2
+@set memory_echo +1
+@if !death:梁野
+liangye(terrified)：那就是她写的。
+liangye(terrified)：她……她在教我们怎么活？还是在教我们怎么排队？
+@endif
+@else
+me：字挺工整。像老师写的。
+zhouxu(cold)：老师不会写第六条。
+zhouxu(cold)：老师不会知道镜子的事。
+@set truth +1
+@endif
+@goto ch3_s2_end
+
+== ch3_s2_b
+周叙冷笑了一下，笑意很薄。
+zhouxu(cold)：提醒？
+zhouxu(cold)：她也可能是在教你，怎么按她那套规矩活。
+me：那按规矩活，会怎么样？
+zhouxu(cold)：会活着。也会一直留在这儿。
+@set truth +1
+@goto ch3_s2_end
+
+== ch3_s2_c
+周叙沉默了一会儿。
+zhouxu(sad)：见过。
+zhouxu(sad)：但上次只有四条。
+@flag flag_zhouxu_confessed_part
+@set truth +2
+> 规则在增加。
+> 说明这不是死循环的复读，而是有人在一次次修补它。
+> 修补的人，是在防着谁？
+@goto ch3_s2_end
+
+== ch3_s2_d
+me：前五条我都能理解。
+me：第六条为什么是镜子？
+周叙看了你一眼。
+zhouxu(flat)：因为镜子会多照出一个。
+me：多照出谁？
+zhouxu(flat)：不知道。
+zhouxu(flat)：知道的人，第二天就不在了。
+@wait 0.8
+@if !death:梁野
+梁野蹲在自己床边，抱着膝盖。
+liangye(fear)：我照过一次。
+你们都看向他。
+liangye(fear)：去年冬天。查寝的时候我憋不住尿，去水房，顺手看了一眼镜子。
+me：看见什么了？
+liangye(fear)：什么都没有。
+liangye(fear)：镜子里就我一个。
+他抬起头。
+liangye(terrified)：可我数了一下，镜子里那个人，眨眼的次数比我多。
+@fx glitch 0.7
+@set sanity -1
+@set truth +2
+@set memory_echo +1
+@endif
+@goto ch3_s2_end
+
+== ch3_s2_end
+@clearchars
+@goto ch3_sc3
+
+-- ================================================= Scene 3 梁野状态回流
+== ch3_sc3
+@bg dorm night
+@bgm bgm_unease
+@if death:梁野
+@goto ch3_ly_missing
+@elif state:liangye_state==half_assimilated
+@goto ch3_ly_half
+@else
+@goto ch3_ly_alive
+@endif
+
+== ch3_ly_alive
+@show liangye fear left
+梁野蹲在床边翻柜子，翻得很急，铁皮柜门撞得咣咣响。
+me：你找什么？
+liangye(fear)：蜡烛。上次停电买的。
+liangye(fear)：手电不行。手电照过去，那边要是有东西，会退。蜡烛不会——蜡烛只是亮，不吓人。
+@set truth +1
+* 帮他一起找 -> ch3_ly_help
+    @set trust_liangye +2
+    @set route_empathy +1
+* “你冷静点。” -> ch3_ly_calm
+    @set trust_liangye +1
+* “烛光反而照出更多影子。” -> ch3_ly_cold
+    @set trust_liangye -1
+    @set route_hostility +1
+
+== ch3_ly_help
+你蹲下去帮他翻。在柜子最里面摸到半截蜡烛，还有一个打火机。
+@item +item_candle
+你把蜡烛递给他。他接的时候，两只手都在抖，抖到握不住，你只好用手包住他的手。
+liangye(sad)：……谢了。
+liangye(sad)：林昼，我跟你说个事。
+liangye(sad)：我妈那个声音，昨晚在走廊上又叫了一次。
+liangye(sad)：这次它叫的是你的小名。
+@fx heartbeat 0.8
+@set sanity -1
+@set truth +2
+@flag flag_liangye_returned
+@goto ch3_sc4
+
+== ch3_ly_calm
+liangye(fear)：我很冷静。
+他把柜门关上，靠着床沿坐下，把借书卡从口袋里掏出来，捏在手里。
+liangye(fear)：我就是想在天亮之前，一直看着这张卡。
+liangye(fear)：卡上有我名字。看着它，我就知道我还是我。
+@set truth +1
+@flag flag_liangye_returned
+@goto ch3_sc4
+
+== ch3_ly_cold
+他停下动作，回头看你。
+liangye(sad)：……你说得对。
+他把柜门轻轻关上，没再找了。那一晚剩下的时间，他一直背对着你躺着。
+@set trust_liangye -1
+@flag flag_liangye_returned
+@goto ch3_sc4
+
+== ch3_ly_half
+@show liangye hollow left
+@fx glitch 0.6
+梁野在。
+他坐在自己床上，姿势很端正，两手放在膝盖上，眼睛睁着，看着门。
+me：梁野。
+他转过头。转的时候，脖子先动，眼睛慢了一拍才跟上。
+liangye(hollow)：林昼，你回来了。
+liangye(hollow)：昨天晚自习你怎么没来。
+me：昨天我们一起去的旧楼。
+liangye(hollow)：（他想了想）
+liangye(hollow)：……对。是一起去的。
+liangye(hollow)：我们明天一起去，好不好。
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+@flag flag_liangye_half_assimilated
+> 他的时态是乱的。
+> 而且这间宿舍里，他没有影子。
+@fx eyes 0.8
+@goto ch3_sc4
+
+== ch3_ly_missing
+梁野的床是空的。
+被子叠得整整齐齐——比他活着的时候整齐得多。
+@bg dorm dark
+@fx fog 0.6
+你掀开被角。
+@sfx sfx_water
+被子下面压着一团湿头发。不多，一小撮，用红绳扎着。
+@fx bloodburst 0.4
+@set sanity -1
+@set truth +2
+@set memory_echo +2
+@show zhouxu sad right
+zhouxu(sad)：别碰。
+zhouxu(sad)：那是留给我们看的。它想让我们知道，它做到了。
+me：他还能回来吗？
+周叙没有回答。他把梁野的被子重新盖好，动作很轻，像怕吵醒什么。
+@goto ch3_sc4
+
+-- ================================================= Scene 4 查寝前对话
+== ch3_sc4
+@bg dorm night
+@bgm bgm_unease
+@clearchars
+@show zhouxu cold right
+熄灯还有二十分钟。周叙一直坐在自己的床沿，没有躺下。
+zhouxu(cold)：林昼。今晚会来。
+me：你怎么知道？
+zhouxu(cold)：因为昨晚它到你门口就停了。停了，就说明它记下了门牌号。
+* [lock flag_zhouxu_secret_answer] “你今天早读，又替她应了一次。” -> ch3_s4_pact
+    @set truth +4
+    @set trust_zhouxu +3
+    @set save_route_score +3
+* “你替沈禾答过几次？” -> ch3_s4_a
+    @set truth +3
+    @set trust_zhouxu -1
+* “今晚我们该怎么做？” -> ch3_s4_b
+    @set trust_zhouxu +2
+    @set route_obedience +1
+* “你是不是一直在拿我们挡？” -> ch3_s4_c
+    @set trust_zhouxu -2
+    @set route_hostility +1
+
+== ch3_s4_pact
+@bg dorm night
+@bgm bgm_truth
+@clearchars
+@show zhouxu tired right
+me：你今天早读，又替她应了一次。
+@wait 1.4
+@fx heartbeat 1.0
+周叙的背绷了一下。
+@wait 0.8
+zhouxu(tired)：你听见了。
+me：没听见。我是看见你嘴唇动了。
+@wait 1.0
+@set truth +3
+@set memory_echo +2
+zhouxu(tired)：……三年了，第一个看见的。
+@wait 1.2
+他从床沿站起来，走到窗边。
+@wait 0.6
+zhouxu(tired)：那今晚的事，我跟你直说。
+@wait 1.0
+@set trust_zhouxu +2
+zhouxu(tired)：它今晚会念梁野。
+me：你怎么确定是他？
+@wait 1.2
+zhouxu(tired)：因为昨天他跟我说他做梦了。梦里有人点名，他答了。
+@wait 0.8
+@set truth +4
+@set shenhe_focus +2
+zhouxu(tired)：我姐走之前那三天，天天做这个梦。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+me：所以你早就知道。
+zhouxu(tired)：知道。
+@wait 0.8
+zhouxu(tired)：但我不敢跟他说。说了他会怕，一怕就更容易应。
+@wait 1.0
+@set truth +3
+@wait 0.6
+@if flag_liangye_warned_deep
+me：我今天下午跟他说了。
+@wait 1.2
+他猛地回头。
+@wait 0.8
+zhouxu(tired)：你说了什么。
+me：我说梦里也算。我让他今晚不要出声，让你应。
+@wait 1.4
+@fx heartbeat 1.4
+@set truth +4
+周叙看了你很久。
+@wait 1.0
+zhouxu(tired)：……你怎么知道我会应。
+me：因为你替一个不认识的人应了三年。
+@wait 0.8
+me：梁野你认识。
+@wait 1.2
+@set trust_zhouxu +4
+@set save_route_score +5
+@set route_empathy +3
+他没有说话。他把窗关上了。
+@wait 1.0
+zhouxu(tired)：好。
+@wait 0.6
+zhouxu(tired)：今晚我应。你按着他，别让他起来。
+@wait 1.2
+@set truth +3
+@flag flag_night_plan_ready
+> 你们两个人，在熄灯前二十分钟，定下了一个没有任何依据的计划。
+@wait 0.8
+> 但这是三天以来，第一次有两个人朝同一个方向使劲。
+@set save_route_score +3
+@set memory_echo +2
+@else
+me：那今晚呢。
+@wait 1.0
+zhouxu(tired)：今晚我尽量应在他前面。
+zhouxu(tired)：但他要是自己先出声了，我拦不住。
+@wait 1.2
+@set truth +2
+@set save_route_score +2
+> 你想起下午在教室，你把话咽了回去。
+@wait 0.8
+@set sanity -1
+@endif
+@wait 1.0
+@clearchars
+@goto ch3_sc5
+
+== ch3_s4_a
+他沉默了很久，久到你以为他睡着了。
+zhouxu(sad)：两次。
+zhouxu(sad)：第一次是高一下学期。那时候我还不知道那个名字是谁。
+zhouxu(sad)：第二次是去年冬天。
+zhouxu(sad)：那天下大雪，晚自习到十点半还不下课，全班坐在教室里冻得发抖。
+zhouxu(sad)：广播念了她的名字，念了十七遍。
+zhouxu(sad)：没有人应。第十八遍的时候，我站起来说了一声“到”。
+me：然后呢？
+zhouxu(sad)：然后就下课了。
+zhouxu(sad)：所有人都很感激我。没有人问我为什么敢答。
+@flag flag_zhouxu_confessed_part
+@clue clue_zhouxu_fill
+@set truth +3
+@if trust_zhouxu>=2
+zhouxu(sad)：林昼，我告诉你这些，是想让你别学我。
+zhouxu(sad)：替人答到，是把自己借出去。借出去的东西，不一定还得回来。
+@set trust_zhouxu +2
+@set truth +1
+@endif
+@goto ch3_sc5
+
+== ch3_s4_b
+zhouxu(flat)：三件事。
+zhouxu(flat)：第一，敲门先数影子。第二，不管谁叫你，先看床位。第三，别照镜子。
+me：为什么不能照镜子？
+zhouxu(flat)：因为镜子里那个，不一定跟你一起做同一件事。
+@set truth +2
+@goto ch3_sc5
+
+== ch3_s4_c
+zhouxu(angry)：我要是想拿人挡，第一晚就把你推出去了。
+me：你昨天让我一个人进广播室。
+他没有反驳。这就是回答。
+zhouxu(sad)：……因为名单上写的是你。
+zhouxu(sad)：不是我怕死。是我替过一次，就知道替一次是什么代价。
+@set truth +2
+@set trust_zhouxu -1
+@goto ch3_sc5
+
+-- ================================================= Scene 5 许清的残页
+== ch3_sc5
+@bg dorm night
+@clearchars
+@bgm bgm_investigate
+你去桌下捡掉在地上的笔，手指在桌板背面摸到一样东西——纸，用胶带粘着。
+@sfx sfx_page
+撕下来，是半张打印纸，被人手写批注过很多遍。抬头印着：教师值班日志（存档件）。
+* 就着窗光看完 -> ch3_s5_read
+    @set truth +3
+    @flag flag_found_xuqing_log_fragment
+    @item +item_log_fragment
+* 先收起来，天亮再看 -> ch3_s5_later
+    @set route_obedience +1
+
+== ch3_s5_later
+你把纸折好塞进枕头下面。
+天亮之后你会看的——如果还有天亮的话。
+@set truth +1
+@flag flag_found_xuqing_log_fragment
+@item +item_log_fragment
+@goto ch3_sc6
+
+== ch3_s5_read
+纸上是一份术语说明，被人用红笔改过三次。
+@note 在册：名字与人对得上，正常参与点名。\n待定：名字在，人不确定在。可被同格替补。\n删除未完成：人已不在，名字未销。\n　　该状态下姓名不得被念全，念全则视为在场申请。\n\n（红笔批注）第109次仍未销。建议继续代答。\n（红笔批注·另一笔迹）不要再代了。她一直没走，是因为你们一直在答。
+@clue clue_terms
+@clue clue_rule_gap
+@set truth +4
+@flag flag_rule_terms_partial
+两种笔迹。前一种工整、冷静，是许清的字——你见过她改作业。
+后一种潦草、笔压很重，和109页残片上的“别替我答到”，是同一个人写的。
+@set memory_echo +2
+@if flag_library_page109
+@set truth +2
+@endif
+@goto ch3_sc6
+
+-- ================================================= Scene 6 第一次正式查寝
+== ch3_sc6
+@timeat 3 22:30
+@bg dorm dark
+@bgm bgm_horror
+@amb amb_dorm_night
+@clearchars
+@autosave
+@sfx sfx_click
+熄灯铃响了。
+整栋楼像被人按了一下，光一下灭透。
+@fx darken 1.0
+黑下来之后的头几分钟，宿舍楼是很吵的——有人还在洗漱，有人在骂骂咧咧找拖鞋，有人在打闹。
+然后声音一层一层退下去。
+十点四十，只剩下水管的滴水声。
+十点五十，连水声都停了。
+@wait 1.0
+你躺在床上，睁着眼睛。
+你能听见另外三个人的呼吸——都不是睡着的呼吸。四个人都醒着，四个人都在装睡。
+@set truth +1
+@wait 1.2
+十一点十四分。
+门外先是很轻的鞋底声。
+@sfx sfx_step
+不是走过来的声音——是已经站在门口，重心换了一下的声音。
+它已经在那儿站了不知道多久。
+@fx heartbeat 1.0
+然后是钥匙串碰门的细响。
+@wait 0.8
+@sfx sfx_knock_pattern
+三下。停。两下。
+和第一晚一模一样。和你在旧楼窗户里看见的灯光闪烁频率，一模一样。
+unknown(flat)：307，查寝。
+@if flag_dorm_rule_known
+> 纸条第一条：听见敲门，先数影子。
+@endif
+* 去看门底影子 -> ch3_s6_shadow
+    @flag flag_peeped_door
+    @set truth +2
+* 不动，听声音 -> ch3_s6_listen
+    @set sanity +2
+    @set route_obedience +1
+* 直接问工号 -> ch3_s6_id
+    @set taboo_count +1
+    @set truth +1
+* 让周叙处理 -> ch3_s6_zhouxu
+* 数宿舍里的呼吸声 -> ch3_s6_count_breath
+    @set truth +3
+    @set sanity -1
+
+== ch3_s6_count_breath
+你没有动。
+你决定先确认一件事——不是门外有几个，而是**屋里**有几个。
+你闭上眼睛，屏住自己的呼吸，听。
+@wait 1.2
+> 周叙的呼吸。上铺，靠窗。很浅，很稳，是刻意控制过的。
+> 梁野的呼吸。对面下铺。急促，带抖，中间还有几次憋住。
+> 李恒的呼吸。对面上铺。慢，长。
+> 三个。
+你松了口气，正要睁开眼——
+@wait 1.0
+@fx heartbeat 1.6
+> 第四个。
+> 就在你床边，离你的脸大概三十公分的地方。
+> 很轻。很平。不快不慢。
+> 而你自己，正屏着呼吸。
+@fx glitch 1.0
+@sfx sfx_breath
+@set sanity -1
+@set memory_echo +3
+@clue clue_headcount
+你没有睁眼。
+你不敢睁眼。
+你保持着屏息的姿势，直到肺里的空气烧起来，直到你必须换气。
+你吸了一口气。
+那个呼吸声也在同一时刻吸了一口气。
+@fx bigshake 0.8
+@set truth +3
+@goto ch3_s6_round2
+
+== ch3_s6_shadow
+@bg dorm_door dark
+你光脚下床，慢慢走到门边。
+地面凉得刺骨。你每走一步都先用脚尖试探，怕踩到什么会响的东西。
+到门边，你蹲下去。
+@wait 0.8
+门缝下的那道光里，有影子。
+你数：
+> 一。
+> 二。
+> 三。
+三道影子。
+@wait 0.8
+可是走廊上的鞋底摩擦声——你现在听得很清楚——至少是四个人在走动。
+@flag flag_shadow_count_wrong
+@clue clue_headcount
+@set truth +2
+@set sanity -1
+@fx shake 0.6
+> 三道影子，四个人的脚步声。
+> 那么第四个，是没有影子的那个。
+@wait 1.0
+就在这时，其中一道影子动了。
+它蹲了下来。
+@fx heartbeat 1.6
+@sfx sfx_breath
+你能听见门另一侧的呼吸——就在你头顶三十厘米的地方，隔着一层门板。
+它也蹲下来了。
+它在和你做同一个动作。
+@set sanity -1
+你屏住呼吸，慢慢往后退。
+退到第三步，你听见门缝那边传来一个很轻的声音。
+unknown(flat)：数完了？
+@set truth +1
+@goto ch3_s6_round2
+
+== ch3_s6_listen
+你没有动。
+门外那声音又说了一遍。
+unknown(flat)：307，查寝。
+第二遍的时候，尾音有点像许清。
+不是很像——是那种"模仿到七成"的像。音色对了，但语调是平的，缺了许清那种压着火的冷。
+@set truth +1
+@wait 1.0
+第三遍。
+unknown(flat)：307，查寝。
+这一遍更像了。
+@fx glitch 0.5
+@set sanity -1
+> 它在学。
+> 它每说一遍，就更像一点。
+@set truth +2
+@goto ch3_s6_round2
+
+== ch3_s6_id
+me：工号多少？
+门外安静了一会儿。
+接着响起极轻的一声笑。
+unknown(faintsmile)：林昼。
+@fx glitch 0.7
+它没有回答工号。
+它只是叫了你的名字——在四个人的宿舍里，它准确地知道刚才说话的是谁。
+@set sanity -1
+@set shenhe_focus +1
+@wait 0.8
+unknown(flat)：你昨天问过一样的问题。
+me：我没有。
+unknown(flat)：不是昨天。
+unknown(flat)：是上一次。
+@fx heartbeat 1.2
+@set sanity -1
+@set memory_echo +3
+@set truth +2
+@goto ch3_s6_round2
+
+== ch3_s6_zhouxu
+@if trust_zhouxu>=2
+周叙在黑暗里做了个手势——你看不见，但你听见他的被子动了一下。
+然后他极轻地开口，几乎只有气声。
+zhouxu(cold)：都别出声。
+zhouxu(cold)：它数不到不出声的人。
+me：那它敲多久？
+zhouxu(cold)：上次敲了四十分钟。
+zhouxu(cold)：忍着。
+@set trust_zhouxu +1
+@set truth +1
+@else
+周叙看了你一眼。
+黑暗里你看不清他的表情，但你能感觉到那个视线。
+他没有立刻开口。
+那一秒的停顿很难形容——像是在权衡，如果必须有人回应，让谁去比较合适。
+@wait 1.0
+zhouxu(flat)：别管它。
+但他说这句话的时候，声音是从上铺**靠里**的方向传来的。
+他往墙边挪了。
+@set trust_zhouxu -1
+@set sanity -1
+@set truth +1
+@endif
+@goto ch3_s6_round2
+
+== ch3_s6_round2
+@bg dorm dark
+门外静了十几秒。
+接着，一个极轻、极熟的女声响起来。
+@wait 1.0
+@sfx sfx_whisper
+@fx heartbeat 1.2
+unknown(flat)：林昼，开门。妈来接你了。
+@flag flag_heard_parent_voice
+@set sanity -1
+> 你妈今年春天刚送你来这所学校。
+> 她送你到校门口就走了，因为要赶最后一班车。
+> 她的声音，就是这样的。
+* “……妈？” -> ch3_s6_mom
+    @set taboo_count +2
+    @set shenhe_focus +2
+    @set sanity -1
+* “先确认床位，别理它。” -> ch3_s6_bed
+    @set trust_zhouxu +1
+    @set truth +2
+* 去看梁野的床 -> ch3_s6_look_ly
+    @set truth +2
+    @set sanity -1
+* 去照镜子确认自己清醒 -> ch3_s6_mirror
+    @set taboo_count +2
+    @set sanity -1
+    @set shenhe_focus +3
+
+== ch3_s6_mom
+你的嘴唇动了。声音很小，但门外立刻贴了过来，像整张脸都压在门板上。
+@fx bigshake 0.9
+@sfx sfx_flesh 0.6
+unknown(smile)：哎。
+unknown(smile)：开门。
+门把手开始转动。慢慢的，一圈，两圈——那不是钥匙在开，是有人在从外面拧。
+@fx heartbeat 1.4
+@if trust_zhouxu>=1
+周叙一把把你从门边拽回来，另一只手死死抵住门。
+zhouxu(terrified)：不许再说话！
+门把手停住了。
+@set trust_zhouxu +1
+@else
+没有人拉你。你自己后退了一步，撞在床架上。
+门把手转到底，然后——停住了。
+门没有开。它只是让你知道，它随时可以开。
+@set sanity -1
+@endif
+@goto ch3_sc7
+
+== ch3_s6_bed
+你在黑暗里睁大眼睛，一张一张床看过去。
+@if death:梁野
+梁野的床是空的。被子还是叠着的。
+> 门外那个声音在叫你妈的名号，但你连梁野都没能留住。
+@set sanity -1
+@else
+梁野在。他缩在被子里，只露出一只手，死死抓着那张借书卡。
+@set trust_liangye +1
+@endif
+周叙在他自己的床上，没动。
+门外的声音又叫了两遍，一遍比一遍近，最后近到像在耳朵里说话。
+然后停了。
+@set truth +2
+@goto ch3_sc7
+
+== ch3_s6_look_ly
+@if death:梁野
+你摸黑走到梁野床边。
+被子下面那团湿头发不见了。
+@fx bloodburst 0.5
+取而代之的，是一滩还温着的水，形状像一个蜷着的人。
+@sfx sfx_water
+@set sanity -1
+@set truth +2
+@elif flag_liangye_half_assimilated
+梁野睁着眼，一眨不眨地看着门。
+你在他面前挥手，他没有反应。
+但当门外那个声音再次响起时，他的嘴唇跟着动了——一模一样的口型，一个字都不差。
+@fx glitch 0.9
+@set sanity -1
+@set truth +3
+@else
+梁野蜷在被子里，抖得整张床都在响。
+他抓着你的手腕，指甲掐进肉里。
+liangye(terrified)：别开。求你了。上次就是有人开了。
+@set trust_liangye +1
+@set truth +1
+@endif
+@goto ch3_sc7
+
+== ch3_s6_mirror
+@bg mirror dark
+> 纸条第六条：查寝结束前，不要照镜子。
+你还是走到了洗手台前。
+@sfx sfx_water
+@fx static 0.6
+镜子上蒙着一层水汽。你抬手擦开一块。
+@wait 1.0
+@fx flash 0.9
+@sfx sfx_sting
+镜子里，你身后站着一个穿旧校服的女生。头发湿的，垂在脸前。
+你猛地回头。
+身后没有人。
+@fx bigshake 1.0
+再看镜子——她还在。而且她抬起了头。
+@show shenhe hollow center
+她的嘴唇动了一下。没有声音，但你读得懂。
+@note 别　替　我　答　到
+@clue clue_dont_answer
+@set shenhe_focus +3
+@set truth +3
+@set memory_echo +3
+@flag flag_mirror_contact
+@set sanity -1
+@if gore>=1
+镜子在你面前裂开一道缝，缝里渗出的不是玻璃碴，是很细的一线血。
+@fx bloodburst 0.7
+@sfx sfx_glass
+@item +item_mirror_shard
+@endif
+@clearchars
+@goto ch3_sc7
+
+-- ================================================= Scene 7 名单夜间改写
+== ch3_sc7
+@time 3 23:40
+@bg dorm dark
+@bgm bgm_horror
+@clearchars
+@wait 1.0
+门外突然开始报名字。
+不是刚才那种试探的语气了——是很正式的、一条一条的报，中间有停顿，像在核对。
+@sfx sfx_write
+每报一个，就有一声笔尖划纸的声音。
+@wait 0.6
+unknown(flat)：周叙，在册。
+@sfx sfx_write
+unknown(flat)：李恒，在册。
+@sfx sfx_write
+@wait 0.8
+你在黑暗里睁大眼睛。
+> 它没有报第三个人。
+> 307住四个人。
+@fx heartbeat 1.0
+@set truth +1
+@wait 0.6
+@if death:梁野
+unknown(flat)：梁野，已听见。
+@sfx sfx_write
+> "已听见"。
+> 不是"在册"，不是"未到"。
+> 是"已听见"。
+@set sanity -1
+@set truth +2
+@elif flag_liangye_half_assimilated
+unknown(flat)：梁野，待定。
+@sfx sfx_write
+你听见对面床上梁野动了一下。
+不是翻身——是坐起来了。
+在黑暗里，他坐得笔直，面朝门口。
+@set sanity -1
+@set truth +2
+@else
+unknown(flat)：梁野，在册。
+@sfx sfx_write
+你听见梁野极轻地吸了一口气。
+> 他一直憋着。听见"在册"两个字才敢呼吸。
+@set truth +1
+@endif
+@wait 1.0
+然后是一段很长的停顿。
+长到你以为它走了。
+@wait 1.4
+@fx heartbeat 1.2
+unknown(flat)：林昼——
+@wait 1.2
+它停在这里。
+你的名字念了一半。
+> 就像广播里的"沈——"。
+@fx glitch 0.6
+@set sanity -1
+@set truth +2
+@wait 1.0
+然后它把后半个字补上了。
+unknown(flat)：——待定。
+@fx glitch 0.8
+@set sanity -1
+@set truth +2
+@sfx sfx_write
+笔尖划纸的声音。
+这一次写得比前面几个都久——不是三个字的时间，是七八个字的时间。
+@wait 0.8
+> 它在改。
+> 它当着你的面，在名单上把你的状态改了。
+> 而且改的内容比"待定"两个字要长。
+@set truth +2
+* 隔着门问“为什么我是待定” -> ch3_s7_ask
+    @set taboo_count +1
+    @set truth +3
+* 保持沉默，记住这句话 -> ch3_s7_silent
+    @set truth +2
+    @set route_obedience +1
+* [if flag_peeped_door] 从门缝下伸手去够那张名单 -> ch3_s7_grab
+    @set truth +4
+    @set route_investigate +2
+    @flag flag_night_roster_taken
+* 数它写了多少个字 -> ch3_s7_count_strokes
+    @set truth +3
+    @set memory_echo +2
+
+== ch3_s7_count_strokes
+你没有出声。
+你闭上眼睛，听那支笔。
+@wait 0.8
+> 中文字的笔画在纸上是有节奏的。横是"刷"，竖是"刷"，点是"嗒"。
+> 你从小练过两年字，你能听出来。
+@wait 1.0
+@sfx sfx_write
+你数：
+> 第一个字，八画。
+> 第二个字，九画。
+> 停顿。
+> 第三个字，两画。
+> 第四个字，五画。
+@fx heartbeat 1.0
+@set truth +2
+@wait 0.8
+> 八画、九画——"林昼"。
+> 两画、五画——
+你在脑子里过了一遍。
+> "可补"。
+@set sanity -1
+@set memory_echo +3
+@set truth +2
+@clue clue_night_rewrite
+@wait 1.0
+> 林昼（待定 / 可补）。
+> 和你在旧楼看见的那张名单，一模一样。
+> 但那张名单是五年前的格式。
+@wait 0.8
+笔停了。
+然后你听见纸被折起来的声音，很脆。
+@sfx sfx_page
+脚步声离开了。七步。
+@set truth +1
+@goto ch3_sc8
+
+== ch3_s7_ask
+me：为什么我是待定？
+门外的笔停了。
+@wait 1.2
+unknown(flat)：因为你的名字，不是原装的。
+me：什么意思？
+unknown(flat)：意思是，写你名字的那支笔，之前写过别人。
+@fx names 1.0
+@set sanity -1
+@set truth +3
+@set memory_echo +3
+@flag flag_true_linday_status_hint
+@goto ch3_sc8
+
+== ch3_s7_silent
+你没有出声。你把那句话在心里重复了三遍，怕自己忘。
+> 待定：名字在，人不确定在。可被同格替补。
+> 现在，同格里有两个名字：沈禾，和你。
+@set truth +2
+@goto ch3_sc8
+
+== ch3_s7_grab
+你趴在地上，把手从门缝底下伸出去。
+门缝很窄，手背蹭破了皮。
+@fx bloodburst 0.4
+@sfx sfx_flesh 0.5
+指尖碰到了纸。
+@wait 0.8
+就在你捏住纸角的一瞬间，门外有另一只手，按在了你的手背上。
+@fx bigshake 1.0
+@sfx sfx_sting
+@fx heartbeat 1.4
+那只手很凉，也很轻。它没有用力，只是按着，像在确认你手的温度。
+@set sanity -1
+然后它松开了。
+你把纸拽了进来。
+@item +item_night_roster
+@flag flag_night_roster_taken
+@set truth +4
+@clue clue_night_rewrite
+> 夜间核对名单。凌晨两点十七分，纸上的墨会自己动。
+@if gore>=1
+你的手背上多了五个指印。不是红的，是青黑色的，按下去不疼，但不会消。
+@endif
+@goto ch3_sc8
+
+-- ================================================= Scene 8 梁野救或弃
+== ch3_sc8
+@bg dorm dark
+@bgm bgm_horror
+@clearchars
+@if death:梁野
+@goto ch3_s8_absent
+@endif
+@wait 1.0
+门外的声音又响了一遍。
+这一次很清晰，也很近——不是隔着门板的闷声，是像门已经开了一样清楚。
+@wait 0.6
+@if flag_liangye_half_assimilated
+unknown(flat)：梁野。请到门口来。
+@wait 0.8
+梁野站了起来。
+@show liangye half left
+他掀被子、坐起、下床、站直——四个动作，一气呵成，中间没有一点犹豫。
+> 这三天里，他连从椅子上起来都要先撑两下。
+@fx heartbeat 1.2
+他走得很稳。脚步落地的声音很轻，很匀。
+me：梁野！
+他停下来，转过头。
+转的时候脖子先动，眼睛慢了一拍才跟上。
+liangye(half)：我该去了。
+me：去哪儿？
+liangye(half)：轮到我值日了。
+@fx glitch 0.8
+@set sanity -1
+@set truth +2
+@wait 0.8
+> 值日。
+> 这个词你今天听过——在失物招领箱的那张纸上。
+> 在沈禾的手抄值日表上。
+@set memory_echo +2
+@else
+unknown(flat)：梁野。请到门口来。
+@wait 0.8
+@show liangye terrified left
+梁野的身体像被线提起来一样，慢慢从床上坐起。
+被子滑到地上，他没有去捡。
+他的眼睛是清醒的。你能看见——月光从窗户照进来一点，他的眼睛在动，在找你。
+脸上全是眼泪。
+liangye(terrified)：林昼……
+liangye(terrified)：我控制不住……
+他的腿已经落地了。
+liangye(terrified)：我的腿自己在走……
+@fx heartbeat 1.6
+@set sanity -1
+@endif
+@wait 0.8
+你能听见门外的呼吸。
+它就在门那边，等着。
+@wait 0.6
+* [lock flag_night_plan_ready] 按住他，让周叙替他应 -> ch3_s8_plan
+    @set trust_liangye +3
+    @set trust_zhouxu +3
+    @set save_route_score +5
+    @set route_empathy +3
+* 抓住他 -> ch3_s8_hold
+    @set trust_liangye +3
+    @set route_empathy +2
+    @set save_route_score +2
+* [if item:item_library_card] 把借书卡塞回他手里 -> ch3_s8_card
+    @set trust_liangye +2
+    @set truth +2
+    @set save_route_score +2
+* 喊周叙一起拦 -> ch3_s8_together
+    @set trust_zhouxu +1
+    @set save_route_score +1
+* 放手，让他去 -> ch3_s8_letgo
+    @set trust_liangye -5
+    @set control_route_score +3
+    @flag flag_gave_up_roommate
+* 冲到门口挡在他前面 -> ch3_s8_block
+    @set trust_liangye +2
+    @set route_hostility +1
+    @set save_route_score +1
+    @set taboo_count +1
+
+== ch3_s8_block
+你从床上翻下来，三步冲到门口，背贴着门，张开手臂。
+@fx bigshake 0.8
+你和梁野面对面。他还在往前走。
+me：不许过来。
+@wait 0.8
+他停下了。
+就停在离你半米的地方。
+@wait 1.0
+然后你感觉到背后的门——在动。
+不是被推开，是门板本身在往里凸，像有什么东西整个贴在门上，用身体压。
+@fx heartbeat 1.6
+@sfx sfx_breath
+你能听见它的呼吸，就在你后脑勺的位置，隔着一层三公分厚的木板。
+@set sanity -1
+@set truth +2
+me：梁野。回床上去。
+liangye(terrified)：我……
+me：回去。
+@wait 0.8
+他后退了一步。
+两步。
+然后他坐回床上，抱住膝盖。
+@wait 1.0
+背后的压力消失了。
+门板"咯"地弹回原位。
+@sfx sfx_door
+@wait 0.8
+你在门口站了很久，不敢挪开。
+> 你挡的不是梁野。
+> 你挡的是门。
+> 而你现在意识到一件事：门是从里面能开的。
+> 只要有人走过去，拧一下把手。
+@set truth +2
+@set memory_echo +1
+@flag flag_liangye_returned
+@wait 0.6
+你在门口坐了一夜，背靠着门。
+@if gore>=1
+天亮的时候你发现，你后背的校服上印着一个手印。
+不是从里面按的——布料的纤维是往里压的，说明力是从外面来的。
+可门一直关着。
+@fx bloodburst 0.4
+@set sanity -1
+@endif
+@goto ch3_night_hub
+
+== ch3_s8_plan
+@bg dorm dark
+@bgm bgm_final
+@clearchars
+@fx heartbeat 1.5
+你没有喊，也没有犹豫——下午在教室，你们已经把这一刻演过一遍了。
+@wait 0.8
+你整个人压上去，一只手按住梁野的肩，一只手捂住他的嘴。
+@sfx sfx_flesh
+@wait 1.0
+他在你手底下挣。力气大得不像他。
+@wait 0.6
+@set sanity -1
+@set truth +2
+但他没能出声。
+@wait 1.2
+@show zhouxu urgent right
+门外，那个声音念完了名字。
+@wait 0.8
+@sfx sfx_knock_pattern
+三下，停，两下。
+@wait 1.0
+然后是那一秒的停顿——等应答的那一秒。
+@wait 1.4
+@fx heartbeat 1.8
+周叙开口了。
+@wait 0.6
+zhouxu(urgent)：到。
+@wait 1.2
+@fx flash 0.5
+@sfx sfx_low_boom
+@set truth +5
+@set memory_echo +3
+两个字。很平，很稳，不大不小。
+@wait 1.0
+> 像他这三年每天早读念的那一声一样。
+@wait 0.8
+@set save_route_score +4
+门外静了。
+@wait 1.2
+你能听见走廊里的脚步转了个方向——不是走远，是**转向了**。
+@wait 0.8
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+它现在冲着周叙那张床去了。
+@wait 1.0
+me：周叙——
+zhouxu(urgent)：别动。
+@wait 0.6
+zhouxu(urgent)：它要的是一个应答。它不管是谁。
+@wait 1.2
+@set truth +4
+@set memory_echo +2
+脚步在周叙床前停下。
+@wait 1.0
+停了很久。
+@wait 0.8
+> 你数到二十七。
+@wait 1.2
+然后它走了。
+@sfx sfx_step
+@wait 1.0
+@fx heartbeat 1.0
+@set sanity +5
+梁野在你手底下瘫软下来，开始发抖。
+@wait 0.8
+@clearchars
+@show liangye fragile left
+liangye(fragile)：我刚才……我刚才想开门。
+liangye(fragile)：我知道不该开，但我的手自己在动。
+@wait 1.2
+@set truth +3
+@set trust_liangye +3
+me：我知道。我按住你了。
+@wait 0.8
+liangye(fragile)：……谢谢。
+@wait 1.0
+@show zhouxu tired right
+周叙躺回床上，很久没说话。
+@wait 0.8
+me：你没事吧。
+@wait 1.2
+zhouxu(tired)：不知道。
+@wait 0.6
+zhouxu(tired)：明天早读你替我看着点。
+@wait 1.0
+me：看什么？
+@wait 1.4
+zhouxu(tired)：看许老师念到我的时候，会不会停一下。
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@set shenhe_focus +2
+@wait 1.2
+> 应了一次，就欠一轮。
+> 他知道自己刚才做了什么。
+@wait 0.8
+@set truth +3
+@set save_route_score +3
+@flag flag_liangye_returned
+@flag flag_zhouxu_answered_once
+@state liangye_final_state_ch3 anchor_alive
+@wait 1.0
+> 这一夜梁野活下来了。
+> 代价记在另一个人账上——而那个人是自愿的。
+@set truth +3
+@set memory_echo +2
+@clearchars
+@goto ch3_sc9
+
+== ch3_s8_hold
+你从床上扑过去，双手环住他的腰，整个人往后拽。
+@fx bigshake 1.0
+@sfx sfx_flesh
+他的身体硬得像木头，但你没有松手。
+me：梁野！看着我！你叫什么名字！
+liangye(terrified)：……梁、梁野。
+me：谁的名字？
+liangye(terrified)：我的！是我的！
+@fx flash 0.8
+@sfx sfx_scream
+门外发出一声很短的、像是被打断的抽气声。
+然后脚步声退开了。
+@set truth +2
+@set sanity -1
+@flag flag_liangye_returned
+@if gore>=1
+你松手的时候，发现自己手臂上有一道很长的抓痕——不是他抓的，方向是从外往里。
+@fx bloodburst 0.5
+@endif
+@goto ch3_night_hub
+
+== ch3_s8_card
+你摸出那张借书卡，一把塞进他手心，逼他攥紧。
+me：看上面写的是谁。
+梁野低头，借着窗外一点光，看那张被反复描过的名字。
+@wait 1.0
+liangye(sad)：……梁野。
+liangye(sad)：是我。
+他的腿软了下去，跪在地上，抱着那张卡哭得说不出话。
+@sfx sfx_breath
+@set truth +2
+@flag flag_liangye_returned
+@set save_route_score +1
+门外的脚步声退开了，退到走廊尽头，停了很久才走。
+@goto ch3_night_hub
+
+== ch3_s8_together
+me：周叙！
+周叙翻身下床，两个人一左一右把梁野按在床上。
+@show zhouxu angry right
+zhouxu(angry)：数三下，一起松手。他要是还往门口走，就绑起来。
+@fx shake 0.8
+数到三的时候，梁野瘫了下去，喘得像刚从水里捞出来。
+@set truth +1
+@flag flag_liangye_returned
+@if trust_zhouxu>=2
+zhouxu(sad)：……上次我没拦。
+zhouxu(sad)：上次我就站在这儿看着他走出去。
+@set truth +2
+@set trust_zhouxu +1
+@endif
+@goto ch3_night_hub
+
+== ch3_s8_letgo
+你的手抬起来了，但没有伸出去。
+梁野从你床边走过。经过的时候，他看了你一眼。
+@show liangye sad left
+liangye(sad)：……哦。
+就这一个字。
+@fx darken 1.0
+@sfx sfx_door
+门开了。走廊上是黑的。他走进去，门在他身后合上。
+没有惨叫。什么声音都没有。
+@wait 1.2
+@death 梁野 被放弃
+@flag flag_gave_up_roommate
+@set sanity -1
+@set memory_echo +3
+@item +item_library_card
+床上留着那张借书卡。上面的名字，比昨天淡了很多。
+@if gore>=1
+@fx bloodburst 0.6
+@sfx sfx_flesh
+门缝底下慢慢渗进来一小片深色的液体，一直流到你的床脚才停。
+@endif
+@clearchars
+@goto ch3_night_hub
+
+== ch3_s8_absent
+门外报完名字，很久都没有别的动静。
+然后，你听见梁野的声音，从走廊尽头传过来。
+@sfx sfx_whisper
+@fx heartbeat 1.0
+liangye(hollow)：林昼。
+liangye(hollow)：这次别慢。
+@set sanity -1
+@set memory_echo +2
+@set truth +1
+> 他还在。或者说，还有什么东西，在用他的声音。
+@goto ch3_night_hub
+
+-- ================================================= Scene 9 周叙部分坦白
+== ch3_sc9
+@time 4 02:17
+@bg dorm night
+@bgm bgm_truth
+@clearchars
+@show zhouxu sad right
+凌晨两点十七分。
+@if item:item_night_roster
+你摊开那张夜间名单。
+@sfx sfx_write
+@fx names 0.8
+纸上的墨自己动了。
+“林昼（待定）”后面，慢慢浮出两个字：可补。
+@set truth +3
+@clue clue_night_rewrite
+@flag flag_list_updated_night
+@endif
+周叙终于开口了。他没有看你，看着天花板。
+zhouxu(sad)：五年前那场火，不是意外。
+zhouxu(sad)：那天晚自习，广播坏了，沈禾一个人去旧楼修。
+zhouxu(sad)：她进去之后，有人从外面把门反锁了。
+* “谁锁的？” -> ch3_s9_who
+    @set truth +3
+* “为什么锁？” -> ch3_s9_why
+    @set truth +3
+* “你怎么知道得这么清楚？” -> ch3_s9_how
+    @set truth +2
+    @set trust_zhouxu -1
+
+== ch3_s9_who
+zhouxu(sad)：不知道。真的不知道。
+zhouxu(sad)：查过。监控那天坏了。所有人都说自己在教室。
+zhouxu(sad)：四十一个人，四十一份笔录，一个字都不差。
+> 一个字都不差的四十一份笔录，本身就是答案。
+@clue clue_fire_truth
+@set truth +2
+@if flag_deep_route_night
+@goto ch3_deep_dawn
+@endif
+@goto ch3_sc10
+
+== ch3_s9_why
+zhouxu(sad)：因为她要停广播。
+me：停广播为什么要锁她？
+zhouxu(sad)：那年高三冲刺，学校把晚自习延长到十一点。
+zhouxu(sad)：广播是唯一能宣布下课的东西。
+zhouxu(sad)：她说她要在广播里念一段话，念完，所有人就都能走了。
+zhouxu(sad)：结果她一个人也没走成。
+@clue clue_fire_truth
+@set truth +3
+@if flag_deep_route_night
+@goto ch3_deep_dawn
+@endif
+@goto ch3_sc10
+
+== ch3_s9_how
+周叙沉默了很久。
+zhouxu(sad)：因为我在场。
+zhouxu(sad)：我那年高一。我在楼下等我姐。
+zhouxu(sad)：我看见有人从旧楼一楼跑出来，手里拿着一把锁。
+me：你看清脸了吗？
+zhouxu(sad)：看清了。
+zhouxu(sad)：是穿老师衣服的人。她没有穿鞋。
+@fx glitch 0.8
+@clue clue_xuqing_barefoot
+@clue clue_fire_truth
+@set truth +4
+@set memory_echo +1
+@if flag_deep_route_night
+@goto ch3_deep_dawn
+@endif
+@goto ch3_sc10
+
+-- ================================================= Scene 10 收束：前往校史馆
+== ch3_sc10
+@bg dorm night
+@bgm bgm_truth
+@clearchars
+天蒙蒙亮的时候，雨停了。
+@amb amb_dorm_night
+@show zhouxu flat right
+zhouxu(flat)：校史馆。
+me：什么？
+zhouxu(flat)：所有笔录、所有名册、所有那年的东西，都封在校史馆后面那间。
+zhouxu(flat)：钥匙一共两把。一把在校长办公室，一把——
+@if item:item_admin_key
+他看了一眼你放在床头的黄铜钥匙。
+zhouxu(flat)：——在你手上。
+@set truth +2
+@flag archive_route_bonus
+@else
+zhouxu(flat)：——在老秦那儿。
+zhouxu(flat)：但今天早上，值班室没开门。
+@set truth +1
+@endif
+@wait 0.6
+@if flag_oldqin_survived
+@bgm bgm_unease
+六点二十，广播响了。这一次是真的校广播，播的是通知。
+radio：全体学生注意，值班室昨夜发生火情，现已扑灭，无人员伤亡。
+radio：警卫值班点临时移至南门传达室。
+@set truth +1
+你跑到校门口。
+值班室烧了一半，窗户是碎的——你砸的那扇。
+老秦坐在旁边的花坛沿上，脚踝缠着绷带，手里端着搪瓷缸。缸子是新的，白的。
+@show oldqin normal center
+oldqin(normal)：来了。
+me：您没事吧。
+oldqin(normal)：崴了脚。校医说养半个月。
+他喝了口水。
+oldqin(flat)：钥匙板烧没了。挂钩全化了。
+oldqin(flat)：那三把旧楼的，也没了。
+@if item:item_admin_key
+oldqin(flat)：你手上那把，是最后一把。
+oldqin(flat)：拿好。
+@set truth +2
+@endif
+@wait 0.8
+oldqin(sad)：昨晚谢谢你。
+me：不用。
+oldqin(sad)：用。
+oldqin(sad)：五年了，我头一回从那个屋子里活着出来。
+@set truth +1
+@set trust_oldqin +1
+@clearchars
+@elif flag_oldqin_smoke or trust_oldqin>=2
+@bgm bgm_horror
+@fx redflash 0.6
+六点二十，广播响了。这一次是真的校广播，播的是通知。
+radio：全体学生注意，值班室发生火情，现已扑灭。请勿靠近校门东侧。
+@fx bloodburst 0.5
+@sfx sfx_fire_burst
+@flag flag_oldqin_burndeath
+@death 老秦 值班室起火
+@set sanity -1
+@set truth +2
+你跑到校门口时，只看见一地被水泡烂的烟盒，和那块烧黑的钥匙板。
+钥匙板上的挂钩，全空了。
+@if item:item_admin_key
+你口袋里的那把，是唯一还在的。
+@set truth +2
+@endif
+@endif
+@settle 3
+@autosave
+> 第三章结束。
+@goto ch3_summary
+
+== ch3_summary
+@bg black
+@title 第三章　熄灯　结束
+@if state:liangye_final_state_ch3==anchor_alive
+> 梁野还在。他说：“下次换我拉你。”
+@elif state:liangye_final_state_ch3==abandoned
+> 你放开了手。这件事不会有人指责你——因为知道的人只剩你自己。
+@elif state:liangye_final_state_ch3==missing
+> 梁野没有回来。走廊尽头有他的声音，但那不是他。
+@else
+> 梁野还在，但他偶尔会用过去时说今天的事。
+@endif
+@if flag_night_roster_taken
+> 你手上有那张会自己改写的名单。天亮之后，它安静得像一张普通的纸。
+@endif
+@goto ch4_start

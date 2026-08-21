@@ -1,0 +1,927 @@
+-- 第四章 · 许清
+-- 定位：全篇唯一一次和许清正面长谈。她不是反派，是上一个"没能停下"的人。
+-- 核心揭示：许清五年前是沈禾的班主任；她手上那份名录写着"已故"；
+--           她每天点名点的不是学生，是在维持一个数字。
+-- 接入：ch4 主线 hub
+
+== xuqing_hub
+@timeat 4 19:20
+@bg office night
+@bgm bgm_unease
+@amb amb_hallway
+@clearchars
+@advtime 8
+办公室在教学楼三楼，这个点只剩一盏灯亮着。
+@wait 0.8
+许清在改作业。红笔，一本一本，速度很快，几乎不停。
+@wait 1.0
+你在门口站了大概十秒，她才抬头。
+@wait 0.6
+@show xuqing neutral right
+xuqing(neutral)：进来。把门带上。
+@wait 1.0
+你关上门。办公室很安静，只有笔尖划纸的声音。
+@wait 0.8
+xuqing(neutral)：坐。
+@wait 0.6
+你坐下。她还在改作业，没有看你。
+@wait 1.0
+xuqing(neutral)：你想问什么。
+@wait 0.8
+她说的是陈述句。
+@set truth +2
+@if visited:xuqing_hub
+> 她还在等。
+@endif
+* [if !visited:xuqing_q_roll] 问她为什么每天都说「人数不对」 -> xuqing_q_roll
+    @set truth +3
+* [if !visited:xuqing_q_shenhe] 问她认不认识沈禾 -> xuqing_q_shenhe
+    @set shenhe_focus +3
+* [if !visited:xuqing_q_list] 问她手上那份名录 -> xuqing_q_list
+    @set truth +3
+* [if !visited:xuqing_q_her] 问她自己怎么了 -> xuqing_q_her
+    @set route_empathy +2
+* 什么都不问，走 -> xuqing_leave
+    @set route_obedience +2
+
+-- ================================================= 人数不对
+== xuqing_q_roll
+me：您每天点完名，都会说一句「人数不对」。
+@wait 1.2
+红笔停了。
+@wait 0.8
+xuqing(neutral)：我说过吗。
+me：每天都说。
+@wait 1.0
+xuqing(neutral)：……
+@wait 0.6
+她把笔放下，靠回椅背。
+@wait 1.0
+xuqing(neutral)：那你觉得，是多了还是少了。
+@wait 1.2
+@set truth +2
+me：少了。
+@wait 0.8
+xuqing(neutral)：为什么是少了。
+me：因为名册四十二行，教室里四十一个人。
+@wait 1.0
+@fx heartbeat 0.8
+@set truth +3
+她看了你一会儿，眼神没什么变化。
+@wait 0.8
+xuqing(neutral)：你数过。
+me：数过。
+xuqing(neutral)：数了几遍。
+me：三遍。
+@wait 1.2
+xuqing(neutral)：那你已经比大部分人认真了。
+@wait 0.8
+@set truth +2
+xuqing(neutral)：大部分人数一遍，觉得不对，就当自己数错了。
+@wait 1.0
+me：那到底是不是数错了？
+@wait 1.4
+她沉默了很久。
+@wait 0.8
+xuqing(neutral)：林昼，我问你一个问题。
+xuqing(neutral)：如果一个班的名册上有四十二个名字，教室里坐着四十一个人。
+@wait 1.0
+xuqing(neutral)：这是"少了一个人"，还是"多了一个名字"。
+@wait 1.2
+@fx heartbeat 1.0
+@set truth +4
+@set memory_echo +2
+@wait 0.6
+你没有答上来。
+@wait 1.0
+xuqing(neutral)：这两个说法，处理方式完全不一样。
+@wait 0.8
+xuqing(neutral)：如果是少了一个人，你要去找人。
+xuqing(neutral)：如果是多了一个名字，你只要划掉那个名字。
+@wait 1.2
+@set truth +3
+xuqing(neutral)：学校选了第二种。
+@wait 0.8
+me：那名字是谁的？
+@wait 1.4
+xuqing(neutral)：划掉了，就没有谁了。
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+@wait 1.0
+她重新拿起红笔。
+@wait 0.6
+xuqing(neutral)：这就是为什么我每天都要念。
+@wait 1.0
+me：念什么？
+@wait 0.8
+xuqing(neutral)：念完整的名册。四十二个。
+@wait 1.2
+@fx heartbeat 1.2
+@set truth +5
+@set shenhe_focus +2
+@set memory_echo +2
+me：您每天都念了四十二个？
+@wait 0.8
+xuqing(neutral)：每天。
+@wait 1.0
+xuqing(neutral)：你们只听见四十一个应答，所以你们以为我念了四十一个。
+@wait 0.6
+xuqing(neutral)：我念了四十二个。
+@wait 1.2
+@set truth +4
+> 你想起来了。
+> 每天早读点名，念到某个位置，她会有一个很短的停顿。
+> 短到你以为是她换气。
+@wait 1.0
+> 那不是换气。那是在等一个不会来的应答。
+@set truth +3
+@set shenhe_focus +3
+@wait 0.8
+me：为什么还要念？
+@wait 1.4
+xuqing(neutral)：因为不念，就真的没了。
+@wait 1.0
+@set truth +3
+@set route_empathy +2
+@flag flag_xuqing_roll
+@clue clue_rollcall
+@goto xuqing_hub
+
+-- ================================================= 沈禾
+== xuqing_q_shenhe
+me：您认识沈禾吗。
+@wait 1.4
+@fx heartbeat 1.0
+她没有立刻回答。红笔在纸上停住，墨渗出一个小点。
+@wait 1.0
+xuqing(neutral)：你从哪儿听来的。
+me：食堂墙上的寻人启事。
+@wait 0.8
+xuqing(neutral)：那东西还在。
+@wait 0.6
+她说这话的时候，语气有点奇怪——不是惊讶，是……疲惫。
+@set truth +2
+@set shenhe_focus +2
+@wait 1.0
+xuqing(neutral)：认识。
+@wait 0.8
+me：她是您的学生？
+@wait 1.2
+xuqing(neutral)：我带的第一届。
+@wait 0.6
+@set truth +3
+她把红笔放下，这次放得很轻。
+@wait 1.0
+xuqing(neutral)：我那年二十四岁，刚毕业，第一次当班主任。
+xuqing(neutral)：高二三班，四十六个人。
+@wait 0.8
+xuqing(neutral)：沈禾坐第三排靠窗。
+@wait 1.2
+@set shenhe_focus +3
+@set truth +2
+她说得很具体。具体到你能看出她想过很多遍。
+@wait 0.8
+* 问五月十七日发生了什么 -> xuqing_q_shenhe_a
+    @set truth +5
+    @set shenhe_focus +3
+* 问她后来做了什么 -> xuqing_q_shenhe_b
+    @set truth +4
+    @set route_empathy +2
+
+== xuqing_q_shenhe_a
+me：五月十七日那天发生了什么。
+@wait 1.4
+xuqing(neutral)：起火。
+@wait 0.8
+xuqing(neutral)：晚自习之后，东边那栋楼三楼的广播室起火。
+@wait 1.0
+xuqing(neutral)：火不大。消防来的时候已经快自己灭了。
+@wait 0.6
+@set truth +2
+me：她在里面？
+@wait 1.2
+xuqing(neutral)：在。
+@wait 0.8
+xuqing(neutral)：她是广播站的。那天轮到她值班。
+@wait 1.0
+me：为什么没跑出来？
+@wait 1.4
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+xuqing(neutral)：这就是我五年来一直在想的问题。
+@wait 0.8
+xuqing(neutral)：门是开着的。
+xuqing(neutral)：校医是第一个到的，他说门开着，火只在角落一米多的范围。
+@wait 1.0
+xuqing(neutral)：她坐在椅子上。
+@wait 1.2
+@set shenhe_focus +3
+@set truth +4
+me：坐着？
+@wait 0.8
+xuqing(neutral)：坐着。手放在桌上。
+xuqing(neutral)：像在等什么。
+@wait 1.4
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 0.6
+办公室很安静。
+@wait 1.0
+xuqing(neutral)：广播室的话筒是开着的。
+@wait 0.8
+me：开着？那全校都能听到？
+@wait 1.2
+xuqing(neutral)：那天晚上，全校的喇叭都在响。
+@wait 1.0
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set shenhe_focus +3
+xuqing(neutral)：响了四十分钟。
+@wait 0.8
+me：她在说什么？
+@wait 1.4
+xuqing(neutral)：点名。
+@wait 1.0
+@set truth +5
+@set memory_echo +3
+xuqing(neutral)：她在念高二三班的名册。一个一个念。
+@wait 0.8
+xuqing(neutral)：念完四十六个，从头再念。
+@wait 1.2
+xuqing(neutral)：四十分钟，念了七遍。
+@wait 1.0
+@fx redflash 0.6
+@set sanity -1
+@set truth +4
+me：……为什么？
+@wait 1.4
+xuqing(neutral)：因为没有人应。
+@wait 0.8
+@set shenhe_focus +3
+@set truth +3
+xuqing(neutral)：全校都听见了。宿舍楼、教学楼、操场。
+xuqing(neutral)：一千多个人听见有人在念名字。
+@wait 1.0
+xuqing(neutral)：没有一个人应。
+@wait 1.2
+@set truth +4
+@set memory_echo +3
+xuqing(neutral)：包括我。
+@wait 1.4
+@fx heartbeat 1.6
+@set sanity -1
+她的声音第一次有了变化。很轻微，但你听出来了。
+@wait 1.0
+xuqing(neutral)：我在办公室改卷子。我听见她念到我们班的名字。
+xuqing(neutral)：我想，这孩子在干什么，明天得说说她。
+@wait 0.8
+xuqing(neutral)：我没有去。
+@wait 1.2
+@set truth +3
+@set route_empathy +2
+xuqing(neutral)：等我意识到不对，火已经灭了。
+@wait 1.0
+> 一个人在广播里念了四十六个名字，念了七遍。
+> 一千多人听见。
+> 没有人应到。
+@wait 0.8
+@set truth +4
+@set shenhe_focus +3
+> 她不是在点名。
+> 她是在求救。
+@wait 1.2
+> 而这所学校把求救听成了点名——因为在这里，念名字这件事，
+> 早就被赋予了另一种含义。
+@set truth +4
+@set memory_echo +2
+@flag flag_shenhe_fire
+@clue clue_shenhe_fire
+@goto xuqing_hub
+
+== xuqing_q_shenhe_b
+me：后来您做了什么。
+@wait 1.2
+xuqing(neutral)：我去找过她父母。
+@wait 0.8
+xuqing(neutral)：她妈妈问我，是不是学校的责任。
+xuqing(neutral)：我说是。
+@wait 1.0
+@set route_empathy +2
+@set truth +2
+xuqing(neutral)：学校让我改口。我没改。
+@wait 0.6
+me：然后呢？
+@wait 1.2
+xuqing(neutral)：然后我被停职了三个月。
+@wait 0.8
+xuqing(neutral)：三个月后回来，我发现一件事。
+@wait 1.0
+@fx heartbeat 0.9
+@set truth +3
+xuqing(neutral)：所有人都不记得她了。
+@wait 1.2
+me：所有人？
+@wait 0.6
+xuqing(neutral)：她的同学。她的科任老师。教务处。
+@wait 1.0
+xuqing(neutral)：我拿着班级合影去问，指着她问这是谁。
+@wait 0.8
+xuqing(neutral)：他们说，照片上没有这个人。
+@wait 1.4
+@fx glitch 0.9
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+me：照片上有吗？
+@wait 1.0
+xuqing(neutral)：有。
+@wait 0.8
+xuqing(neutral)：我用手指着，一个一个数，能数出四十六个。
+xuqing(neutral)：他们扫一眼，说是四十五个。
+@wait 1.2
+@set truth +4
+> 和周叙的那张照片一模一样。
+@wait 0.8
+@set memory_echo +2
+me：她父母呢？
+@wait 1.4
+xuqing(neutral)：这是最难的一部分。
+@wait 1.0
+xuqing(neutral)：我第二年去看她妈妈。
+xuqing(neutral)：她妈妈很客气，倒了茶，问我是哪个学校的。
+@wait 0.8
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+xuqing(neutral)：家里没有照片。没有房间。没有任何痕迹。
+@wait 1.2
+xuqing(neutral)：我问她，您有几个孩子。
+@wait 1.0
+xuqing(neutral)：她说，没有孩子。
+@wait 1.4
+@fx redflash 0.5
+@set sanity -1
+@set shenhe_focus +3
+@set memory_echo +3
+@wait 0.8
+xuqing(neutral)：可她家的碗柜里，有五个碗。
+@wait 1.2
+@set truth +4
+xuqing(neutral)：夫妻两个人，五个碗。
+xuqing(neutral)：其中一个是儿童碗，画着小兔子，边上磕了个口。
+@wait 1.0
+xuqing(neutral)：她一边说没有孩子，一边把那个碗擦了三遍。
+@wait 0.8
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+> 习惯留下来了。
+> 就像食堂阿姨记得她爱吃茄子。
+@wait 1.2
+@set truth +2
+> 被删掉的是"人"，不是"人留下的凹痕"。
+> 所有人的生活里都还留着那个形状，只是他们不知道那是什么形状。
+@wait 1.0
+@set truth +3
+@set route_empathy +2
+xuqing(neutral)：从那天起我就明白了。
+@wait 0.8
+xuqing(neutral)：我不能让第二个人变成那样。
+@set truth +3
+@flag flag_xuqing_history
+@clue clue_shenhe_missing
+@goto xuqing_hub
+
+-- ================================================= 名录
+== xuqing_q_list
+me：您手上一直拿着一份名单。不是点名册，是另一份。
+@wait 1.4
+她低头看了看桌上那个牛皮纸文件夹。
+@wait 0.8
+xuqing(neutral)：眼睛挺尖。
+@wait 1.0
+她把文件夹推过来。
+@sfx sfx_page
+@wait 0.6
+xuqing(neutral)：看吧。反正你迟早要看。
+@set truth +2
+@wait 1.0
+你打开。
+@wait 0.8
+里面是一份打印的名录，标题是《历年在册学生异动记录》。
+@wait 1.2
+不厚，大概二十页。
+@wait 0.6
+@set truth +2
+每一页是一个年份，下面列着名字，名字后面跟着状态。
+@wait 1.0
+> 转出　转出　转出　休学　转出　转出
+@wait 0.8
+你往下翻。
+@wait 1.2
+状态栏大部分是"转出"，偶尔有"休学"。
+@wait 0.6
+翻到五年前那一页。
+@wait 1.0
+* 找沈禾的名字 -> xuqing_q_list_a
+    @set truth +5
+    @set shenhe_focus +3
+* 统计一下每年转出多少人 -> xuqing_q_list_b
+    @set truth +5
+    @set route_investigate +2
+
+== xuqing_q_list_a
+你在五年前那一页找到了她。
+@wait 1.2
+@fx names 0.7
+> 沈禾　　高二（3）　　已故
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set shenhe_focus +3
+整份名录里，只有这一个"已故"。
+@wait 0.8
+其余全部是"转出"或"休学"。
+@wait 1.0
+me：只有她一个是已故。
+@wait 0.8
+xuqing(neutral)：不是。
+@wait 1.2
+@set truth +3
+xuqing(neutral)：是只有她一个，我写了"已故"。
+@wait 1.0
+@fx glitch 0.8
+@set sanity -1
+@set truth +5
+me：……这份名录是您做的？
+@wait 0.8
+xuqing(neutral)：教务处的原件里，她的状态是"转出"。
+@wait 1.0
+xuqing(neutral)：转往临川第三中学。
+@wait 0.6
+@set truth +3
+me：那个学校不存在。
+@wait 1.2
+xuqing(neutral)：不存在。
+@wait 0.8
+xuqing(neutral)：所以我自己打了一份，把她改成"已故"。
+@wait 1.0
+xuqing(neutral)：改完打印出来，一直带着。
+@wait 1.4
+me：为什么？
+@wait 1.0
+@set truth +4
+@set route_empathy +3
+xuqing(neutral)：因为"转出"的意思是她还活着，在别的地方。
+xuqing(neutral)："已故"的意思是她死了，但她存在过。
+@wait 1.2
+@fx heartbeat 1.0
+@set truth +4
+@set memory_echo +3
+xuqing(neutral)：这两个词，前一个更好听。
+xuqing(neutral)：但只有后一个是真的。
+@wait 1.0
+@set shenhe_focus +3
+@wait 0.8
+她把文件夹拿回去，抱在怀里。
+@wait 1.0
+xuqing(neutral)：这份东西每年会消失一次。
+@wait 0.6
+me：消失？
+@wait 1.2
+xuqing(neutral)：字会褪。
+@wait 0.8
+@set truth +4
+@set memory_echo +2
+xuqing(neutral)：不是全褪。只有"已故"那两个字，会一点一点变淡，
+xuqing(neutral)：淡到最后变成"转出"。
+@wait 1.4
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+xuqing(neutral)：我每年重打一份。
+@wait 1.0
+xuqing(neutral)：今年是第五份。
+@wait 0.8
+@set truth +3
+> 图书馆的借书卡会自行褪色。
+> 这份名录也会。
+@wait 1.2
+> 不是有人在改。
+> 是这个地方本身，倾向于把"死"改成"走了"。
+@wait 0.8
+@set truth +4
+> 因为"走了"不需要有人负责。
+@set truth +3
+@set save_route_score +3
+@flag flag_xuqing_list
+@clue clue_shenhe_dead
+@goto xuqing_hub
+
+== xuqing_q_list_b
+你从最早那一页开始数。
+@wait 1.0
+> 九年前：转出 2 人
+> 八年前：转出 3 人
+> 七年前：转出 2 人
+> 六年前：转出 3 人
+@wait 0.8
+@set truth +2
+很正常。县城中学，每年两三个转学的不奇怪。
+@wait 1.2
+你接着往下。
+@wait 0.6
+> 五年前：转出 4 人，已故 1 人
+> 四年前：转出 5 人
+> 三年前：转出 7 人
+> 两年前：转出 9 人
+> 去年：转出 12 人
+@wait 1.4
+@fx heartbeat 1.0
+@set truth +4
+数字在涨。
+@wait 0.8
+你翻到今年。
+@wait 1.0
+> 今年（截至本月）：转出 8 人
+@wait 0.6
+现在才第二学期开头。
+@wait 1.2
+@set truth +3
+按这个速度，今年会超过二十。
+@wait 0.8
+me：越来越多。
+@wait 1.0
+xuqing(neutral)：越来越快。
+@wait 0.6
+她说的是"快"，不是"多"。
+@wait 1.2
+@set truth +3
+me：什么越来越快？
+@wait 0.8
+xuqing(neutral)：你自己看间隔。
+@wait 1.0
+你重新看了一遍，这次注意日期。
+@wait 1.4
+@set truth +4
+@set memory_echo +2
+> 九年前那两个人，相隔七个月。
+> 五年前那四个人，相隔三到四个月。
+> 去年那十二个人，相隔不到一个月。
+> 今年这八个人——最近两个，相隔九天。
+@wait 1.2
+@fx glitch 0.8
+@set sanity -1
+@set truth +5
+me：它在加速。
+@wait 0.8
+xuqing(neutral)：对。
+@wait 1.0
+xuqing(neutral)：一开始它一年吃一个。现在它九天吃一个。
+@wait 0.6
+xuqing(neutral)：我不知道为什么会加速。
+@wait 1.2
+@set truth +3
+me：会停吗？
+@wait 1.4
+xuqing(neutral)：不知道。
+@wait 0.8
+xuqing(neutral)：但你可以自己算。
+@wait 1.0
+xuqing(neutral)：九天，然后是八天，七天，六天。
+@wait 0.6
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +4
+@set end_cycle_score +2
+xuqing(neutral)：最后会变成零天。
+@wait 1.2
+@set truth +3
+> 零天的意思是：不需要间隔了。
+> 不需要间隔的意思是：一次可以拿走所有人。
+@wait 1.0
+@set truth +4
+@set memory_echo +2
+@flag flag_cycle_accelerating
+@clue clue_cycle
+@goto xuqing_hub
+
+-- ================================================= 她自己
+== xuqing_q_her
+me：许老师。
+me：您自己怎么了。
+@wait 1.4
+她抬起头。
+@wait 0.8
+这是整个晚上，她第一次真正看你。
+@wait 1.0
+xuqing(neutral)：什么意思。
+@wait 0.6
+me：您不穿鞋。
+@wait 1.2
+@fx heartbeat 1.0
+@set truth +3
+办公室里很安静。
+@wait 0.8
+她的脚在桌子底下，赤着。地板是水磨石的，这个季节很凉。
+@wait 1.0
+xuqing(neutral)：……
+@wait 1.2
+xuqing(neutral)：从什么时候开始注意到的。
+me：第一天。
+@wait 0.8
+xuqing(neutral)：一个星期了，你才问。
+me：我以为是您的习惯。
+@wait 1.0
+xuqing(neutral)：是习惯。
+@wait 0.6
+@set truth +2
+她把椅子往后推了推，脚露出来。
+@wait 1.2
+xuqing(neutral)：五年前那天晚上，我从办公室跑到东楼，跑掉了一只鞋。
+@wait 0.8
+xuqing(neutral)：跑到的时候火已经灭了。
+@wait 1.0
+xuqing(neutral)：我在楼梯口站着，一只脚有鞋，一只脚没有。
+@wait 1.2
+@set truth +3
+@set route_empathy +2
+xuqing(neutral)：后来我就把另一只也脱了。
+@wait 0.8
+me：为什么？
+@wait 1.4
+xuqing(neutral)：因为那天我要是早两分钟到，可能来得及。
+@wait 1.0
+xuqing(neutral)：而我没有早两分钟到，是因为我在办公室换了鞋。
+@wait 0.8
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set route_empathy +3
+xuqing(neutral)：高跟鞋跑不动，我换了双平底的。
+xuqing(neutral)：换鞋花了大概两分钟。
+@wait 1.2
+@wait 0.6
+她说得很平静，像在说别人的事。
+@wait 1.0
+xuqing(neutral)：所以我不穿鞋。
+@wait 0.8
+xuqing(neutral)：这样下次就不用换了。
+@wait 1.4
+@set truth +3
+@set memory_echo +2
+> 五年。
+> 她每天赤脚在这栋楼里走，等着"下次"。
+@wait 1.0
+* 「不会有下次了。」 -> xuqing_q_her_a
+    @set route_empathy +3
+    @set save_route_score +3
+* 「那这五年，来过下次吗。」 -> xuqing_q_her_b
+    @set truth +5
+    @set route_investigate +2
+
+== xuqing_q_her_a
+me：不会有下次了。
+@wait 1.2
+她笑了一下。很淡，但确实是笑。
+@wait 0.8
+xuqing(neutral)：你是第一个跟我说这句话的人。
+@wait 1.0
+xuqing(neutral)：谢谢。
+@wait 0.6
+xuqing(neutral)：但你说错了。
+@wait 1.2
+@set truth +3
+xuqing(neutral)：已经有过很多次下次了。
+@wait 0.8
+xuqing(neutral)：只是每一次，我都没赶上。
+@wait 1.0
+@set route_empathy +2
+@set save_route_score +2
+她重新拿起红笔。
+@wait 0.8
+xuqing(neutral)：林昼，我教书九年，带过四届。
+xuqing(neutral)：我记得住每一个学生的名字。
+@wait 1.2
+xuqing(neutral)：但每年都会有那么几个，我明明记得名字，却想不起来长什么样。
+@wait 1.0
+@fx heartbeat 1.0
+@set truth +4
+@set memory_echo +3
+xuqing(neutral)：一开始我以为是我年纪大了。
+@wait 0.8
+xuqing(neutral)：后来我发现，想不起来的那几个，都在这份名录上。
+@wait 1.2
+@set truth +3
+xuqing(neutral)：所以我才每天点名。
+@wait 0.8
+xuqing(neutral)：点到还在的，我就多看两眼，把脸记住。
+@wait 1.0
+@set route_empathy +3
+@set save_route_score +3
+xuqing(neutral)：这是我唯一能做的。
+@wait 1.2
+@set truth +2
+> 一个老师，每天早读用五分钟把学生的脸看一遍。
+> 不是为了管纪律。
+@wait 0.8
+> 是为了在他们被删掉之前，多记住一点。
+@wait 1.0
+@set truth +3
+@set save_route_score +2
+@flag flag_xuqing_ally
+@goto xuqing_hub
+
+== xuqing_q_her_b
+me：那这五年，来过下次吗。
+@wait 1.4
+她的表情没有变。
+@wait 0.8
+xuqing(neutral)：来过。
+@wait 1.0
+xuqing(neutral)：三十七次。
+@wait 0.6
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+@wait 1.2
+me：三十七？
+@wait 0.8
+xuqing(neutral)：这五年，我这个班——不只是三班，是我带的所有班——
+xuqing(neutral)：一共"转出"了三十七个学生。
+@wait 1.0
+xuqing(neutral)：每一次，我都去过。
+@wait 1.2
+@set truth +4
+xuqing(neutral)：去教务处查转出手续，去问家长的联系电话，去查那些学校存不存在。
+@wait 0.8
+xuqing(neutral)：三十七次。
+@wait 1.0
+me：结果呢？
+@wait 1.4
+xuqing(neutral)：三十七次，都是同一个结果。
+@wait 0.8
+@fx glitch 0.8
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+xuqing(neutral)：手续齐全，签字盖章，家长确认。
+@wait 1.0
+xuqing(neutral)：家长确认这一栏，永远有签名。
+@wait 0.6
+xuqing(neutral)：而我打电话过去，家长会很客气地问我：您是哪位？
+@wait 1.2
+@set truth +4
+@wait 0.8
+她放下笔，两只手交叠放在桌上。
+@wait 1.0
+xuqing(neutral)：所以我停下来了。
+@wait 0.6
+me：停下来？
+@wait 1.2
+xuqing(neutral)：三十七次以后，我不再去查了。
+@wait 0.8
+@set truth +3
+@set control_route_score +2
+xuqing(neutral)：我改成每天点名。念完整的四十二个。
+@wait 1.0
+xuqing(neutral)：这是投降。
+@wait 1.4
+@fx heartbeat 1.0
+@set truth +4
+@set memory_echo +2
+xuqing(neutral)：我知道这是投降。
+@wait 0.8
+xuqing(neutral)：查不动了，就改成守着。守着守着，就成了这个系统的一部分。
+@wait 1.2
+@set truth +3
+xuqing(neutral)：现在我是它的点名员。
+@wait 1.0
+@set control_route_score +2
+@set truth +3
+@wait 0.8
+她抬眼看你。
+@wait 1.0
+xuqing(neutral)：所以你不要学我。
+@wait 0.6
+xuqing(neutral)：你要么别管，要么一次做完。
+@wait 1.2
+@set truth +4
+@set save_route_score +2
+xuqing(neutral)：中间那条路，我走了五年，走不通。
+@wait 1.0
+> 她不是反派。
+> 她是上一个想救人、但没能停下来的人。
+@wait 0.8
+> 而现在，这套规则每天用她的嘴念名字。
+@set truth +4
+@set memory_echo +2
+@flag flag_xuqing_surrender
+@goto xuqing_hub
+
+-- ================================================= 离开
+== xuqing_leave
+@bg office night
+@bgm bgm_truth
+@clearchars
+@advtime 5
+你站起来。
+@wait 0.8
+@show xuqing neutral right
+@if flag_xuqing_roll or flag_xuqing_list or flag_shenhe_fire or flag_xuqing_ally or flag_xuqing_surrender
+xuqing(neutral)：林昼。
+@wait 1.0
+你回头。
+@wait 0.6
+xuqing(neutral)：明天早读，我念到第四十二个的时候。
+@wait 1.2
+她停了一下。
+@wait 0.8
+xuqing(neutral)：你能不能应一声。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@wait 0.6
+你站在门口，手还搭在门把上。
+@wait 1.0
+me：应了会怎么样。
+@wait 1.2
+xuqing(neutral)：不知道。
+@wait 0.8
+xuqing(neutral)：五年了，从来没有人应过。
+@wait 1.0
+xuqing(neutral)：我想知道，如果有人应了，会怎么样。
+@wait 1.4
+@set truth +3
+@set shenhe_focus +3
+> 这是一个非常危险的请求。
+> 你今天听过至少三个人告诉你：不要替别人答到。
+@wait 1.0
+> 镜子里那个人，宿管，李恒。
+@wait 0.8
+> 而现在，一个老师在请你答。
+@wait 1.2
+@set truth +3
+me：我考虑一下。
+@wait 0.8
+xuqing(neutral)：嗯。
+@wait 1.0
+xuqing(neutral)：不应也没关系。
+@wait 0.6
+xuqing(neutral)：这五年我一个人念，也念下来了。
+@wait 1.2
+@set route_empathy +2
+@set save_route_score +2
+@flag flag_xuqing_asked
+@else
+xuqing(neutral)：什么都不问？
+me：不知道该问什么。
+@wait 1.0
+xuqing(neutral)：那就好。
+@wait 0.6
+她重新低头改作业。
+@wait 1.0
+xuqing(neutral)：不知道该问什么，说明你还正常。
+@set truth +2
+@set route_obedience +2
+@endif
+@wait 1.0
+你出门，把门带上。
+@wait 0.8
+走廊很黑，只有安全出口的绿灯。
+@wait 1.0
+你走了几步，回头看了一眼办公室。
+@wait 0.6
+玻璃窗上映着灯光，她还在改作业，一本一本，速度很快。
+@wait 1.2
+@set truth +2
+> 你忽然意识到，她改的是明天要发下去的作业。
+> 而明天早读，她会念四十二个名字。
+@wait 0.8
+> 她改的作业里，有一本是永远不会有人来领的。
+@wait 1.0
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +3
+@set shenhe_focus +2
+@set memory_echo +2
+> 你在门外站了很久。
+> 然后你想通了一件事：她每天多批一本作业，
+> 就像周叙留着那张车票，像有人每年去贴一张寻人启事。
+@wait 1.2
+> 这些都不是纪念。
+@wait 0.8
+> 这些是抵抗。
+@set truth +4
+@set save_route_score +3
+@flag flag_xuqing_done
+@clearchars
+@goto ch4_prep_hub

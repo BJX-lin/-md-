@@ -1,0 +1,642 @@
+-- 第一章《转入》—— 日常的崩解（上）
+-- Scene 1 填表的午后 / Scene 2 进班与座位 / Scene 3 课间对抗
+-- 对应 f.md ch1_sc1~ch1_sc3，e.md 第一章正式剧情脚本
+
+== ch1_start
+@chapter 1 转入
+@time 1 14:40
+@bg office day
+@bgm bgm_day_class
+@amb amb_classroom_day
+@clearchars
+@autosave
+教务处在行政楼二楼东头。
+走廊尽头那扇窗开着，风却进不来——南方三月的空气是稠的，像泡在温水里的棉花，压在人身上。
+你把行李箱靠在墙边，箱轮上还沾着长途汽车站的泥。
+@sfx sfx_step
+门虚掩着。里面有电风扇在转，扇叶刮着铁网，一圈一圈，"嘎、嘎、嘎"。
+@wait 0.6
+你敲门。
+@sfx sfx_knock_soft
+里面没人应。风扇还在转。
+你又敲了一次，稍微用力。
+@sfx sfx_knock_soft
+xuqing(flat)：进。
+@bg office day
+@show xuqing flat left
+办公室不大，六张桌子挤在一起，桌上堆着卷子，卷子上压着搪瓷缸、老花镜、没拧紧的红墨水瓶。
+只有靠窗那张桌子后面坐着人。
+她大概三十岁上下，穿深色针织衫，头发在脑后低低束着，一丝不乱。手里的红笔没停，正在批一沓作业。
+她没抬头。
+xuqing(flat)：坐。
+你在桌前的椅子上坐下。椅腿一条短一点，你一坐，它就往左歪。
+@wait 0.5
+她批完最后一道题，画了个叉，把作业本合上，放在左手边那摞的最上面。
+然后才抬起眼睛看你。
+xuqing(neutral)：林昼。高二三班。原来在江城七中。
+me：是。
+xuqing(neutral)：三月转学。快期中了。
+她的语气不是疑问，也不是责备，就是把一个事实念出来，像在念名册。
+me：家里搬过来了。
+xuqing(neutral)：嗯。
+她没有再问。你反而有点意外——按你的经验，老师听到"转学"总要多问两句的。
+她从抽屉里抽出一张表格，推过来。
+@sfx sfx_page
+xuqing(flat)：名字，原学校，监护人电话，按顺序填。字写清楚点，别让我再看第二遍。
+me：好。
+你低头去够笔。
+就在这时候，你注意到桌角还压着另一张纸。
+那张纸和你面前这张不一样——它更旧，纸边发黄，被人揉皱过又展平，折痕深得像刀刻的，折痕里积了灰。
+最上面印着五个字：
+> 违纪记录表。
+@fx heartbeat 0.5
+你的手停在半空。
+xuqing(cold)：那张别碰。
+* “这是我的东西？” -> ch1_s1_a
+    @set truth +1
+    @set memory_echo +2
+    @set trust_xuqing -1
+    @flag flag_pocket_record
+* “违纪记录表？” -> ch1_s1_b
+    @set truth +1
+    @set route_investigate +1
+* “知道了。” -> ch1_s1_c
+    @set trust_xuqing +1
+    @set route_obedience +1
+* 假装没听见，继续看那张纸 -> ch1_s1_d
+    @set truth +2
+    @set trust_xuqing -2
+    @set route_hostility +1
+    @flag flag_pocket_record
+
+== ch1_s1_a
+@fx shake 0.4
+许清的眼皮跳了一下。
+不是惊讶那种跳，是更小、更快的一下，像有人在她脸下面轻轻扯了一根线。
+然后她伸手，把那张纸按住了。动作不快，但很稳，掌心整个盖在纸面上。
+xuqing(cold)：不是。你看错了。
+me：上面像写了我的名字。
+风扇转到你这个方向，纸角被吹起来一点点。
+你确实看见了。三个字，压得很深，笔画抖得厉害，像是被人反复描过很多遍，描到纸都起了毛。
+她把纸角按下去。
+xuqing(cold)：林昼，第一天来，眼睛别太尖。
+xuqing(cold)：太尖的人，在这儿待不久。
+@clue clue_record_table
+me：待不久是什么意思？
+她终于正眼看你。那目光很平，平得像一堵墙。
+xuqing(neutral)：意思是转走。你以为是什么意思？
+@set memory_echo +1
+@goto ch1_s1_after
+
+== ch1_s1_b
+xuqing(neutral)：学校里每个人都可能有。你以后也不例外。
+me：我还没来，就先记上了？
+她笑了一下。
+嘴角是动了，眼睛没有。那种笑你在很多大人脸上见过——不是觉得好笑，是觉得你说了句蠢话。
+xuqing(faintsmile)：你怎么知道是今天记的？
+你张了张嘴，没接上。
+她已经低头去翻另一沓卷子了。
+@clue clue_record_table
+@goto ch1_s1_after
+
+== ch1_s1_c
+许清把表往你面前又推近一点，指尖在桌面上敲了两下。
+xuqing(flat)：听话是好事。至少能少吃点苦头。
+她说这话的时候语气很淡，不像敲打，倒像陈述一条早就验证过很多遍的规律。
+@goto ch1_s1_after
+
+== ch1_s1_d
+你没有立刻挪开视线。
+你盯着那张纸看了大概三秒——足够看清"违纪记录表"底下那一行小字：
+> 姓名：林　昼
+> 日期：三月十四日
+@fx glitch 0.5
+@sfx sfx_sting
+今天是三月十四日。
+可这张纸的黄，这些折痕，绝不是今天才有的。
+@clue clue_record_table
+@set sanity -1
+许清抬起头。这一次她看你的时间比之前都长。
+xuqing(stare)：你叫什么？
+me：……林昼。您刚才叫过我。
+xuqing(stare)：我知道。
+xuqing(cold)：我只是想听你自己说一遍。
+她把那张旧纸抽走，翻过来，扣在桌面上，压在一本教案底下。
+xuqing(cold)：填你的表。
+@set memory_echo +2
+@goto ch1_s1_after
+
+== ch1_s1_after
+你低头填表。
+姓名：林昼。原学校：江城市第七中学。
+写到"监护人电话"那一栏，笔尖停住了。
+@wait 0.8
+你想不起来家里的号码。
+不是记不清后几位那种想不起来——是整串号码在你脑子里是空的，像一行被擦掉的字，只剩下擦过的痕迹。
+你在纸上写了一个"1"，又划掉。
+@set memory_echo +1
+@set sanity -1
+> 你告诉自己：路上坐了七个小时车，累了。人累的时候什么都会忘。
+最后你写了个手机号。写完之后你看着那串数字，不确定它是不是真的。
+你把表推回去。
+许清接过来，低头扫了一眼，红笔在"监护人电话"那一栏停了半秒。
+@sfx sfx_write
+她没说什么，在表格右下角签了字。
+xuqing(flat)：宿舍给你排在307。先跟周叙熟悉班里情况。
+xuqing(flat)：梁野……你自己看着处。
+me：什么意思？
+xuqing(flat)：他嘴碎，胆子又小，偏偏还爱碰不该碰的东西。
+* “不该碰的东西，指什么？” -> ch1_s1_e
+    @set truth +1
+    @set route_investigate +1
+* “周叙是班长？” -> ch1_s1_f
+    @set trust_zhouxu +1
+* “307还有谁？” -> ch1_s1_g
+    @set trust_liangye +1
+* “老师，我能问个别的吗？” -> ch1_s1_h
+    @set truth +1
+    @set route_investigate +1
+
+== ch1_s1_e
+许清停顿了半秒。
+她的目光越过你，落在窗外。
+从这个角度能看见操场，操场那头是四栋教学楼。最东边那栋和其他三栋隔着一段空地，颜色也不一样——更暗，更旧，窗户上钉着木条。
+xuqing(cold)：门锁着的地方，广播停掉的时间，还有被划掉的名字。
+> 广播、锁门、名字删除。
+> 这三样东西，第一次出现在同一句话里。
+@set truth +1
+@goto ch1_s1_end
+
+== ch1_s1_f
+xuqing(neutral)：嗯。他做事稳。
+xuqing(neutral)：你要是运气够好，今晚大概会感谢他。
+me：今晚有什么？
+她把钢笔帽套回去，"咔"一声。
+xuqing(flat)：晚自习。
+@goto ch1_s1_end
+
+== ch1_s1_g
+xuqing(flat)：梁野，周叙，另外两个。
+她顿了一下，像在数。
+xuqing(flat)：如果半夜有人跟你搭话，先看清楚床位再开口。
+me：……为什么？
+xuqing(flat)：宿舍晚上黑。认错人会闹笑话。
+她说得很平常，平常到你差点就这么信了。
+@set truth +1
+@set shenhe_focus +1
+@fx heartbeat 0.5
+@goto ch1_s1_end
+
+== ch1_s1_h
+me：老师，学校东边那栋楼，为什么钉着木条？
+红笔在她手里转了半圈，停住。
+xuqing(neutral)：危房。等拆。
+me：等了多久了？
+xuqing(neutral)：五年。
+me：五年还没拆？
+xuqing(cold)：拆楼要钱。钱要打报告。报告要有人签字。
+xuqing(cold)：签字的人得先说清楚，那栋楼当年为什么关的。
+她把红笔放下。
+xuqing(cold)：没人愿意说清楚。所以它就一直在那儿。
+@set truth +2
+@clue clue_missing_one
+@goto ch1_s1_end
+
+== ch1_s1_end
+你拎起行李，往门口走。
+走到门边时，许清忽然开口。
+xuqing(flat)：林昼。
+你回头。她低着头在改作业，红笔尖压在纸上，没动。
+xuqing(flat)：走廊上别跑。
+me：……好。
+xuqing(flat)：跑起来，脚步声会多。
+@fx glitch 0.4
+@sfx sfx_broadcast_static
+你等了两秒，等她解释这句话。
+她没有。红笔重新动起来，在卷子上划出一道长长的叉。
+@clearchars
+@set truth +1
+@goto ch1_walk_to_class
+
+-- ================================================= 过渡：走向教室
+== ch1_walk_to_class
+@advtime 20
+@bg hallway day
+@amb amb_hallway
+@bgm bgm_unease
+@clearchars
+教学楼在行政楼对面。你拖着箱子穿过操场。
+@sfx sfx_step
+下午两点四十，太阳被云挡着，光是灰白的，把所有东西的影子都压得很淡。
+操场上没人。跑道上的红漆掉了大半，露出底下的水泥，像结痂剥落之后的皮肤。
+> 你抬头数了一下教学楼的窗。
+> 一层十二扇，四层，四十八扇。三栋楼，一百四十四扇。
+> 都开着。都有人。
+> 只有东边那栋，一扇都没开。
+@set truth +1
+你走进教学楼。楼道里的声音一下子涌上来——读书声、写字声、老师讲课的声音、椅子腿刮地的声音。
+这些声音很正常。正常得让你刚才那点不安显得可笑。
+@wait 0.6
+四楼。高二（三）班。
+门口的班牌是新的，白底黑字，边角贴着透明胶。
+你在门口站了一会儿，整理了一下衣领。
+@sfx sfx_door
+@goto ch1_sc2
+
+-- ================================================= Scene 2 进班与座位
+== ch1_sc2
+@advtime 10
+@bg classroom day
+@amb amb_classroom_day
+@bgm bgm_day_class
+教室里有四十几个人，但你推门进去的时候，抬头的不到十个。
+剩下的还在写作业，或者趴着睡觉。有人在最后一排偷偷用手机。
+风扇在天花板上转，"嘎吱、嘎吱"，吹起黑板上没擦干净的粉笔灰。
+@show zhouxu neutral center
+一个男生从讲台那边走过来。校服拉链拉到最上面，领子是平的，头发很短，剪得很整齐。
+他手里拿着一张纸——座位表。
+zhouxu(neutral)：林昼？
+me：嗯。
+zhouxu(neutral)：周叙。班长。
+他没伸手，只是点了点头，然后侧身让开半步。
+zhouxu(neutral)：你坐最后一排，靠窗。书先用旧的，新的还没领到。
+你顺着他指的方向看过去。
+最后一排靠窗那个位置是空的，但桌上摆着旧课本，摞得整整齐齐，边角磨得起了毛。
+课本上面还压着一支笔。
+me：这里原来有人坐？
+周叙的目光从你脸上掠过去，在那张桌子上停了一瞬。
+只是一瞬。然后他把座位表卷起来。
+zhouxu(flat)：现在没人。
+* “那这些书是谁的？” -> ch1_s2_a
+    @set truth +1
+    @flag flag_saw_seatname
+    @set trust_zhouxu -1
+* “座位表上这个被擦掉的是谁？” -> ch1_s2_b
+    @set truth +2
+    @set route_investigate +1
+    @set trust_zhouxu -2
+    @flag flag_saw_seatname
+* “好，我先坐这儿。” -> ch1_s2_c
+    @set trust_zhouxu +1
+    @set route_obedience +1
+* “那支笔也是他的？” -> ch1_s2_d
+    @set truth +2
+    @set memory_echo +1
+    @flag flag_saw_seatname
+
+== ch1_s2_a
+周叙走过去，把最上面那本书翻过来，压住封皮。
+动作很快，快得像排练过。
+zhouxu(flat)：旧书。教务处懒得收。
+me：名字呢？也懒得擦？
+你伸手去拿那本书。他没拦——但你翻开封皮内页的时候，看见那里有一块被橡皮反复擦过的地方，纸都起球了，中间还破了个小洞。
+擦得很干净。干净到只剩下一个偏旁的半截笔画，压在纸的纤维里。
+> 三点水。
+周叙的眼神沉了下去。
+zhouxu(cold)：你问题很多。
+me：我第一天来。
+zhouxu(cold)：第一天来的人，问题应该更少才对。
+@clue clue_erased_seat
+@goto ch1_s2_liangye
+
+== ch1_s2_b
+你伸手去拿他手里的座位表。
+他没有躲，但手指猛地捏紧了纸边，纸角起了褶。
+座位表是打印的，每个格子里印着名字。最后一排靠窗那格——被擦过。
+不是打印错误后用修正液涂的那种，是有人用橡皮，一遍一遍地擦。擦得太用力，纸面已经透了一小块光，对着窗户能看见。
+zhouxu(frown)：没谁。写错了。
+me：写错能反复擦三次？
+教室里几个正在讲话的人，突然都不说话了。
+你能感觉到有几道视线落在你背上。不是好奇，是那种"这人怎么又提这个"的视线。
+zhouxu(cold)：林昼。
+zhouxu(cold)：我再说一遍，坐下。
+@clue clue_erased_seat
+@fx shake 0.5
+@set memory_echo +1
+@goto ch1_s2_liangye
+
+== ch1_s2_c
+zhouxu(neutral)：嗯。晚自习前，我把作息表给你。
+他把座位表卷起来，塞进外套内袋。
+卷的时候，最后一排那一格朝内。
+你注意到了。但你什么也没说。
+@goto ch1_s2_liangye
+
+== ch1_s2_d
+你指了指桌上那支笔。
+它躺在课本最上面，笔帽扣着，摆得很正——不是随手一扔的样子，是有人特意放好的。
+me：那支笔也是他的？
+周叙沉默了两秒。
+zhouxu(flat)：那是我放的。
+me：为什么？
+zhouxu(flat)：……习惯。
+他伸手想把笔拿走，手伸到一半又停住，最后收回去了。
+zhouxu(flat)：算了。你要用就用。
+> 他不敢碰那支笔。
+@set truth +1
+@clue clue_erased_seat
+@goto ch1_s2_liangye
+
+== ch1_s2_liangye
+@show liangye normal right
+后桌探出一个头。
+头发乱翘，一看就是早上没洗直接来的。嘴里叼着根笔，笔杆上的漆掉了一半。
+liangye(normal)：新来的？梁野。
+他伸出手，你握了一下。他手心有点汗。
+liangye(normal)：先提醒一句啊。
+liangye(normal)：你那位置要是晚上发凉，别把脚缩上椅子。
+me：为什么？
+他咧嘴笑了一下。
+笑得有点虚——那种嘴角上去了但眼睛没跟上的笑。
+liangye(nervous)：因为有人说，那样像给别人让位置。
+* “你是在吓我？” -> ch1_s2_e
+    @set trust_liangye +1
+    @set route_empathy +1
+* “别人是谁？” -> ch1_s2_f
+    @set truth +1
+    @set shenhe_focus +1
+* “你看起来比我还怕。” -> ch1_s2_g
+    @set trust_liangye -1
+    @set route_hostility +1
+* “谁说的？” -> ch1_s2_h
+    @set truth +2
+    @set route_investigate +1
+
+== ch1_s2_e
+liangye(sad)：我倒希望是。
+liangye(sad)：吓人至少还能笑出来。真碰上了，连笑都笑不出来。
+他把笔在指间转了半圈，转到一半掉了。
+笔"啪"地落在地上，滚到你脚边。
+他愣了一下，没有弯腰去捡。
+me：笔掉了。
+liangye(nervous)：……知道。晚点再捡。
+> 他为什么不敢弯腰？
+你自己弯腰把笔捡起来递给他。他接的时候飞快看了一眼门口的方向。
+@set truth +1
+@goto ch1_s2_end
+
+== ch1_s2_f
+梁野的笑僵了一下。
+他的眼神往那个空位扫了一眼，很快收回来。
+liangye(nervous)：就是……那个没来上晚自习的人呗。
+> 他说"那个没来的人"时，用的是现在时。
+> 像那个人现在也还没来。而不是——从来没有过这个人。
+me：他什么时候会来？
+liangye(nervous)：……你别问了行不行。
+@clue clue_missing_one
+@goto ch1_s2_end
+
+== ch1_s2_g
+笔"咔"一下被他掰断了。
+断口是斜的，戳进掌心。他好像没感觉到。
+liangye(annoyed)：行，当我多嘴。
+他把断笔往桌肚里一塞，转过身去。
+> 一滴血从他掌心渗出来，落在课桌边缘。
+> 他用袖子抹掉了。袖口上已经有几块深色的、洗不掉的印子。
+@fx blood 0.4
+@sfx sfx_flesh 0.4
+@goto ch1_s2_end
+
+== ch1_s2_h
+me：谁说的？
+梁野张了张嘴。
+然后他做了一件很奇怪的事——他先看了一眼周叙。
+周叙已经走回讲台那边了，背对着这边，正在整理一摞卷子。但他的动作停住了。
+虽然只有半秒，但确实停住了。
+liangye(nervous)：……老生。学校里传的。
+liangye(nervous)：反正你就当我放屁。
+@set truth +1
+@set memory_echo +1
+@goto ch1_s2_end
+
+== ch1_s2_end
+@clearchars
+上课铃响了。
+@sfx sfx_bell
+你坐进最后一排靠窗那个位置。
+椅子是凉的。
+不是那种木头本身的凉——三月的南方，教室里闷得人后背发黏，这把椅子却像是刚从阴面搬进来的，凉气顺着裤子往上爬。
+你往椅背上靠了靠。椅背也凉。
+> 也许是靠窗，风吹的。
+> 你告诉自己。
+@wait 0.6
+数学老师在讲台上讲三角函数。你把课本翻开，笔记本摊平。
+就在你把手放在桌面上的时候，指腹碰到了桌沿下侧的一道凹痕。
+你低下头，从桌肚的角度往上看。
+@fx heartbeat 0.4
+桌板背面刻着一个字。
+刻得很深，笔画末端拖出去很长，像刻的人手在抖，又像是被人打断了。
+> 沈。
+你用指腹描了一遍那道刻痕。木头的毛刺扎手。
+刻痕里没有灰。
+@bg desk carving
+> 一张放了很久的旧桌子，桌底的刻痕里，应该积满灰才对。
+@set truth +1
+@set memory_echo +1
+@goto ch1_sc3
+
+-- ================================================= Scene 3 课间对抗
+== ch1_sc3
+@time 1 15:50
+@bg hallway day
+@amb amb_hallway
+@bgm bgm_unease
+@clearchars
+第二节课间。
+走廊上全是人。有人靠着栏杆吃面包，有人在追打，有人抱着一摞作业本挤过去。
+这种嘈杂让你稍微松了口气——它太日常了，日常到刚才那些别扭的细节像是你自己想多了。
+@show liangye nervous left
+然后梁野拽住了你的袖子。
+liangye(nervous)：过来一下。
+他把你拽到楼梯口的转角。那里没什么人，因为窗户正对着东边那栋楼。
+liangye(nervous)：你摸到桌子底下那个字了吧。
+me：你怎么知道？
+liangye(nervous)：每个坐那儿的人都会摸到。
+liangye(nervous)：摸到之后，都会问同一句话。
+me：什么话？
+liangye(nervous)："这是谁刻的"。
+他学你的语气学得很像。像到你后颈有点发麻。
+* “你继续说。” -> ch1_s3_a
+    @set truth +2
+    @set route_investigate +1
+    @set trust_liangye +1
+* “班长为什么这么怕你提这个？” -> ch1_s3_b
+    @set truth +1
+    @set trust_zhouxu -1
+* “我对怪谈没兴趣。” -> ch1_s3_c
+    @set route_obedience +1
+    @set trust_liangye -1
+* “坐那儿的人，一共有几个？” -> ch1_s3_d
+    @set truth +3
+    @set memory_echo +2
+    @set route_investigate +1
+
+== ch1_s3_a
+liangye(nervous)：五年前，旧楼那边出过事。
+liangye(nervous)：着火，还是别的，没人说得清。反正从那以后，晚自习点名会多念一个名字。
+me：多念一个？
+他摇头。
+liangye(nervous)：不是多。是……念到一半，念不下去。
+liangye(nervous)：只有一个姓。后面那个字，像被人从嘴里抠掉了。
+me：谁在念？
+liangye(fear)：广播。
+liangye(fear)：可那栋楼断电五年了。广播室在三楼。
+@clue clue_first_rollcall
+@set truth +1
+@goto ch1_s3_mid
+
+== ch1_s3_b
+liangye(nervous)：因为他答过。
+me：答什么？
+梁野立刻闭嘴了。
+他往楼梯下面看了一眼，又往上看了一眼，确认没人。
+liangye(fear)：……没什么。你别问了。
+liangye(fear)：反正你记住，晚自习点名，念到不认识的名字，别接话。
+me：不接话会怎么样？
+liangye(fear)：不接话就没事。
+me：那接了呢？
+他没回答。他在发抖，很轻微，但你能看见他校服的袖子在动。
+@set truth +1
+@goto ch1_s3_mid
+
+== ch1_s3_c
+liangye(sad)：行。那你就当我在编。
+他松开你的袖子，退了半步。
+liangye(sad)：编的东西不会半夜敲你门，对吧。
+那一瞬间你注意到，他手心里还有干掉的血——刚才掰断笔的时候留下的。
+他自己好像一直没发现。
+@goto ch1_s3_mid
+
+== ch1_s3_d
+你问得很平静。
+me：坐那个位置的人，一共有几个？
+梁野愣住了。
+他大概想过很多种反应——害怕、追问、嘲笑——但没想过你会问这个。
+liangye(nervous)：……什么意思？
+me：你说"每个坐那儿的人都会摸到"。
+me：那就是不止一个。
+他张开嘴，又合上。
+过了几秒，他伸出手，很慢地比了一个数字。
+> 四。
+liangye(fear)：这三年，我见过四个。
+liangye(fear)：都是转学来的。都坐那儿。
+me：他们现在呢？
+liangye(fear)：走了。转走了。
+liangye(fear)：至少……班主任是这么说的。
+@fx glitch 0.6
+@set sanity -1
+@set memory_echo +2
+@clue clue_missing_one
+@goto ch1_s3_mid
+
+== ch1_s3_mid
+@show zhouxu cold right
+zhouxu(cold)：梁野。
+周叙不知什么时候站在走廊那头。
+手里拿着卷子。他走过来的时候，你注意到一件事——
+> 走廊上这么多人，全是脚步声。
+> 他走过来的这七八步，你一声都没听见。
+zhouxu(cold)：上课了。
+liangye(nervous)：……哦。
+梁野一溜烟走了，跑得比铃响还快。
+周叙没有立刻跟上。他站在你面前，看着你。
+比你高半个头，所以是微微低头看。
+zhouxu(cold)：他跟你说了多少？
+* “你在保护我，还是在瞒我？” -> ch1_s3_e
+    @set truth +1
+    @set trust_zhouxu -1
+    @set route_hostility +1
+* “你是不是也听过广播叫名字？” -> ch1_s3_f
+    @set truth +2
+    @set trust_zhouxu -1
+    @set shenhe_focus +1
+* “我知道了。” -> ch1_s3_g
+    @set trust_zhouxu +2
+    @set route_obedience +1
+* “你刚才走过来，没有声音。” -> ch1_s3_h
+    @set truth +2
+    @set trust_zhouxu -1
+    @set memory_echo +1
+
+== ch1_s3_e
+周叙看了你三秒。
+zhouxu(cold)：这两件事在这所学校里，是一件事。
+me：什么意思？
+zhouxu(cold)：意思是，你要么全信我，要么什么都别问。
+me：中间没有别的选项？
+zhouxu(cold)：有。
+zhouxu(cold)：中间那个选项，是你自己去试。试过的人现在都不在这儿了。
+@set truth +1
+@goto ch1_s3_end
+
+== ch1_s3_f
+他的手指在卷子边缘捏了一下，纸发出很轻的一声响。
+zhouxu(flat)：听过。
+me：那你怎么回应的？
+zhouxu(cold)：我没回应。
+> 他说这句话的时候，眼睛看着地板。
+> 你在他脸上第一次看到别的东西——不是防备，是心虚。
+me：一次都没有？
+他抬起眼睛。
+zhouxu(cold)：林昼，你今天问的问题，已经超过前三个转学生加起来的总和了。
+me：前三个？
+他意识到自己说漏了。但他没有慌，只是把话咽回去，转身往教室走。
+@clue clue_dont_answer
+@set truth +1
+@set memory_echo +1
+@goto ch1_s3_end
+
+== ch1_s3_g
+zhouxu(neutral)：晚自习坐好，别乱看，别乱应。下课了跟我走。
+zhouxu(neutral)：能做到这三条，你在这儿会过得很轻松。
+me：那做不到呢？
+他想了想。
+zhouxu(flat)：做不到的，我一般第二个月就见不到了。
+他说完就走了。你分不清那是威胁还是提醒。
+@goto ch1_s3_end
+
+== ch1_s3_h
+me：你刚才从走廊那头走过来。
+me：八步。一点声音都没有。
+周叙站住了。
+他低头看了看自己的鞋——很普通的白色运动鞋，鞋底已经磨平了。
+zhouxu(flat)：鞋底软。
+me：走廊上四十几个人在走路，我能听见每一个人的脚步。
+me：就是听不见你的。
+沉默。
+他忽然做了一件事：他抬起脚，用力在地上跺了一下。
+@sfx sfx_step
+"咚。"
+声音很响，走廊上有几个人回头看。
+zhouxu(cold)：现在有了。
+zhouxu(cold)：满意了吗。
+他转身走了。这一次，你听见了他的脚步声——每一步都很重，重得像故意的。
+@fx heartbeat 0.6
+@set sanity -1
+@set truth +1
+@goto ch1_s3_end
+
+== ch1_s3_end
+@clearchars
+@sfx sfx_bell
+上课铃。
+你转身回教室。走过楼梯口那扇窗的时候，下意识往外看了一眼。
+东边那栋楼，三层，最左边那扇窗。
+钉着的木条中间有一道缝——大概两指宽，是木条老化之后裂开的。
+@fx flash 0.5
+缝里有光。
+不是反光。反光是死的，会随着你走动的角度变化。
+这个光是活的。它在很轻微地、一下一下地闪。
+像有人在里面，一遍一遍地开关一盏灯。
+@set truth +1
+@set memory_echo +1
+@wait 0.8
+你数了一下频率。
+> 亮，灭。亮，灭，灭。
+> 亮，灭。亮，灭，灭。
+> 三短，两长。
+> 或者说——三下，停，两下。
+@set truth +1
+你当时还不知道这个节奏意味着什么。
+你只是觉得它很像敲门。
+@goto ch1_free_hub

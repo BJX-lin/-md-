@@ -1,0 +1,20 @@
+# Godot
+game/.godot/
+game/.import/
+game/export.cfg
+# game/export_presets.cfg  (随包提供，方便直接导出)
+*.translation
+
+# 导出产物
+build/
+*.apk
+*.aab
+*.pck
+*.exe
+
+# 系统
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+game/tools/.sprite_work/

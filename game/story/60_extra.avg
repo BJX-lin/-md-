@@ -1,0 +1,238 @@
+-- 番外《天晴》
+-- 真结局《点名停止》后解锁。一个安静的清晨：没有点名，没有人需要被补上。
+-- 60_extra.avg · v1.4.0
+
+== extra_sunny_day
+@bg schoolgate day
+@bgm bgm_day_class
+@stopamb
+@title 番外　《天晴》
+@chapter 6 天晴
+@time 7 7:40
+@wait 0.8
+雨停之后的第三个早晨，天晴得没有一点道理。
+水泥缝里不再冒泡。阳光斜着铺进校门，把铁栅栏的影子拉得很长。
+门房的挂钟还是慢四分钟。
+@sfx sfx_clock_tick
+但今天听上去，它就只是一只走得慢的钟。
+@wait 0.6
+你把校园卡贴上闸机。
+@sfx sfx_click
+「嘀。」
+屏幕上跳出两个数字。
+入校：5。出校：1。
+@wait 0.8
+你站着看了它两秒，才意识到自己在看什么。
+> 五比一。
+> 活人的账，终于开始记了。
+@set truth +1
+@show oldqin normal left
+老秦坐在门口的躺椅上，捏着老花镜，正在看新一年的名单。
+oldqin(normal)：早。
+me：秦叔，早。
+oldqin(normal)：今天来得早。
+me：昨晚睡得好。
+@wait 0.6
+他抬眼看你，看了有三秒钟。
+oldqin(normal)：嗯。
+oldqin(normal)：你这张脸，我今年记得住。
+@wait 0.8
+> 今年那页名单上，三个勾还在。
+> 有一个在你身上。
+@set truth +1
+@clearchars
+@wait 0.6
+你往教学楼走。口袋里有东西硌了你一路。
+你把它掏出来看——一支很普通的中性笔，笔杆上的漆掉了一半。
+@sfx sfx_write
+> 有些东西，捡起来是可以的。
+> 只要你知道它是谁的，也知道该还给谁。
+@wait 1.0
+你知道它是谁的。
+只是没有地方还了。
+@wait 1.0
+@goto extra_sunny_class
+
+== extra_sunny_class
+@bg classroom morning
+@amb amb_classroom_day
+@wait 0.6
+早读之前，教室里有一层薄薄的、铅笔灰一样的安静。
+四十一张桌子。
+四十一把椅子。
+你从后门进去，数了一遍。
+> 四十一。
+> 不是四十二，也不是四十。
+> 就只是四十一。
+@set truth +1
+最后一排靠窗的桌子是干净的。
+保洁还是只扫地、不擦桌。
+但你路过的时候看见，桌角那一小片被擦亮的地方——像有人每天来擦，擦完了就走。
+@wait 0.8
+你坐到自己的位子上。前面的男生回过头，把一本练习册递过来。
+@show liheng flat center
+liheng(flat)：昨天的数学。
+liheng(flat)：你抄我了吗？
+me：没有。
+liheng(flat)：那今天借我。
+me：……好。
+@wait 0.6
+他把练习册收回去，犹豫了一下，又说：
+liheng(flat)：晚自习改九点半了，你知道吧。
+me：知道。
+liheng(flat)：那样的话——
+他顿了顿。
+liheng(flat)：我妈说，回家路上还能赶在天黑之前。
+@set truth +1
+@clearchars
+@wait 0.8
+早读铃响。
+许清抱着两本册子进来。旧的点名册夹在腋下，新的那本放在讲台上，还没有写字。
+@show xuqing neutral center
+xuqing(neutral)：翻到第七页，齐读。
+xuqing(neutral)：读到哪儿算哪儿，不赶。
+@wait 0.6
+她翻开新书的第一页，拿笔在抬头写日期。
+写完，她停了一秒，把「晚自习」后面的那一栏，整行划掉了。
+@sfx sfx_write
+@wait 0.8
+xuqing(neutral)：这学期没有晚自习。
+xuqing(neutral)：有事的同学，四点半以后来办公室。
+@clearchars
+@wait 0.6
+周叙踩着铃声进门。
+@show zhouxu soft right
+zhouxu(soft)：早。
+me：早。
+zhouxu(soft)：昨天那件衬衫的事，我妈说想请你吃个饭。
+me：……这事不用急着谢。
+zhouxu(soft)：不是谢。
+zhouxu(soft)：就是吃饭。
+@wait 0.8
+点名没有来。
+早读也没有人念名字。
+四十一个人各自翻书，纸页哗啦哗啦，像一场很小的雨下在屋子里。
+@set truth +1
+> 没有人停顿着等谁应答。
+> 也没有人替谁答。
+@clearchars
+@wait 1.0
+梁野从前门探进半个身子。
+@show liangye smile left
+liangye(smile)：借书卡找着了！
+liangye(smile)：夹在数学书里，我说怎么死活找不到。
+me：……你借书卡在我这儿。
+liangye(smile)：啊？
+me：上回你托我代保管的。忘了吗。
+liangye(smile)：……哦。哦！
+他挠了挠头，接过去，看了一眼自己的名字。
+liangye(smile)：描得挺深啊，这名字。
+me：你的名字，自己描。
+@set truth +1
+@clearchars
+@wait 1.0
+@time 7 16:50
+放学以后，你摸了摸口袋里那支笔。
+该还了。
+* 把笔放到旧楼广播室的窗台上去 -> extra_sunny_broadcast
+* 把笔留在靠窗那张课桌的桌洞里 -> extra_sunny_desk
+
+== extra_sunny_broadcast
+@bg oldbuilding_out day
+@stopamb
+@stopbgm
+@clearchars
+@wait 0.6
+你一个人去了旧楼。
+铁丝网的破口，学校用新铁丝补过了。
+补得很潦草。但补过了。
+@wait 0.8
+三层走廊里很亮。
+窗上的木条还是密的，光从缝隙里进来，在地上排成一格一格的亮片。
+你踩着那些亮片走过去。
+铁门没有锁。
+@sfx sfx_door
+@wait 0.8
+@bg broadcast_room white
+@bgm bgm_ending_true
+@wait 1.0
+广播室里全是白天的光。
+灰尘在光柱里慢慢地转。
+调音台的旋钮蒙了一层薄灰，蒙得很均匀——五年了，第一次没有人急着来动它们。
+红灯灭了。
+@wait 0.8
+你把话筒罩掀开看了一眼，又轻轻扣回去。
+@sfx sfx_broadcast_click
+@wait 0.6
+你把那支笔放在窗台上。
+掉漆的那一半朝里，干净的那一半朝外。
+@sfx sfx_write
+@wait 1.0
+> 放在有人记得的地方，东西就不会变成无主的东西。
+@set truth +1
+@wait 1.0
+下楼的时候，你在楼梯拐角站了一会儿。
+整栋楼安安静静的。
+不是那种憋着声音的静。
+是下过雨、开了天、晒了一上午太阳的静。
+@bg schoolyard day
+@stopbgm
+@wait 0.8
+操场上有人在拍球。
+一下，一下，拍得不快，也不数数。
+@sfx sfx_bell
+上课铃响了。
+> 第一节，第二节，第三节……
+> 晚上没有课了。一节都没有。
+> 第十三节课，下课了。
+@wait 1.2
+@ending ending_extra_sunny
+
+== extra_sunny_desk
+@bg classroom day
+@clearchars
+@wait 0.6
+教室里人走空了。
+夕阳从窗户进来，给每张桌子都铺了一层薄薄的黄。
+你走到最后一排靠窗的那张桌子前。
+桌角被擦亮的那一小片，在光里看得很清楚。
+@bg desk carving
+@wait 0.8
+桌侧板上有几道很浅的旧刻痕。
+你数了一遍。
+一百零九。
+@wait 0.8
+> 一百零八道是等出来的。
+> 第一百零九道，是有人活着补上的。
+> 刻痕停在这个数上，挺好。
+@set truth +1
+@wait 0.6
+你蹲下来，把笔放进桌洞最里面，笔尖朝里。
+@sfx sfx_write
+@wait 0.8
+> 每天早上有人来擦这张桌子。
+> 擦桌子的人会看见它。
+> 看见，就是还在被记得。
+@set truth +1
+@wait 1.0
+@time 8 7:20
+第二天早读之前，你特意早到了十分钟。
+那张桌子靠窗的桌角，还是干干净净。
+桌洞里——
+@wait 1.0
+笔不在了。
+@fx heartbeat 0.4
+@wait 1.2
+你站了几秒，然后笑了一下。
+> 有些东西，是被亲手拿走的。
+> 那就不是丢。
+@set truth +1
+@wait 0.8
+@bg schoolyard day
+@sfx sfx_bell
+上课铃响了。操场上有人在拍球，拍得不快，也不数数。
+> 第一节，第二节，第三节……
+> 晚上没有课了。一节都没有。
+> 第十三节课，下课了。
+@wait 1.2
+@ending ending_extra_sunny

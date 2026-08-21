@@ -1,0 +1,615 @@
+-- 第二章 白天支线：在别人身上找证据
+-- 前面所有调查都在"物"上（名单、书、录像）。这条线转向"人"：
+-- 同班同学、教务处、校医室——从活人嘴里撬出他们自己都没意识到的异常。
+
+== ch2_school_hub
+@bg hallway day
+@bgm bgm_investigate
+@amb amb_hallway
+@clearchars
+@advtime 15
+第二天下午，两节连堂之间有四十分钟自由活动。
+@wait 0.6
+你决定换个方向。
+@wait 0.8
+> 名单、旧书、登记册——这些都是死的。
+> 死的东西只会告诉你已经发生过什么。
+> 活人不一样。活人身上有他们自己都没察觉的痕迹。
+@set truth +2
+@if visited:ch2_school_hub
+> 还有时间再问一个人。
+@endif
+* [if !visited:ch2_school_ask] 找同班同学聊聊 -> ch2_school_ask
+    @set route_investigate +1
+* [if !visited:ch2_school_office] 去教务处查学籍 -> ch2_school_office
+    @set route_investigate +2
+* [if !visited:ch2_school_clinic] 去校医室 -> ch2_school_clinic
+    @set route_investigate +1
+* [if !visited:ch2_school_photo] 找往届毕业照 -> ch2_school_photo
+    @set truth +1
+* 回教室 -> ch2_school_end
+    @set route_obedience +1
+
+-- ================================================= 同班同学
+== ch2_school_ask
+@bg classroom day
+@bgm bgm_unease
+@clearchars
+@advtime 15
+你回教室，找了三个人问。
+问法很小心——不能问"你觉得班里有鬼吗"，那会被当成神经病。
+@wait 0.8
+你问的是："咱们班到底多少人？"
+@wait 1.0
+@show classmate normal center
+第一个是坐你前排的女生，姓王，戴眼镜。
+classmate：四十一啊。
+me：你确定？
+classmate：确定。上周体检排队我数过，四十一个。
+@wait 0.6
+me：那点名册上是四十二行。
+她愣了一下。
+classmate：……那可能是印错了吧。
+classmate：或者留了一行备用？
+@set truth +1
+@wait 1.0
+你注意到她说"留了一行备用"的时候，自己也觉得这个解释很勉强。
+但她说完就转过去写作业了，没有再想。
+@wait 0.8
+> 这是最普遍的反应。
+> 不是不知道，是知道了之后，立刻替它编一个能过去的理由。
+@set truth +2
+@wait 1.0
+@clearchars
+@show classmate normal center
+第二个是后排打篮球那个男生，姓陈。
+classmate：四十二。
+@fx heartbeat 0.8
+@set truth +2
+me：四十二？
+classmate：嗯，四十二啊。怎么了。
+me：可实际到场是四十一。
+@wait 0.8
+他挠了挠头。
+classmate：是吗？我一直以为四十二。
+classmate：可能我记错了。
+@wait 1.0
+me：你为什么会记成四十二？
+@wait 1.2
+他想了很久。
+classmate：……不知道。
+classmate：就是觉得应该是四十二。
+@set truth +3
+@set memory_echo +2
+@wait 0.8
+> 他不是在猜。
+> 他是"记得"四十二——只是找不到这个记忆的来源。
+@set truth +2
+@wait 1.0
+@clearchars
+第三个你没问成。
+@wait 0.6
+你走到李恒桌前，正要开口，他抬头看了你一眼。
+@show unknown flat center
+classmate：别问了。
+me：我还没说。
+classmate：你要问人数。
+@wait 1.0
+@set sanity -1
+@set truth +2
+me：你怎么知道。
+classmate：因为前面几个都问过。
+classmate：问完之后就没了。
+@wait 0.8
+他戴上耳机，低头继续做题。
+@wait 1.0
+> "问完之后就没了"。
+> 他用的是"没了"，不是"转学了"。
+@set truth +3
+@set memory_echo +2
+@clue clue_missing_one
+@clearchars
+@goto ch2_school_hub
+
+-- ================================================= 教务处
+== ch2_school_office
+@bg infirmary day
+@bgm bgm_investigate
+@clearchars
+@advtime 20
+教务处在行政楼二楼。
+你编了个理由：转学手续里少交一份材料，来问问。
+@wait 0.8
+接待你的不是许清，是个四十多岁的女老师，姓吴。
+@show unknown normal center
+她翻了翻电脑。
+unknown(normal)：林昼是吧。高二三班。
+unknown(normal)：材料齐的，没缺。
+me：那可能是我记错了。
+@wait 0.6
+你没有立刻走。
+me：吴老师，能问一下咱们班的学籍名单吗？我想认认人。
+@wait 1.0
+unknown(normal)：这个可以。
+她点了几下鼠标，把屏幕转过来一点。
+@sfx sfx_page
+@wait 0.8
+一张表格。姓名、学号、性别、入学年月。
+@wait 0.6
+你从上往下数。
+@wait 1.0
+> 四十一行。
+@set truth +1
+@wait 0.8
+* 问她表格能不能往下拉 -> ch2_school_office_a
+    @set truth +5
+    @set route_investigate +2
+* 问她这个班有没有转走过学生 -> ch2_school_office_b
+    @set truth +4
+* 记下学号规律 -> ch2_school_office_c
+    @set truth +4
+    @set memory_echo +2
+
+== ch2_school_office_a
+me：吴老师，能往下拉一下吗？
+unknown(normal)：没了，就这些。
+me：您拉一下试试。
+@wait 0.8
+她"嗯"了一声，滚动鼠标滚轮。
+@wait 1.2
+表格往下滚了一行。
+@fx heartbeat 1.0
+@set truth +3
+@wait 0.8
+第四十二行。
+@wait 0.6
+姓名栏是空的。学号栏有内容。
+@wait 1.0
+你凑近看那个学号。
+@fx names 0.6
+@set truth +3
+@set memory_echo +2
+@wait 0.8
+unknown(normal)：哎，这行怎么回事。
+她皱起眉，点了两下。
+unknown(normal)：系统的老毛病。有时候会多一行空的。
+me：能删掉吗？
+@wait 1.0
+她试着右键，选删除。
+@sfx sfx_click
+@wait 1.2
+弹出一个提示框。
+@note 该记录存在关联档案，无法删除。
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@wait 1.0
+unknown(normal)：……那就不管它了。
+unknown(normal)：反正也不影响什么。
+@wait 0.8
+她把屏幕转回去，继续做自己的事。
+@wait 1.0
+> "存在关联档案"。
+> 一个没有名字的学号，关联着一份档案。
+> 而这份档案，在系统里活得比任何一个学生都久。
+@set truth +3
+@flag flag_empty_row
+@clue clue_missing_one
+@goto ch2_school_hub
+
+== ch2_school_office_b
+me：吴老师，咱们班这两年有转走的学生吗？
+@wait 0.8
+unknown(normal)：有啊。
+她又点了几下。
+unknown(normal)：这两年……三个。
+@wait 0.6
+me：能看看是谁吗？
+unknown(normal)：这个不太合适吧，学生隐私。
+me：我就是想知道我这个位置以前是谁坐的。
+@wait 1.0
+她犹豫了一下，还是把屏幕转过来了。
+@sfx sfx_page
+@wait 0.8
+"转出学生记录"，三条。
+@wait 0.6
+每一条都有姓名、转出日期、转入学校。
+@wait 1.0
+你看那三个"转入学校"。
+@fx heartbeat 0.9
+@wait 0.8
+三条都是同一个学校名。
+@wait 0.6
+> 临川第三中学
+@set truth +3
+@wait 1.0
+me：他们三个都转去了同一所学校？
+unknown(normal)：巧了呗。三中离这儿近。
+@wait 0.8
+你拿出手机，当着她的面搜"临川第三中学"。
+@sfx sfx_click
+@wait 1.4
+@fx glitch 0.7
+> 未找到相关结果。
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 1.0
+me：吴老师，临川有三中吗？
+@wait 1.2
+她愣住了。
+unknown(normal)：……有吧？
+unknown(normal)：我在这儿干了十几年，一直往三中转学生。
+@wait 0.8
+me：您去过吗？
+unknown(normal)：……没有。
+@wait 1.0
+她盯着屏幕上那三行字，看了很久。
+然后她做了一件事：把窗口关了。
+@wait 0.8
+unknown(normal)：这个我得问一下领导。你先回去上课吧。
+@set truth +3
+@flag flag_fake_school
+@clearchars
+@goto ch2_school_hub
+
+== ch2_school_office_c
+你没有多问，只是把屏幕上的学号记了下来。
+@wait 0.8
+学号是十位数：前四位是入学年份，中间两位是班级，后四位是序号。
+@wait 0.6
+你在心里排了一遍序号。
+@wait 1.0
+> 0001 到 0041，连续。
+> 你自己是 0041——最后一个，因为你是最晚转来的。
+@set truth +1
+@wait 0.8
+> 但按理说，转学生的学号应该是接在原有序号之后的新号。
+> 而 0041 这个号，本来就该属于原班的第四十一个人。
+@wait 1.0
+你问了一句。
+me：吴老师，我这个学号是新给的，还是原来就有的？
+@wait 1.2
+她看了一眼。
+unknown(normal)：这个是……
+她停住了。
+@wait 0.8
+unknown(normal)：奇怪。
+unknown(normal)：这个号有使用记录，但登记日期比你入学早。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.0
+me：早多久？
+@wait 0.8
+unknown(normal)：……四年。
+@wait 1.2
+@fx glitch 0.8
+@set truth +3
+@clue clue_repeat_name
+@wait 0.8
+> 四年前。
+> 和图书馆借阅卡上第一条"林昼"的日期，一模一样。
+@set truth +2
+@set memory_echo +2
+@clearchars
+@goto ch2_school_hub
+
+-- ================================================= 校医室
+== ch2_school_clinic
+@bg office day
+@bgm bgm_unease
+@clearchars
+@advtime 15
+校医室在体育馆旁边的平房里。
+你说自己这两天睡不好，想开点安神的药。
+@wait 0.8
+校医是个五十来岁的男医生，很随和。
+@show unknown normal center
+unknown(normal)：睡不好？几天了。
+me：三天。转学过来之后就没睡好。
+unknown(normal)：换环境嘛，正常。
+@wait 0.6
+他给你量了血压，看了看眼睑。
+unknown(normal)：血压有点低。你最近是不是老出冷汗？
+me：……是。
+unknown(normal)：晚上惊醒过没有？
+me：有。
+@wait 1.0
+他一边写病历一边点头。
+unknown(normal)：典型的应激反应。开点谷维素，晚上睡前吃。
+@wait 0.8
+* 问他这种情况多不多 -> ch2_school_clinic_a
+    @set truth +4
+* 问他能不能看以前的病历 -> ch2_school_clinic_b
+    @set truth +5
+    @set route_investigate +2
+
+== ch2_school_clinic_a
+me：医生，我们学校这种情况多吗？
+@wait 0.8
+unknown(normal)：睡不好的？高中生嘛，一半以上都睡不好。
+me：我是说……应激反应这种。
+@wait 1.0
+他停下笔，想了想。
+unknown(normal)：说实话，你们三班来得多。
+@fx heartbeat 0.8
+@set truth +2
+me：三班？
+unknown(normal)：嗯。高二三班。
+unknown(normal)：我在这儿快二十年了，各个班都有来的，但三班的比例明显高。
+@wait 0.8
+me：为什么？
+unknown(normal)：不知道。楼层朝向？还是班主任管得严？
+unknown(normal)：我问过几次，孩子们都说不清楚。
+@wait 1.0
+他把处方递给你。
+unknown(normal)：都是一样的症状：睡不好，出冷汗，说听见有人叫自己名字。
+@wait 0.8
+me：听见有人叫名字？
+unknown(normal)：对。这个最常见。
+unknown(normal)：我一开始以为是幻听，让家长带去精神科查。
+@wait 1.0
+me：查出来什么了？
+unknown(normal)：……都没去。
+unknown(normal)：说是家长觉得没必要，孩子过阵子就好了。
+@wait 0.8
+他顿了一下，又补了一句。
+unknown(normal)：也确实好了。
+unknown(normal)：过阵子他们就不来了。
+@fx glitch 0.6
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 1.0
+> "不来了"。
+> 好了会不来，走了也会不来。
+> 在他的记录里，这两件事长得一模一样。
+@set truth +2
+@clearchars
+@goto ch2_school_hub
+
+== ch2_school_clinic_b
+me：医生，我能看看以前的病历记录吗？
+me：就是……我想知道有没有人和我症状一样，他们后来怎么好的。
+@wait 1.0
+unknown(normal)：这个不合规矩。
+@wait 0.6
+他看了看你，又看了看外面。
+unknown(normal)：不过就诊记录是脱敏的，只有班级和症状，没有姓名。
+unknown(normal)：那个可以看。
+@wait 0.8
+他从柜子里搬出一摞硬皮本，纸质登记，不是电子的。
+@sfx sfx_page
+@wait 1.0
+你翻。
+@wait 0.6
+高二（3）班的记录确实多得反常。
+@wait 0.8
+> 高二3　失眠、盗汗、幻听　　2019.10.14
+> 高二3　失眠、心悸　　　　　2019.11.02
+> 高二3　失眠、幻听　　　　　2019.11.20
+> 高二3　失眠、盗汗、幻听　　2019.12.08
+@wait 1.0
+你往前翻，翻到五年前。
+@wait 0.8
+@fx names 0.8
+五年前五月之后，三班的记录突然暴增。
+一个月里有十七条。
+@set truth +3
+@wait 1.0
+然后你翻到五月十七日那一页。
+@wait 1.2
+那一页只有一条记录，字迹和别处不同——写得很急，笔画都连在一起。
+@wait 0.8
+@note 高二3　烟雾吸入　轻度　1人\n处理：现场处置后转院\n备注：另有1人未送出\n\n（这一行被划掉了，但还能看清）
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@clue clue_fire_truth
+@wait 1.2
+"另有1人未送出"。
+这行字被划掉了，但划得很轻，像是划的人自己也不确定该不该划。
+@wait 1.0
+你抬头看校医。
+me：五年前那场火，您在场吗？
+@wait 1.4
+他沉默了很久。
+unknown(normal)：在。
+unknown(normal)：我是第一个上去的医务人员。
+@wait 0.8
+me：您看见什么了？
+@wait 1.2
+unknown(normal)：门开着。
+unknown(normal)：里面在烧，但门是开着的。
+@set truth +3
+@wait 0.8
+me：门开着为什么人出不来？
+@wait 1.4
+unknown(normal)：这就是我一直没想明白的地方。
+unknown(normal)：门开着，火不大，就一米多的范围。
+unknown(normal)：那个孩子就坐在椅子上。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 1.0
+unknown(normal)：她没有跑。
+unknown(normal)：她坐在那儿，手放在桌上，好像在等什么人。
+@wait 0.8
+> 等什么人。
+> 等一个来点名的人。
+> 或者等一个替她答到的人。
+@set truth +3
+@set shenhe_focus +2
+@flag flag_clinic_record
+@clearchars
+@goto ch2_school_hub
+
+-- ================================================= 往届毕业照
+== ch2_school_photo
+@bg hallway day
+@bgm bgm_investigate
+@clearchars
+@advtime 10
+教学楼一楼的走廊墙上挂着往届毕业照——不是校史馆那套正式的，
+是每届学生自己拍的合影，塑封了挂在这儿。
+@wait 0.8
+你从最新的往回看。
+@wait 0.6
+去年、前年、三年前……每张照片下面写着届别和班级。
+@wait 1.0
+你找高二（3）班——不对，毕业的时候是高三。
+你找到五年前那一届的高三（3）班。
+@wait 0.8
+@fx heartbeat 0.8
+照片在。四十一个人，站成三排。
+@wait 0.6
+但这张照片和别的不一样。
+@wait 1.0
+别的照片都是彩色的。
+这一张是黑白的。
+@set truth +3
+@set sanity -1
+@wait 0.8
+* 问路过的老师为什么是黑白的 -> ch2_school_photo_a
+    @set truth +4
+* 仔细看照片本身 -> ch2_school_photo_b
+    @set truth +4
+    @set memory_echo +2
+
+== ch2_school_photo_a
+你等到一个路过的老师，问了这个问题。
+@wait 0.8
+@show unknown normal center
+那是个教物理的男老师，年纪不小了。
+unknown(normal)：黑白的？
+他走过来看了一眼。
+@wait 1.0
+unknown(normal)：哦，这一届。
+unknown(normal)：他们那年出了点事，说是拍照那天下大雨，
+unknown(normal)：相机进水了，彩色的洗不出来，只能用备用的黑白胶卷。
+@wait 0.8
+me：备用胶卷？
+unknown(normal)：那时候还用胶卷嘛。
+@wait 1.0
+你点点头，好像接受了这个解释。
+@wait 0.6
+然后你问了一句。
+me：老师，五年前拍毕业照，用的还是胶卷？
+@wait 1.4
+他愣住了。
+@fx heartbeat 1.0
+unknown(normal)：……
+unknown(normal)：五年前？
+@wait 0.8
+unknown(normal)：五年前早就数码了。
+@wait 1.0
+他自己也盯着那张照片看起来。
+unknown(normal)：奇怪。
+unknown(normal)：那这照片怎么是黑白的。
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 0.8
+他看了大概十几秒，然后摇摇头。
+unknown(normal)：可能是后期做的效果吧。现在小孩喜欢搞这些。
+@wait 1.0
+他走了。
+@wait 0.6
+> 他给了自己一个解释，然后就走了。
+> 每个人都是这样。
+> 不是没看见，是看见之后立刻替它编一个理由，然后离开。
+@set truth +3
+@clearchars
+@goto ch2_school_hub
+
+== ch2_school_photo_b
+你凑近看那张黑白照片。
+@wait 0.8
+塑封已经发黄，边角起泡。
+四十一个人，三排：前排蹲，中排坐，后排站。
+@wait 1.0
+你一个一个看过去。
+@wait 0.6
+> 后排最右边那个男生，眼睛闭着。
+> 中排左三的女生，手挡在脸前面。
+> 前排有个人低着头。
+@wait 0.8
+> 都是很正常的合影瑕疵。
+@wait 1.0
+然后你看中排正中间。
+@fx heartbeat 1.2
+@wait 0.8
+中排是坐着的，一排椅子。
+椅子的数量比人多一把。
+@set truth +3
+@wait 1.0
+正中间那把椅子是空的。
+@wait 0.6
+不是没人坐——是**椅子上有东西**。
+@wait 1.2
+你把脸贴到塑封上，眯起眼睛。
+@wait 0.8
+@fx glitch 0.7
+@set sanity -1
+@set memory_echo +3
+@set truth +3
+那把椅子上放着一件校服外套。
+折得整整齐齐，摆在椅面正中间。
+@wait 1.0
+> 拍毕业照的时候，有人把自己的外套折好，放在了自己该坐的位置上。
+> 然后人没有出现在照片里。
+@set truth +3
+@wait 0.8
+> 而其他四十一个人，就这么拍完了。
+> 没有一个人说："等等，还有一个没来。"
+@set truth +2
+@set shenhe_focus +2
+@flag flag_bw_photo
+@goto ch2_school_hub
+
+-- ================================================= 收束
+== ch2_school_end
+@bg classroom day
+@bgm bgm_unease
+@clearchars
+上课铃响了。
+@sfx sfx_bell
+你回到座位上。
+@wait 0.8
+@if flag_empty_row or flag_fake_school or flag_clinic_record or flag_bw_photo
+> 今天下午你问了几个人。
+> 他们每个人都知道一点点，每个人都不觉得那是问题。
+@wait 0.6
+> 王同学说"可能是印错了"。
+> 陈同学说"可能我记错了"。
+> 吴老师说"系统的老毛病"。
+> 校医说"过阵子就好了"。
+> 物理老师说"可能是后期效果"。
+@wait 1.0
+> 五个人，五个解释。
+> 每个解释单独看都成立。
+> 合起来看，就是这所学校维持运转的方式。
+@set truth +4
+@set memory_echo +2
+@else
+> 你什么都没问出来。
+> 或者说，你没有去问。
+@set route_obedience +1
+@endif
+@wait 0.8
+你坐下，翻开课本。
+@wait 0.6
+前排的王同学回头，小声问你：
+classmate：你下午去哪了？找你半天。
+me：随便走走。
+classmate：哦。
+@wait 1.0
+她转回去了。
+@wait 0.6
+> 她不会追问。
+> 这所学校里，没有人会追问第二遍。
+@set truth +1
+@goto ch2_hub3

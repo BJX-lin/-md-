@@ -1,0 +1,844 @@
+-- 第一章 · 转学第一天的白天
+-- 定位：全篇最"正常"的一段。所有异常都伪装成普通校园细节。
+-- 这里埋的每一个东西，后面都要收。
+-- 接入：ch1_free_hub 的选项
+
+== ch1_day_hub
+@timeat 1 12:30
+@bg classroom day
+@bgm bgm_day_class
+@amb amb_classroom_day
+@clearchars
+@advtime 5
+午饭时间。教室里剩下十几个人，有人趴着睡，有人在啃面包。
+@wait 0.8
+你还没跟任何人说过超过三句话。
+@if visited:ch1_day_hub
+> 午休还剩一点时间。
+@endif
+* [if !visited:ch1_day_seat] 收拾一下自己的座位 -> ch1_day_seat
+    @set route_investigate +1
+* [if !visited:ch1_day_duty] 看看墙上的值日表 -> ch1_day_duty
+    @set truth +2
+* [if !visited:ch1_day_lunch] 去食堂吃口饭 -> ch1_day_lunch
+* [if !visited:ch1_day_liangye] 跟后座那个男生搭话 -> ch1_day_liangye
+    @set trust_liangye +1
+* [if !visited:ch1_day_window] 站在窗边看一会儿 -> ch1_day_window
+    @set sanity +5
+* 出去走走 -> ch1_day_end
+
+-- ================================================= 座位
+== ch1_day_seat
+@bg classroom day
+@clearchars
+@advtime 8
+你的座位在最后一排靠窗。
+@wait 0.8
+班主任说这是唯一的空位。你没多想——转学生坐哪儿都一样。
+@wait 1.0
+桌面很干净。干净得有点不对劲。
+@wait 0.6
+@set truth +1
+其他桌子上都有痕迹：圆珠笔画的格子、修正液盖住的字、指甲抠出的月牙。
+你这张桌子什么都没有，像刚擦过。
+@wait 1.0
+* 拉开抽屉 -> ch1_day_seat_a
+    @set truth +3
+* 看看桌面下方的侧板 -> ch1_day_seat_b
+    @set truth +3
+    @set memory_echo +1
+
+== ch1_day_seat_a
+你拉开抽屉。
+@sfx sfx_chair
+@wait 0.8
+里面不是空的。
+@wait 0.6
+一摞旧课本，摞得整整齐齐，边角对得很正。上面放着一支笔，笔尖朝里，摆得笔直。
+@wait 1.0
+@set truth +2
+你翻了翻。语文、数学、英语——都是本学期的版本，用过，但很爱惜，没有折角。
+@wait 0.8
+扉页上应该写名字的地方，被人用橡皮擦过。
+擦得很干净，只留下一小片起毛的纸面。
+@wait 1.2
+@fx names 0.5
+@set truth +3
+@set memory_echo +2
+你对着光斜过去看，隐约能看出笔压：两个字，第二个字笔画很多。
+@wait 0.8
+认不出来。
+@wait 1.0
+> 有人坐过这个位置。
+> 有人替他把书摞好了。
+> 有人把名字擦掉了。
+@wait 0.8
+你正想再看，前排一个女生回过头。
+@wait 0.6
+@show classmate_girl neutral left
+classmate_girl：那些书你别动。
+me：不是我的？
+@wait 1.0
+classmate_girl：……
+她张了张嘴，像是要说什么，然后自己也愣住了。
+@wait 1.2
+classmate_girl：我也不知道是谁的。
+classmate_girl：反正一直在那儿。
+@set truth +2
+@set sanity -1
+@wait 0.8
+me：一直是多久？
+@wait 1.0
+classmate_girl：……
+classmate_girl：我怎么会知道。
+@wait 0.6
+她转回去了。你注意到她的耳朵有点红——不是害羞，是那种"说错话了"的红。
+@set truth +2
+@clue clue_empty_seat
+@clearchars
+@goto ch1_day_hub
+
+== ch1_day_seat_b
+你弯腰，摸桌面下方的侧板。
+@wait 1.0
+每张课桌侧面都有一块木板，学生喜欢在上面刻字——刻名字、刻数字、刻脏话。
+@wait 0.8
+你的桌子上有刻痕。
+@sfx sfx_write
+@wait 0.6
+不是字，是"正"字。
+@wait 1.0
+@set truth +2
+一个一个排过去，刻得很浅，但很规整，间距一样。
+@wait 0.8
+你数了数。
+@wait 1.2
+> 二十一个"正"字，最后一个只刻了三画。
+> 二十一乘五，加三。
+@wait 0.6
+@fx heartbeat 0.8
+> 一百零八。
+@set truth +3
+@set memory_echo +2
+@wait 1.0
+你不知道这是在数什么。
+可能是数天数——但一百零八天，将近四个月，谁会这么无聊。
+@wait 0.8
+你用手指划过最后那三画。
+@wait 1.0
+刻痕的边缘还很锋利，木屑没有被磨圆。
+@wait 0.6
+@set sanity -1
+@set truth +2
+> 这三画是新刻的。
+> 就在最近。
+@wait 1.0
+> 而这个位置，从你今天早上坐下之前，一直是空的。
+@fx glitch 0.5
+@set memory_echo +2
+@flag flag_desk_marks
+@goto ch1_day_hub
+
+-- ================================================= 值日表
+== ch1_day_duty
+@bg classroom day
+@bgm bgm_unease
+@clearchars
+@advtime 6
+@bg prop duty
+教室后墙贴着一张值日表，A3 打印的，塑封过。
+@wait 0.8
+七列，对应周一到周日。每列下面写着当天值日的四个人。
+@wait 1.0
+你随便看了看，本来打算记一下自己排在哪天。
+@wait 0.6
+@set truth +1
+然后你发现一件事。
+@wait 1.0
+* 数一数表上一共多少个名字 -> ch1_day_duty_a
+    @set truth +4
+* 找找自己的名字 -> ch1_day_duty_b
+    @set truth +3
+    @set sanity -1
+
+== ch1_day_duty_a
+你从周一开始数。
+@wait 1.0
+> 周一四个，周二四个，周三四个……
+> 七天，每天四个，一共二十八个人次。
+@wait 0.8
+但班上有四十多个人。按理说值日表应该轮两遍以上。
+@wait 1.0
+你重新看了一遍，这次看名字有没有重复。
+@wait 1.2
+> 没有重复。二十八个名字，二十八个不同的人。
+@wait 0.8
+所以还有十几个人从来不值日。
+@wait 0.6
+@set truth +2
+你觉得这不太公平，但也不关你的事。
+@wait 1.0
+你正要走开，又回头看了一眼。
+@wait 0.8
+@fx names 0.6
+周三那一列，第四个位置。
+@wait 1.0
+名字被人用修正液涂掉了，涂得很厚，涂了不止一遍——修正液堆起来，摸上去是凸的。
+@wait 0.6
+@set truth +3
+@set memory_echo +2
+但底下还是隐约透出笔画。
+@wait 1.2
+你凑近看。
+@wait 0.8
+透出来的不是一个名字，是两个字叠在一起，像是先写了一个，擦掉，又写了一个。
+@wait 1.0
+@fx glitch 0.6
+@set sanity -1
+@set truth +3
+> 这个位置换过人。
+> 而且换过不止一次。
+@wait 0.8
+> 修正液是一层一层加上去的。最下面那层已经发黄了。
+@set truth +2
+@flag flag_duty_erased
+@clue clue_duty_swap
+@goto ch1_day_hub
+
+== ch1_day_duty_b
+你从头找自己的名字。
+@wait 1.0
+林昼。
+@wait 0.8
+你今天才来，按说不该在表上。
+@wait 1.2
+但你在周三那一列找到了。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+@wait 0.8
+第四个位置。用黑色水笔写的，字迹很新，墨还有点亮。
+@wait 1.0
+你伸手摸了一下。
+@wait 0.6
+下面是凸的——有一层修正液，被这个名字盖住了。
+@wait 1.0
+@set truth +3
+@set memory_echo +2
+> 有人在你来之前，就把这个位置空出来了。
+> 或者说，有人把上一个人涂掉，把你写了上去。
+@wait 1.2
+你回头看教室。
+@wait 0.6
+十几个人在吃饭、趴着、看手机。没有人看你。
+@wait 1.0
+你走到讲台边，问了一个正在擦黑板的男生。
+@wait 0.8
+@show classmate_boy neutral left
+me：值日表是谁排的？
+classmate_boy：班长吧。周叙。
+me：他什么时候排的？
+@wait 1.0
+classmate_boy：开学就排好了啊，一直贴那儿。
+@wait 0.8
+me：上面有我的名字。我今天才来。
+@wait 1.4
+他停下手里的黑板擦，看了看表，又看了看你。
+@wait 1.0
+classmate_boy：……那可能是班长提前写的。
+me：他怎么知道我要来？
+@wait 1.2
+classmate_boy：老师会说的吧。
+@wait 0.6
+他说这句话的时候，声音已经小下去了，自己也知道不对。
+@wait 1.0
+classmate_boy：你别问我啊，我就管擦黑板。
+@set truth +2
+@set sanity -1
+@clearchars
+@wait 0.8
+> 他不是不知道。
+> 他是不想知道。
+@set truth +2
+@flag flag_duty_erased
+@clue clue_duty_swap
+@goto ch1_day_hub
+
+-- ================================================= 食堂
+== ch1_day_lunch
+@bg canteen day
+@bgm bgm_day_class
+@amb amb_classroom_day
+@clearchars
+@advtime 20
+食堂在教学楼后面，两层，一楼打饭二楼吃。
+@wait 0.8
+你打了两荤一素，找了个角落坐下。
+@wait 1.0
+饭菜很普通。土豆炖得有点烂，米饭偏硬。你吃了几口就没什么胃口。
+@wait 0.8
+不是难吃，是没有味道。
+@wait 0.6
+@set sanity -1
+你把这归结为第一天的紧张。
+@wait 1.0
+* 观察一下周围的人 -> ch1_day_lunch_a
+    @set truth +3
+* 看看墙上贴的东西 -> ch1_day_lunch_b
+    @set truth +3
+    @set shenhe_focus +1
+
+== ch1_day_lunch_a
+你抬头看了看食堂。
+@wait 1.0
+午饭高峰，二楼坐得挺满。声音很杂——碗筷、说话、笑、椅子拖地。
+@wait 0.8
+很正常的学校食堂。
+@wait 1.0
+你一桌一桌看过去，本来只是无聊。
+@wait 0.6
+然后你注意到，每张桌子都是六个座位。
+@wait 1.0
+@set truth +1
+六个座位的圆桌，坐满是六个人。
+@wait 0.8
+你数了最近的五桌。
+@wait 1.2
+> 第一桌：五个人，一个空位。
+> 第二桌：五个人，一个空位。
+> 第三桌：五个人，一个空位。
+> 第四桌：五个人，一个空位。
+> 第五桌：六个人。
+@wait 1.0
+@set truth +2
+前四桌都空一个，你觉得是巧合。
+@wait 0.8
+但你多看了第五桌一眼。
+@wait 1.2
+@fx heartbeat 0.9
+第五桌确实坐了六个人，但其中一个面前没有餐盘。
+@wait 0.8
+@set sanity -1
+@set truth +3
+他就坐在那儿，手放在桌上，看着别人吃。
+@wait 1.0
+你盯着他看了几秒。
+@wait 0.6
+他好像感觉到了，转过头来。
+@wait 1.2
+是个很普通的男生，校服拉链拉到顶。
+@wait 0.8
+他冲你笑了一下。
+@wait 1.0
+然后他对口型说了三个字。没有出声。
+@wait 1.4
+@fx names 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+你没看懂——但你看懂了最后一个字的口型是闭嘴音。
+@wait 0.8
+你低下头，扒了两口饭。
+@wait 1.0
+再抬头的时候，第五桌是五个人。
+@wait 0.6
+@fx glitch 0.7
+@set sanity -1
+@set truth +2
+空出来的那个位置，桌面上什么都没有。
+@wait 1.0
+> 你告诉自己是数错了。
+@wait 0.8
+> 后来你会明白，"就当自己数错了"这句话，是这个地方最重要的一条规则。
+@set truth +3
+@clue clue_missing_one
+@goto ch1_day_hub
+
+== ch1_day_lunch_b
+食堂墙上贴着几张东西：菜价表、食品安全承诺书、还有一张"文明就餐"的标语。
+@wait 1.0
+最角落有一张纸，比其他的旧很多，边缘卷起来了。
+@wait 0.8
+你走过去看。
+@sfx sfx_page
+@wait 0.6
+@bg prop poster
+是一张寻人启事。
+@wait 1.0
+@set truth +2
+纸已经泛黄，胶带干裂发脆。照片是黑白复印的，糊得看不清脸，只能看出是个女生，留长发。
+@wait 0.8
+下面的字还能认。
+@wait 1.2
+@note 寻人\n沈禾，女，17 岁，本校高二（3）班学生\n于 5 月 17 日晚离校后未归\n如有线索请联系校办公室或其家属\n联系电话：0731-XXXXXXX
+@wait 1.4
+@fx heartbeat 1.0
+@set truth +4
+@set shenhe_focus +3
+@set memory_echo +2
+五月十七日。
+@wait 0.8
+你不知道是哪一年的五月十七日。纸上没写年份。
+@wait 1.0
+* 撕下来看看背面 -> ch1_day_lunch_b2
+    @set truth +4
+    @set route_investigate +2
+* 记住这个名字，走开 -> ch1_day_lunch_b3
+    @set truth +2
+    @set shenhe_focus +1
+
+== ch1_day_lunch_b2
+你把纸的一角掀起来。
+@wait 0.8
+胶带一碰就碎了。整张纸掉下来，落在你手里。
+@sfx sfx_page
+@wait 1.0
+背面朝上。
+@wait 0.6
+背面不是空白的。
+@wait 1.0
+@set truth +2
+有人在背面用铅笔写了字，写得很急，字很大。
+@wait 1.2
+@note 别贴了\n她没走\n她在楼里\n每年都有人贴 每年都被撕
+@fx glitch 0.9
+@sfx sfx_sting
+@set sanity -1
+@set truth +5
+@set shenhe_focus +3
+@set memory_echo +3
+@wait 1.4
+"每年都有人贴，每年都被撕。"
+@wait 0.8
+你看了看这张纸的正面——纸是黄的，但胶带只有四处，说明只贴过一次。
+@wait 1.0
+@set truth +2
+那被撕掉的那些呢？
+@wait 0.6
+你抬头看墙上其他的纸。
+@wait 1.2
+菜价表底下，露出一小片旧纸的残角。你把菜价表掀开。
+@wait 0.8
+@fx heartbeat 1.2
+下面还有一张。同样的寻人启事，更旧，更黄。
+@wait 1.0
+你继续掀。
+@wait 0.6
+@set sanity -1
+@set truth +4
+第三张。第四张。第五张。
+@wait 1.0
+一层一层贴上去的，最下面那张几乎已经烂成纸浆，粘在墙上撕不下来。
+@wait 0.8
+每一张的照片都是同一个女生。
+@wait 1.2
+> 五年。至少五张。
+> 有人每年都来贴一次。
+@wait 0.8
+> 而每一次，都会被人盖住。
+@set truth +3
+@set shenhe_focus +2
+@wait 1.0
+你把手里那张折起来，塞进口袋。
+@item +item_missing_poster
+@flag flag_saw_poster
+@clue clue_shenhe_missing
+@wait 0.8
+> 你还不知道贴的人是谁。
+> 第四章你会在值班室的抽屉里，看到一整叠没贴出去的。
+@set truth +2
+@goto ch1_day_hub
+
+== ch1_day_lunch_b3
+你没有动那张纸。
+@wait 0.8
+沈禾。你在心里念了一遍这个名字。
+@wait 1.0
+@set shenhe_focus +2
+@set truth +2
+转身要走的时候，打饭窗口的阿姨叫住了你。
+@wait 0.6
+@show canteen_aunt neutral left
+canteen_aunt：同学，那边不用看了。
+me：什么？
+canteen_aunt：那张纸。老早的事了。
+@wait 1.0
+me：她找到了吗？
+@wait 1.4
+阿姨擦了擦手，没马上回答。
+@wait 0.8
+canteen_aunt：找到了吧。
+me：您不确定？
+@wait 1.0
+canteen_aunt：我在这儿干了十几年。
+canteen_aunt：那孩子那年天天来打饭，我记得她爱吃茄子。
+@wait 1.2
+canteen_aunt：后来就不来了。
+@wait 0.6
+canteen_aunt：不来了就是找到了，或者转学了。总不能一直不来。
+@set truth +3
+@set sanity -1
+@wait 1.0
+她说这句话的时候语气很平静，像是在说一件想通了很久的事。
+@wait 0.8
+me：您还记得她长什么样吗？
+@wait 1.4
+阿姨看着你，很久。
+@wait 1.0
+canteen_aunt：……不记得了。
+canteen_aunt：奇怪啊，我记得她爱吃茄子，怎么会不记得脸呢。
+@fx glitch 0.7
+@sfx sfx_sting
+@set sanity -1
+@set truth +4
+@set shenhe_focus +3
+@set memory_echo +3
+@wait 1.2
+她自己也愣住了，拿着抹布站在那儿。
+@wait 0.8
+然后她摇摇头，转身回去干活了。
+@wait 1.0
+> 习惯留下来了。脸没有。
+@set truth +2
+@clue clue_shenhe_missing
+@clearchars
+@goto ch1_day_hub
+
+-- ================================================= 搭话梁野
+== ch1_day_liangye
+@bg classroom day
+@bgm bgm_day_class
+@clearchars
+@advtime 10
+后座那个男生一直在睡。头发乱得像鸟窝，校服敞着。
+@wait 0.8
+你回头的时候，他刚好醒了，抬头看你，眼神还没聚焦。
+@wait 1.0
+@show liangye normal right
+liangye(normal)：……看什么。
+me：我叫林昼，今天转来的。
+@wait 0.8
+liangye(normal)：知道。早上老师说了。
+liangye(normal)：梁野。
+@wait 1.0
+他伸了个懒腰，椅子往后一仰。
+@wait 0.6
+liangye(normal)：你哪儿来的？
+me：市里。
+liangye(normal)：市里？跑我们这鸟不拉屎的县城？
+@wait 0.8
+me：我爸工作调动。
+liangye(normal)：哦。
+@wait 1.0
+他好像对这个答案不感兴趣，打了个哈欠。
+@set trust_liangye +1
+@wait 0.8
+* 问他这个班怎么样 -> ch1_day_liangye_a
+    @set truth +3
+    @set trust_liangye +1
+* 问他晚上住宿的事 -> ch1_day_liangye_b
+    @set truth +2
+    @set trust_liangye +2
+
+== ch1_day_liangye_a
+me：这个班怎么样？
+@wait 1.0
+liangye(normal)：能怎么样。就那样。
+liangye(normal)：班长挺凶的，许老师人还行，就是有点冷。
+@wait 0.8
+me：同学呢？
+liangye(normal)：都还行。没什么坏人。
+@wait 1.0
+他顿了一下。
+@wait 0.6
+liangye(normal)：就是有点闷。
+me：怎么说？
+@wait 1.2
+liangye(normal)：怎么说呢……
+liangye(normal)：你有没有过那种感觉，一屋子人，大家都挺好的，也都说话，但就是没人真的聊天。
+@wait 1.0
+@set truth +2
+liangye(normal)：像是都在等着什么。
+@wait 0.8
+me：等什么？
+@wait 1.2
+liangye(normal)：不知道啊。我随便说的。
+@wait 0.6
+他自己笑了一下，摆摆手。
+@wait 1.0
+liangye(normal)：别听我瞎扯，我睡多了脑子不清楚。
+@wait 0.8
+你正要说话，他忽然坐直了。
+@wait 1.0
+liangye(normal)：诶，你坐那个位置啊？
+me：嗯，老师说是唯一的空位。
+@wait 1.4
+@fx heartbeat 0.8
+@set truth +3
+@set sanity -1
+他看着你的座位，看了三四秒。
+@wait 0.8
+liangye(normal)：……哦。
+@wait 0.6
+me：怎么了？
+@wait 1.0
+liangye(normal)：没怎么。
+liangye(normal)：就是那位置一直空着，我看习惯了。
+@wait 0.8
+me：之前没人坐？
+@wait 1.2
+liangye(normal)：没人坐。
+@wait 0.6
+liangye(normal)：不过每天早上都有人给它擦桌子。
+@fx glitch 0.6
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 1.4
+me：谁擦？
+liangye(normal)：不知道。反正来了就是干净的。
+@wait 0.8
+liangye(normal)：我以为是保洁。
+@wait 1.0
+liangye(normal)：但保洁不擦桌面，只扫地。
+@set truth +3
+@wait 0.8
+他说完这句，自己也觉得哪里不对，皱了皱眉。
+@wait 1.0
+liangye(normal)：算了，管他呢。
+@set trust_liangye +1
+@clue clue_empty_seat
+@clearchars
+@goto ch1_day_hub
+
+== ch1_day_liangye_b
+me：我今晚住校，307。
+@wait 1.0
+liangye(normal)：哟，那咱俩一屋。
+@wait 0.8
+他一下子精神了，往前凑了凑。
+@wait 0.6
+liangye(normal)：307 就我和周叙，空着两个床位。
+liangye(normal)：你睡靠门那张还是靠窗那张？
+@wait 1.0
+me：宿管说靠窗。
+@wait 1.4
+@fx heartbeat 0.7
+@set truth +2
+liangye(normal)：……靠窗啊。
+@wait 0.8
+me：不行吗？
+@wait 1.0
+liangye(normal)：行。行行行。
+liangye(normal)：就是靠窗那张床板上有字，别吓着。
+@wait 0.8
+me：什么字？
+@wait 1.2
+liangye(normal)：刻的道道。跟坐牢数日子似的。
+liangye(normal)：我数过，二十几道。
+@set truth +3
+@set memory_echo +2
+@wait 1.0
+me：谁刻的？
+liangye(normal)：不知道，我住进去就有了。
+@wait 0.8
+liangye(normal)：诶不过说起来——
+@wait 0.6
+他压低了声音。
+@wait 1.0
+liangye(normal)：我上学期数是二十三道。
+liangye(normal)：上个月又数了一次，二十四道。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.4
+me：……那张床一直空着？
+liangye(normal)：一直空着。
+@wait 0.8
+liangye(normal)：所以我就没敢再数了。
+@wait 1.0
+他笑了一下，笑得有点勉强。
+@wait 0.6
+liangye(normal)：你别当真啊，可能是我记错了。
+liangye(normal)：我这人记性差。
+@set truth +2
+@wait 1.0
+> 记性差。
+> 这个班上的每个人，都用这句话解释过一些事。
+@set truth +2
+@set trust_liangye +2
+@flag flag_bed_marks
+@clue clue_bed_marks
+@clearchars
+@goto ch1_day_hub
+
+-- ================================================= 窗边
+== ch1_day_window
+@bg classroom day
+@bgm bgm_day_class
+@clearchars
+@advtime 8
+你走到窗边，往外看。
+@wait 1.0
+操场上有人在打球。跑道边上几个女生在聊天。远处是围墙，围墙外面是县城的低矮楼房。
+@wait 0.8
+天是灰的，但不阴。就是那种没什么特点的天。
+@wait 1.0
+风从窗户吹进来，带着一点尘土味。
+@wait 0.6
+@set sanity +5
+这一刻很平常。平常得让你放松了一点。
+@wait 1.0
+你想，也许只是新环境让你太敏感了。
+@wait 0.8
+桌上那摞书可能是别人忘的，值日表可能是老师提前写的，食堂那个人可能真的走了。
+@wait 1.0
+你深吸了一口气。
+@wait 0.6
+> 这是你在这所学校里，最后一次感到放松。
+@set truth +1
+@wait 1.2
+你正准备回座位，眼角扫到操场东边。
+@wait 0.8
+那里有一栋楼。
+@wait 1.0
+@set truth +2
+三层，红砖，窗户全部用木条从里面钉死了。楼前面拉着警戒带，已经褪成粉白色。
+@wait 0.8
+很明显是废弃的。
+@wait 1.0
+* 多看两眼那栋楼 -> ch1_day_window_a
+    @set truth +4
+    @set sanity -1
+* 回座位 -> ch1_day_window_b
+    @set sanity +2
+
+== ch1_day_window_a
+你多看了两眼。
+@wait 1.0
+三层，每层大概八个窗户。全部钉死。
+@wait 0.8
+你数了数，一共二十四扇窗。
+@wait 1.2
+其中二十三扇的木条是横着钉的。
+@wait 0.6
+@fx heartbeat 0.8
+@set truth +3
+有一扇是竖着钉的。三楼，从左数第三个。
+@wait 1.0
+你盯着那扇窗看。
+@wait 0.8
+横着钉是标准做法——从外面钉，工人省事。
+竖着钉不合常理，除非……
+@wait 1.2
+@set truth +2
+除非那扇窗是从里面钉的。
+@wait 0.8
+@fx glitch 0.6
+@set sanity -1
+@set truth +3
+你眯起眼。木条之间有缝。
+@wait 1.0
+缝里是黑的。
+@wait 0.6
+你看了大概十秒。
+@wait 1.2
+然后缝里的黑，变成了别的颜色。
+@fx heartbeat 1.4
+@sfx sfx_sting
+@set sanity -1
+@set truth +4
+@set shenhe_focus +2
+@set memory_echo +2
+@wait 1.0
+很浅的一块，像是布料。白色的。
+@wait 0.8
+它在那儿停了一会儿，然后往旁边移开了。
+@wait 1.2
+你猛地闭了下眼。
+@wait 0.6
+再看，缝里又是黑的。
+@wait 1.0
+> 断电五年的楼。
+> 从里面钉死的窗。
+@wait 0.8
+> 你告诉自己是反光。
+> 但那天是阴天，没有太阳。
+@set truth +3
+@flag flag_saw_window
+@clue clue_old_building
+@goto ch1_day_hub
+
+== ch1_day_window_b
+你没有多看，回了座位。
+@wait 1.0
+@set sanity +2
+@set route_obedience +1
+有些东西不看比看了好。你现在还不知道这个道理，只是本能。
+@wait 0.8
+坐下的时候，你顺手摸了一下桌面。
+@wait 1.0
+是凉的。
+@wait 0.6
+@set truth +1
+教室里开着窗，午后的空气不算冷，别的桌子摸上去都是温的。
+@wait 1.0
+你的桌子是凉的。
+@wait 0.8
+> 你没多想。
+> 第四章你会明白，凉的东西说明很久没有人用了。
+> 而热的东西——比如省城东站那辆车最后一排的坐垫——说明刚刚还有人。
+@set truth +2
+@set memory_echo +1
+@goto ch1_day_hub
+
+-- ================================================= 收束
+== ch1_day_end
+@bg hallway empty
+@bgm bgm_unease
+@amb amb_hallway
+@clearchars
+@advtime 10
+午休快结束了。你从教室出来，在走廊上站了一会儿。
+@wait 1.0
+走廊很长，两边都是教室。这个点大部分教室都有人，说话声混在一起，像水。
+@wait 0.8
+很热闹。
+@wait 1.0
+你忽然意识到一件事。
+@wait 0.6
+@set truth +2
+从早上到现在，你跟七八个人说过话。
+每一个人，在被你问到某个具体问题的时候，都会出现同一个反应——
+@wait 1.2
+先愣一下，然后给一个说得通的解释，然后自己也不太信，然后换话题。
+@wait 0.8
+@set truth +3
+不是撒谎。撒谎的人不会自己愣住。
+@wait 1.0
+更像是……他们的脑子里有一块地方，一碰就滑开了。
+@wait 0.8
+@set memory_echo +2
+@fx heartbeat 0.7
+> 你还不知道那块地方叫什么。
+> 老秦后来会告诉你一个词：待定。
+@wait 1.0
+@set truth +2
+上课铃响了。
+@sfx sfx_bell
+@wait 0.6
+你转身回教室。
+@wait 1.0
+经过后门的时候，你下意识数了一下教室里的人。
+@wait 0.8
+@fx names 0.5
+四十一个。
+@wait 0.6
+@set truth +2
+@set memory_echo +1
+你不知道自己为什么要数。
+@wait 1.0
+> 但从这天开始，你会一直数下去。
+@set truth +2
+@goto ch1_free_hub

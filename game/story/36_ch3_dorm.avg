@@ -1,0 +1,572 @@
+-- 第三章 支线扩展：熄灯后的 307 内部
+-- 定位：原 35_ch3_side 有 18 个节点却只有 1629 字，密度最低。
+-- 那条线全在往外走（走廊/水房/天台），这里补的是「留在屋里」——
+-- 三个醒着的人在黑暗里熬四个小时，谁也不说话，然后开始说话。
+--
+-- 这一段是全篇少有的「安静戏」，靠对话与细节推进，不靠惊吓。
+-- 但它承担两个功能：交代 307 这间屋子本身的历史，
+-- 以及让三个人在最后一夜之前把话说开。
+
+== ch3_dorm_hub
+@bg dorm dark
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@advtime 10
+你没有出门。
+@wait 0.8
+三个人躺在各自的床上，睁着眼睛。
+@wait 1.0
+> 黑暗里有一种奇怪的默契：谁都知道另外两个没睡，谁都不先开口。
+@wait 0.8
+@set truth +1
+窗外的雨小了，变成那种细细的、几乎听不见的雨。
+@wait 1.0
+@if visited:ch3_dorm_hub
+> 离天亮还有一段时间。
+@endif
+* [if !visited:ch3_dorm_bunk] 摸黑看看第四张床 -> ch3_dorm_bunk
+    @set truth +3
+    @set route_investigate +1
+* [if !visited:ch3_dorm_talk and !death:梁野] 先开口说话 -> ch3_dorm_talk
+    @set trust_zhouxu +1
+    @set trust_liangye +1
+* [if !visited:ch3_dorm_wall] 摸墙上那些字 -> ch3_dorm_wall
+    @set truth +3
+    @set memory_echo +2
+* [if !visited:ch3_dorm_phone] 看手机 -> ch3_dorm_phone
+    @set sanity -1
+* 回到走廊那边 -> ch3_night_hub
+    @set route_investigate +1
+
+-- ================================================= 第四张床
+== ch3_dorm_bunk
+@bg dorm dark
+@bgm bgm_horror
+@clearchars
+@advtime 8
+你翻身下床，摸黑走到靠门那张空床边。
+@sfx sfx_step
+@wait 0.8
+四人间，三个人住。第四张床一直空着。
+@wait 1.0
+> 你现在知道那是李恒的床——名单上被你的名字盖住的那个位置。
+@wait 0.6
+@set truth +2
+床板是光的，没有褥子。你伸手摸上去。
+@wait 1.2
+@fx heartbeat 0.9
+@set sanity -1
+是温的。
+@wait 1.0
+@set truth +4
+@set memory_echo +2
+> 不是余温那种温——余温会有温差，中间热边上凉。
+> 这是均匀的温，像有什么东西一直躺在上面。
+@wait 1.2
+你把手抽回来。
+@wait 0.8
+@show zhouxu tired right
+黑暗里传来周叙的声音。
+@wait 0.6
+zhouxu(tired)：别摸了。
+@wait 1.0
+me：你知道？
+zhouxu(tired)：我住了两年，天天看着。
+@wait 0.8
+zhouxu(tired)：一开始我以为是暖气管走那边。后来我查了，那面墙里没管子。
+@wait 1.2
+@set truth +3
+me：那是什么。
+@wait 1.4
+zhouxu(tired)：不知道。
+@wait 0.6
+zhouxu(tired)：但你注意一件事——它只有晚上是温的。
+@wait 1.0
+@set truth +4
+@set memory_echo +3
+zhouxu(tired)：白天你去摸，凉的。跟别的木板一样。
+@wait 1.2
+@fx glitch 0.6
+@set sanity -1
+> 白天凉，晚上温。
+@wait 0.8
+> 这是一张有人在用的床。只是用的时间和你们错开。
+@wait 1.0
+@set truth +4
+@set shenhe_focus +2
+* 掀开床板下面看看 -> ch3_dorm_bunk_a
+    @set truth +5
+    @set sanity -1
+* 回自己床上 -> ch3_dorm_hub
+    @set route_obedience +1
+
+== ch3_dorm_bunk_a
+你蹲下去，把床板一头抬起来。
+@sfx sfx_chair
+@wait 1.0
+床板很沉。抬起来的时候有木头摩擦的声音，在安静的屋里格外响。
+@wait 0.8
+底下是床架的空档，堆着一些东西。
+@wait 1.2
+你摸出来看。
+@wait 0.6
+@sfx sfx_page
+@wait 1.0
+> 一双布鞋。鞋底磨得很薄，鞋帮上有洗不掉的泥印。
+> 一件叠好的校服外套。
+> 一本练习册。
+@wait 1.2
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+东西都很整齐。不是被塞进去的，是被人一样一样放好的。
+@wait 0.8
+你翻开那本练习册。
+@wait 1.0
+@sfx sfx_page
+@wait 0.6
+里面写满了字，一页一页，密密麻麻。
+@wait 1.2
+@fx names 0.8
+@set memory_echo +3
+但不是作业。
+@wait 0.8
+每一页都是同一句话，抄了几百遍。
+@wait 1.4
+@note 我记得我叫什么\n我记得我叫什么\n我记得我叫什么
+@wait 1.6
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+一开始的字很工整。
+@wait 0.8
+往后翻，字越来越乱，笔画开始连在一起。
+@wait 1.0
+翻到中间，有几页只有一半——写着写着停了。
+@wait 1.2
+再往后，字重新变工整了。
+@wait 0.8
+@set truth +3
+> 但内容变了。
+@wait 1.0
+@fx names 0.6
+@note 我记得我叫什么　但我不确定这是不是我的名字
+@wait 1.4
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.0
+最后一页是空的。
+@wait 0.6
+不，不是空的。
+@wait 1.2
+纸上有笔的压痕，但没有墨——笔没水了，写的人不知道，一直往下写。
+@wait 1.0
+@set truth +4
+你对着窗外的光斜看。
+@wait 0.8
+@fx names 0.8
+@set memory_echo +3
+压痕能认出来。还是那句话。
+@wait 1.2
+@set truth +3
+@flag flag_practice_book
+@item +item_practice_book
+你把东西一样一样放回去，把床板轻轻盖上。
+@wait 1.0
+@show zhouxu tired right
+zhouxu(tired)：你看到本子了。
+@wait 0.8
+me：你早就知道底下有东西。
+zhouxu(tired)：知道。
+@wait 1.0
+me：那你为什么不拿走？
+@wait 1.4
+zhouxu(tired)：拿走放哪儿？
+@wait 0.8
+zhouxu(tired)：扔了就是我帮着删。
+zhouxu(tired)：带走了，万一哪天他回来找呢。
+@wait 1.2
+@set truth +4
+@set trust_zhouxu +3
+@set save_route_score +3
+> 放在原处，是最消极也最固执的一种守。
+@wait 0.8
+@set memory_echo +2
+@clearchars
+@goto ch3_dorm_hub
+
+-- ================================================= 说话
+== ch3_dorm_talk
+@bg dorm dark
+@bgm bgm_truth
+@clearchars
+@advtime 20
+me：都没睡吧。
+@wait 1.2
+黑暗里静了两秒。
+@wait 0.6
+@show liangye nervous left
+liangye(nervous)：……没。
+@wait 0.8
+@show zhouxu tired right
+zhouxu(tired)：嗯。
+@wait 1.0
+> 三个人躺在黑暗里，谁也看不见谁。
+> 这样反而好说话。
+@wait 0.8
+@set truth +2
+@set trust_liangye +1
+liangye(nervous)：诶，我问个事。
+liangye(nervous)：你们两个，将来想干什么？
+@wait 1.2
+@set sanity +5
+> 这个问题在此刻显得非常荒谬。
+> 但也许正因为荒谬，才有人愿意答。
+@wait 1.0
+zhouxu(tired)：我想考师范。
+@wait 0.8
+liangye(nervous)：啊？你？当老师？
+@wait 0.6
+zhouxu(tired)：嗯。
+@wait 1.0
+liangye(nervous)：为什么啊，当老师有什么好的。
+@wait 1.4
+@set truth +2
+zhouxu(tired)：因为老师每天要点名。
+@wait 1.2
+@fx heartbeat 0.9
+@set truth +4
+@set memory_echo +3
+@set save_route_score +3
+@wait 0.8
+> 屋里安静下来。
+@wait 1.0
+zhouxu(tired)：一个班四十几个人，一天点一次，一年两百天。
+zhouxu(tired)：三年下来，你能把每个人的名字念上六百遍。
+@wait 0.8
+zhouxu(tired)：念六百遍，就不容易忘了。
+@wait 1.2
+@set truth +4
+@set save_route_score +3
+liangye(nervous)：……
+@wait 0.6
+liangye(nervous)：草。
+@wait 0.8
+liangye(nervous)：你他妈。
+@wait 1.0
+@set trust_zhouxu +2
+> 梁野骂了一句脏话，然后没有再说话。
+> 你听见他翻了个身，把脸埋进枕头。
+@wait 1.2
+@set memory_echo +2
+me：梁野呢。
+@wait 1.0
+liangye(nervous)：我啊。
+liangye(nervous)：我没什么想的。
+@wait 0.8
+liangye(nervous)：我成绩就那样，我爸让我读个中专学修车。
+@wait 1.0
+liangye(nervous)：修车挺好的，修车这活儿，东西坏了你能修好。
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+> 东西坏了你能修好。
+@wait 0.8
+> 这句话从一个刚刚差点被点走的人嘴里说出来，
+> 有一种很难形容的分量。
+@wait 1.0
+@set trust_liangye +3
+@set save_route_score +2
+liangye(nervous)：你呢林昼。
+@wait 1.4
+* 「我想活到毕业。」 -> ch3_dorm_talk_a
+    @set save_route_score +3
+    @set route_empathy +2
+* 「我不知道我还有没有将来。」 -> ch3_dorm_talk_b
+    @set truth +4
+    @set sanity -1
+
+== ch3_dorm_talk_a
+me：我想活到毕业。
+@wait 1.4
+@set truth +3
+黑暗里两个人都没接话。
+@wait 1.0
+过了一会儿，梁野说：
+@wait 0.6
+liangye(nervous)：这算什么理想。
+me：在这儿算。
+@wait 1.0
+liangye(nervous)：……也是。
+@wait 1.2
+@set save_route_score +3
+@set trust_liangye +2
+zhouxu(tired)：那就这么定了。
+@wait 0.8
+zhouxu(tired)：三个人，活到毕业。
+@wait 1.0
+@set truth +3
+@set trust_zhouxu +3
+@set save_route_score +4
+@flag flag_three_pact
+> 你们没有击掌，没有拉钩，甚至没有人坐起来。
+@wait 0.8
+> 就是三个躺在黑暗里的人，说了一句话。
+@wait 1.2
+> 但你记住了。
+@set memory_echo +3
+@wait 1.0
+@clearchars
+@goto ch3_dorm_hub
+
+== ch3_dorm_talk_b
+me：我不知道我还有没有将来。
+@wait 1.4
+@set sanity -1
+@set truth +3
+你说完就后悔了。
+@wait 0.8
+> 这话太重，压在这间屋子里。
+@wait 1.0
+liangye(nervous)：你别这么说。
+@wait 0.6
+liangye(nervous)：你要是没有，那我肯定也没有。
+@wait 1.2
+@set truth +2
+zhouxu(tired)：说得对。
+@wait 0.8
+zhouxu(tired)：所以你得有。
+@wait 1.0
+@set trust_zhouxu +2
+@set save_route_score +3
+@wait 0.6
+> 一句很笨的逻辑。
+> 但你忽然觉得好受了一点。
+@wait 1.2
+@set sanity +5
+@set trust_liangye +2
+@set memory_echo +2
+@flag flag_three_pact
+@clearchars
+@goto ch3_dorm_hub
+
+-- ================================================= 墙上的字
+== ch3_dorm_wall
+@bg dorm names
+@bgm bgm_horror
+@clearchars
+@advtime 12
+你侧过身，面朝墙。
+@wait 0.8
+床头这面墙上有字。白天看不出来——白天光是从窗户进来的，正面打在墙上，
+反而把浅浅的刻痕照平了。
+@wait 1.0
+现在窗外只有路灯的斜光，刻痕有了影子。
+@wait 0.6
+@set truth +2
+你伸手摸过去。
+@wait 1.2
+密密麻麻。
+@wait 0.8
+@fx names 0.7
+@set memory_echo +3
+不是一个人刻的。有的用小刀，有的用圆规，有的干脆是圆珠笔反复划出来的凹槽。
+@wait 1.0
+> 都是名字。
+@wait 0.8
+@set truth +4
+一层压一层，从床板往上大概一米，铺满了整面墙。
+@wait 1.2
+最底下那几层已经被磨平了——不是被擦的，是被无数只手摸过。
+@wait 1.0
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+> 每一个睡过这张床的人，都摸过这些字。
+> 摸久了，字就没了。
+@wait 1.2
+@set memory_echo +3
+你数了一下自己能摸出来的。
+@wait 0.8
+> 三十七个。
+@wait 1.0
+@set truth +3
+> 但你知道底下还有。
+@wait 0.8
+* 也刻一个上去 -> ch3_dorm_wall_a
+    @set truth +5
+    @set save_route_score +4
+    @set memory_echo +3
+* 不刻 -> ch3_dorm_wall_b
+    @set truth +3
+    @set route_obedience +1
+
+== ch3_dorm_wall_a
+你从笔袋里摸出圆规。
+@wait 1.0
+@sfx sfx_write
+@wait 0.8
+你在最上面那一层，找了一块空的地方。
+@wait 0.6
+> 不是刻自己的名字。
+@wait 1.2
+@set truth +3
+你刻的是别人的。
+@wait 1.0
+@fx names 0.8
+@set memory_echo +3
+@set shenhe_focus +3
+> 沈禾。
+@wait 1.2
+@set truth +4
+两个字，刻得很深。你用了很大的力，圆规尖在墙灰里犁出白色的槽。
+@wait 0.8
+刻完你摸了一遍，确认凹凸清楚。
+@wait 1.0
+@set save_route_score +4
+> 摸得出来，就不容易被磨平。
+@wait 0.8
+@show zhouxu tired right
+zhouxu(tired)：你刻什么了。
+@wait 0.6
+me：沈禾。
+@wait 1.4
+黑暗里静了很久。
+@wait 1.0
+然后你听见周叙也起来了。
+@sfx sfx_step
+@wait 0.8
+他摸黑走到你床边，蹲下去，手在墙上摸。
+@wait 1.2
+zhouxu(tired)：……在这儿。
+@wait 0.8
+@set truth +3
+他没有再说话。他摸了很久。
+@wait 1.0
+@fx heartbeat 0.9
+@set memory_echo +3
+@set trust_zhouxu +3
+@set save_route_score +3
+> 一个刻，一个摸。
+> 这是这所学校里，两个活人能为一个死人做的全部。
+@wait 1.2
+@set truth +4
+@flag flag_carved_name
+@clue clue_shenhe_name
+@clearchars
+@goto ch3_dorm_hub
+
+== ch3_dorm_wall_b
+你把手收回来。
+@wait 1.0
+@set route_obedience +1
+@set truth +2
+> 刻上去有什么用。
+> 刻上去也会被磨平，就像底下那几层一样。
+@wait 0.8
+你翻过身，背对墙。
+@wait 1.2
+> 但你睡不着。
+@wait 0.6
+> 后半夜你又翻回来，用手指在墙上比划了两下。
+@wait 1.0
+@set truth +3
+@set memory_echo +2
+> 没有刻。只是比划。
+@wait 0.8
+> 比划完你自己都觉得可笑。
+@wait 1.2
+> 三天后你会为今晚没刻这件事后悔很久。
+@set truth +2
+@set memory_echo +2
+@goto ch3_dorm_hub
+
+-- ================================================= 手机
+== ch3_dorm_phone
+@bg prop phone
+@bgm bgm_horror
+@clearchars
+@advtime 8
+你摸出手机。
+@sfx sfx_phone_buzz
+@wait 0.8
+屏幕亮起来的一瞬间，整间屋子都被照成惨白色，你赶紧调暗。
+@wait 1.0
+> 凌晨一点十四分。
+@wait 0.6
+@set sanity -1
+信号一格。这栋楼信号一直不好。
+@wait 1.0
+你点开通讯录，往下翻。
+@wait 1.2
+> 爸。妈。姑姑。以前学校的三个同学。
+@wait 0.8
+你在「妈」那一栏停了两秒，没有点。
+@wait 1.0
+@set truth +2
+> 打过去说什么呢。
+> 说这个学校在删人？说你自己是被塞进来补位的？
+@wait 0.8
+> 她会连夜开车过来，然后……
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+> 然后她就也进来了。
+@wait 1.0
+@fx heartbeat 0.9
+@set sanity -1
+你退出通讯录。
+@wait 0.8
+* 给自己发一条短信 -> ch3_dorm_phone_a
+    @set truth +5
+    @set memory_echo +3
+* 关掉手机睡觉 -> ch3_dorm_hub
+    @set sanity +5
+
+== ch3_dorm_phone_a
+你新建了一条短信，收件人填自己的号码。
+@wait 1.0
+@sfx sfx_write
+@wait 0.8
+你想了很久，写了几个字，删掉，又写。
+@wait 1.2
+最后发出去的是这样一条：
+@wait 0.8
+@fx names 0.7
+@note 我叫林昼。转学生。高二三班最后一排靠窗。\n如果你读到这条不记得自己是谁，就照着上面念一遍。
+@wait 1.6
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+发送。
+@wait 1.0
+> 送达。
+@wait 0.8
+你把手机放回枕头下面。
+@wait 1.2
+@set truth +3
+> 这是你今晚做的最理性的一件事，也是最疯的一件事。
+@wait 1.0
+@set memory_echo +2
+> 理性在于：你已经见过太多被删掉的人，
+> 你知道自己有一天可能会想不起自己是谁。
+@wait 0.8
+> 疯在于：你居然真的相信到那时候，
+> 一条短信能救回来。
+@wait 1.2
+@set truth +4
+@flag flag_self_sms
+@item +item_self_sms
+@wait 1.0
+> 第四天早上你会再看一次这条短信。
+> 它还在。
+@wait 0.8
+> 第五天你就不敢看了。
+@set truth +3
+@set memory_echo +3
+@goto ch3_dorm_hub

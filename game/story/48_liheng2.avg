@@ -1,0 +1,689 @@
+-- 第四章后段 · 李恒（对质）
+-- 前置：flag_true_linday_status_known（老秦告诉你，你是补位，你顶掉了一个人）
+-- 这是全篇唯一一次两个"待定"的人正面说话。
+-- 影响：save_route_score / flag_liheng_pact / 终章他是否替你答到
+
+== liheng2_hub
+@timeat 4 22:30
+@bg classroom night
+@bgm bgm_truth
+@amb amb_classroom_night
+@clearchars
+@advtime 10
+晚自习早就结束了。教学楼只剩三楼还亮着一盏灯。
+@wait 0.8
+是你们班的教室。
+@wait 1.0
+你站在后门往里看。
+@wait 0.6
+李恒一个人坐在第三排，摊着一张纸，在画。
+@wait 1.2
+@set truth +2
+不是做题。你已经知道他在画什么了。
+@wait 0.8
+你推门进去。
+@sfx sfx_door
+@wait 1.0
+他没有抬头。
+@wait 0.6
+@show liheng flat center
+liheng(flat)：门带上。
+@wait 1.0
+你把门带上，走过去。
+@wait 0.8
+桌上那张纸是座位表。四十一个格子，画得很精确。
+@wait 1.2
+最后一排靠窗那格是空的。
+@wait 0.6
+@set truth +3
+@set memory_echo +2
+liheng(flat)：你今天去找老秦了。
+me：你怎么知道。
+@wait 1.0
+liheng(flat)：他值班室的灯，十点前灭了一次，又亮了。
+liheng(flat)：他跟人说话的时候会关电视。
+@wait 0.8
+@set truth +2
+他把笔放下。
+@wait 1.0
+liheng(flat)：所以你知道了。
+@wait 1.2
+@set truth +2
+* 「我知道我是补位。」 -> liheng2_admit
+    @set truth +4
+* 「我顶掉的是你，对吗。」 -> liheng2_direct
+    @set truth +5
+    @set route_empathy +2
+* 「你为什么不早说。」 -> liheng2_blame
+    @set route_hostility +2
+
+-- ================================================= 承认
+== liheng2_admit
+me：我知道我是补位。
+@wait 1.4
+liheng(flat)：嗯。
+@wait 0.8
+他很平静，平静到你有点意外。
+@wait 1.0
+me：你不惊讶？
+liheng(flat)：我等了七个月。
+@wait 1.2
+@fx heartbeat 0.9
+@set truth +3
+me：等什么？
+@wait 0.8
+liheng(flat)：等有人自己说出这句话。
+@wait 1.0
+liheng(flat)：你是第一个。
+@wait 0.6
+@set truth +3
+@set save_route_score +2
+liheng(flat)：前面几个，我提醒过。
+liheng(flat)：他们都说我有病。
+@wait 1.2
+@set truth +2
+liheng(flat)：其中一个还去跟班主任告状，说我半夜蹲在门口数数。
+@wait 0.8
+liheng(flat)：许老师把我叫去办公室，问我在数什么。
+@wait 1.0
+me：您怎么说的？
+@wait 1.4
+liheng(flat)：我说我在数影子。
+@wait 0.8
+liheng(flat)：她没有笑。
+@wait 1.0
+liheng(flat)：她说：数到几了。
+@wait 1.2
+@fx heartbeat 1.0
+@set truth +4
+@set shenhe_focus +2
+你想起许清赤着的脚。
+@wait 0.8
+@set memory_echo +2
+@goto liheng2_core
+
+-- ================================================= 直问
+== liheng2_direct
+me：我顶掉的是你，对吗。
+@wait 1.4
+@fx heartbeat 1.0
+他终于抬起头。
+@wait 1.0
+这是你第一次真正看清他的脸。
+@wait 0.6
+很普通的一张脸。眼下有很深的青黑，比周叙的还重。
+@wait 1.2
+@set truth +3
+liheng(flat)：不是。
+@wait 0.8
+me：不是？
+@wait 1.0
+liheng(flat)：你顶掉的不是我。
+@wait 0.6
+liheng(flat)：我顶掉的是别人。你顶掉的是我原来那个位置。
+@wait 1.4
+@set truth +4
+@set memory_echo +2
+liheng(flat)：这不是一回事。
+@wait 1.0
+me：有什么区别？
+@wait 0.8
+liheng(flat)：区别是我不恨你。
+@wait 1.2
+@fx heartbeat 0.9
+@set truth +3
+@set save_route_score +3
+@set route_empathy +2
+liheng(flat)：三年前我转学来的时候，我也坐了最后一排靠窗。
+@wait 1.0
+liheng(flat)：我的抽屉里也有一摞不是我的书。
+@wait 0.8
+liheng(flat)：我的名字也写在值日表的修正液上面。
+@wait 1.2
+@set truth +5
+@set memory_echo +3
+@wait 0.6
+教室里很静。
+@wait 1.0
+liheng(flat)：所以你现在坐的那个位置，我坐过三年。
+@wait 0.8
+liheng(flat)：三年前，那个位置上有个人，被我顶掉了。
+@wait 1.4
+@set truth +4
+me：你记得他吗。
+@wait 1.0
+liheng(flat)：不记得。
+@wait 0.6
+liheng(flat)：我只记得，我第一天坐下去的时候，桌子是凉的。
+@wait 1.2
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+> 桌子是凉的。
+> 你第一天也摸过。
+@wait 0.8
+@set truth +2
+@goto liheng2_core
+
+-- ================================================= 责问
+== liheng2_blame
+me：你为什么不早说。
+@wait 1.2
+me：你数了三个月。你什么都知道。你一个字都没说。
+@wait 1.4
+他看着你，没有反驳。
+@wait 0.8
+liheng(flat)：说了会怎么样。
+@wait 1.0
+me：至少我能有个准备。
+@wait 0.6
+liheng(flat)：准备什么。
+@wait 1.2
+@set truth +2
+liheng(flat)：准备好被删掉？
+@wait 0.8
+你没有答上来。
+@wait 1.0
+liheng(flat)：我说了，你会去查。
+liheng(flat)：你去查，就会被它注意到。
+@wait 1.2
+@set truth +3
+liheng(flat)：被注意到，就会加速。
+@wait 0.8
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +3
+me：你怎么知道会加速？
+@wait 1.4
+liheng(flat)：因为我说过一次。
+@wait 1.0
+liheng(flat)：去年，有个女生，坐我前面。
+@wait 0.6
+liheng(flat)：她发现名册多一行，来问我。我全告诉她了。
+@wait 1.2
+@set truth +3
+me：然后呢？
+@wait 1.4
+liheng(flat)：三天。
+@wait 0.8
+@fx glitch 0.8
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+liheng(flat)：从她开始查，到她被删掉，三天。
+@wait 1.0
+liheng(flat)：正常是几个月。
+@wait 0.6
+liheng(flat)：她三天。
+@wait 1.2
+@set truth +4
+liheng(flat)：所以我不说了。
+@wait 0.8
+liheng(flat)：我改成数。数不会惊动它。
+@wait 1.0
+@set truth +3
+@set route_empathy +1
+@wait 0.6
+你忽然为刚才那句话感到羞愧。
+@wait 1.2
+@set sanity -1
+me：……对不起。
+@wait 0.8
+liheng(flat)：不用。
+@wait 1.0
+liheng(flat)：你说得也对。
+@wait 0.6
+liheng(flat)：我确实是在看着你们一个一个消失。
+@wait 1.4
+@set truth +3
+@set memory_echo +2
+@goto liheng2_core
+
+-- ================================================= 核心
+== liheng2_core
+@bg classroom night
+@bgm bgm_truth
+@clearchars
+@show liheng flat center
+@advtime 8
+他把桌上那张座位表推给你。
+@sfx sfx_page
+@wait 1.0
+liheng(flat)：你看这张。
+@wait 0.6
+你低头看。四十一个格子。
+@wait 1.2
+最后一排靠窗那格是空的。
+@wait 0.8
+me：这格是我的位置。
+liheng(flat)：对。
+@wait 1.0
+me：为什么是空的？
+@wait 1.4
+liheng(flat)：因为今天早读，许老师念到你的名字的时候。
+@wait 0.8
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+liheng(flat)：你没有应。
+@wait 1.2
+@wait 0.6
+你想了想。
+@wait 1.0
+今天早读，你在想老秦的事，走神了。
+@wait 0.8
+许清念了一遍。你没听见。
+@wait 1.2
+她没有念第二遍。
+@wait 0.6
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+me：她为什么不念第二遍。
+@wait 1.4
+liheng(flat)：她念了。
+@wait 1.0
+liheng(flat)：你没听见，是因为那时候你已经不在名单上了。
+@wait 0.8
+@fx heartbeat 1.6
+@set sanity -1
+@set truth +5
+@wait 1.2
+liheng(flat)：从今天早上起，你是待定。
+@wait 1.0
+@set truth +4
+@set memory_echo +3
+> 老秦说你从进这个门开始就是待定。
+> 李恒说是从今天早上起。
+@wait 0.8
+> 两个都对。
+> 一个说的是状态，一个说的是——它开始了。
+@wait 1.2
+@set truth +4
+* 「那我现在该做什么。」 -> liheng2_what
+    @set save_route_score +3
+* 「你能替我答到吗。」 -> liheng2_ask
+    @set truth +5
+* 「许老师知道吗。」 -> liheng2_xuqing
+    @set truth +4
+    @set shenhe_focus +2
+
+== liheng2_what
+me：那我现在该做什么。
+@wait 1.2
+liheng(flat)：三件事。
+@wait 0.8
+他伸出三根手指。
+@wait 1.0
+liheng(flat)：第一，明天早读，你必须应到。
+liheng(flat)：不是应你的名字。是等许老师念完四十一个之后，那个停顿。
+@wait 1.2
+@set truth +4
+@set shenhe_focus +2
+me：第四十二个？
+liheng(flat)：对。
+@wait 0.8
+me：那是沈禾的位置。
+@wait 1.0
+liheng(flat)：那是空席。
+@wait 0.6
+@set truth +3
+liheng(flat)：谁应了，谁就在册。
+@wait 1.4
+@fx heartbeat 1.0
+@set truth +4
+me：那沈禾怎么办。
+@wait 1.0
+liheng(flat)：……
+@wait 1.2
+liheng(flat)：这就是第二件事。
+@wait 0.8
+liheng(flat)：如果你应了，你就在册了，她就永远出不来。
+@wait 1.0
+@set truth +5
+@set memory_echo +3
+liheng(flat)：如果你不应，你三天之内被删掉。
+@wait 1.2
+@set truth +3
+@wait 0.6
+教室里的灯管嗡嗡响。
+@wait 1.0
+me：那第三件事呢。
+@wait 1.4
+liheng(flat)：第三件事是——
+@wait 0.8
+liheng(flat)：别信我说的前两件。
+@wait 1.2
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+me：什么意思？
+@wait 1.0
+liheng(flat)：我说的是我知道的。
+liheng(flat)：我知道的，是我从上一个人那儿听来的。
+@wait 0.8
+liheng(flat)：上一个人是从上上一个人那儿听来的。
+@wait 1.2
+@set truth +4
+@set memory_echo +2
+liheng(flat)：一百多轮了。
+@wait 1.0
+liheng(flat)：每一轮都有人告诉下一轮的人"必须应到"。
+@wait 0.6
+liheng(flat)：一百多个人都应了。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+liheng(flat)：一百多个人，现在都不在了。
+@wait 1.2
+@set truth +4
+@set memory_echo +3
+> 「必须应到」这条规则，本身就是这套系统的一部分。
+@wait 0.8
+> 它不是求生的方法。
+> 它是让队伍继续往下传的方法。
+@wait 1.0
+@set truth +5
+@set save_route_score +3
+liheng(flat)：所以第三件事是：想一个没人试过的办法。
+@wait 0.8
+liheng(flat)：我想了七个月，没想出来。
+@wait 1.2
+liheng(flat)：你只有三天。
+@wait 1.0
+@set truth +3
+@flag flag_liheng_pact
+@flag flag_rule_terms_complete
+@goto liheng2_end
+
+== liheng2_ask
+me：你能替我答到吗。
+@wait 1.4
+@fx heartbeat 1.2
+他的表情第一次变了。
+@wait 1.0
+很轻微，但你看见了——他的下巴收紧了一下。
+@wait 0.8
+liheng(flat)：你知道你在问什么吗。
+@wait 1.2
+me：我知道。
+@wait 0.6
+liheng(flat)：不，你不知道。
+@wait 1.0
+liheng(flat)：替人答到，不是帮忙。
+@wait 1.4
+@set truth +4
+liheng(flat)：是换位置。
+@wait 0.8
+@fx glitch 0.7
+@set sanity -1
+@set truth +5
+liheng(flat)：我答了你的名字，你就在册，我就变成多余的。
+@wait 1.2
+liheng(flat)：三天之内，我被删掉。
+@wait 1.0
+@set truth +4
+@set memory_echo +3
+@wait 0.6
+你张了张嘴，没有说出话。
+@wait 1.2
+liheng(flat)：所以镜子里那个人跟你说什么？
+@wait 0.8
+me：……别替我答到。
+@wait 1.0
+liheng(flat)：对。
+@wait 0.6
+liheng(flat)：他不是在警告你别去救他。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+liheng(flat)：他是在求你别害他。
+@wait 1.2
+@set truth +4
+@set memory_echo +3
+> 「你也别替我答到。」
+> 你一直以为这句话的意思是"不要为我牺牲"。
+@wait 0.8
+> 不是。
+@wait 1.0
+> 是"你替我答了，我就得替你去死"。
+@wait 1.2
+@set truth +5
+@wait 0.6
+你在椅子上坐下来，很久没说话。
+@wait 1.0
+liheng(flat)：现在你明白为什么我不说话了吧。
+@wait 0.8
+liheng(flat)：这个地方最恶心的地方不是它杀人。
+@wait 1.2
+@set truth +3
+liheng(flat)：是它让救人和杀人变成同一个动作。
+@wait 1.4
+@set truth +5
+@set memory_echo +3
+@set save_route_score +2
+@wait 1.0
+me：对不起。我不该问。
+@wait 0.8
+liheng(flat)：没关系。
+@wait 1.0
+liheng(flat)：你是第一个问完之后道歉的。
+@wait 0.6
+@set save_route_score +3
+@set route_empathy +2
+liheng(flat)：前面那几个，问完就走了。
+@wait 1.2
+liheng(flat)：有两个，我答应了。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+me：你答应过？
+@wait 0.8
+liheng(flat)：嗯。
+@wait 1.0
+liheng(flat)：所以我现在也是待定。
+@wait 0.6
+@set truth +4
+@set memory_echo +2
+liheng(flat)：我替两个人答过到。
+liheng(flat)：他们都在册了，都毕业了，都走了。
+@wait 1.2
+liheng(flat)：他们不记得我。
+@wait 1.0
+@set truth +3
+@set save_route_score +3
+@wait 0.8
+> 他不是一个冷漠的旁观者。
+> 他是一个已经替别人死过两次的人。
+@wait 1.2
+@set truth +4
+@flag flag_liheng_pact
+@flag flag_liheng_sacrificed
+@goto liheng2_end
+
+== liheng2_xuqing
+me：许老师知道吗。
+@wait 1.2
+liheng(flat)：知道。
+@wait 0.8
+liheng(flat)：她比谁都知道。
+@wait 1.0
+me：那她为什么不救人？
+@wait 1.4
+liheng(flat)：她救过。
+@wait 1.0
+liheng(flat)：第一年她救过一个。
+@wait 0.6
+@set truth +3
+me：怎么救的？
+@wait 1.2
+liheng(flat)：她自己答到了。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set shenhe_focus +3
+@wait 0.8
+liheng(flat)：那年有个男生待定了。早读点名，念到他名字，他应不出声。
+@wait 1.0
+liheng(flat)：许老师在讲台上，替他应了一声"到"。
+@wait 1.2
+@set truth +4
+me：然后呢？
+@wait 0.8
+liheng(flat)：那个男生活下来了。现在在省城工作，结婚了。
+@wait 1.0
+@set truth +3
+me：许老师呢？
+@wait 1.4
+liheng(flat)：你见过她穿鞋吗。
+@wait 1.2
+@fx glitch 0.9
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 0.8
+liheng(flat)：她说是因为跑掉了一只鞋。
+@wait 1.0
+liheng(flat)：那是真的。但不是全部。
+@wait 0.6
+liheng(flat)：待定的人，会先失去一样东西。
+@wait 1.2
+@set truth +4
+liheng(flat)：有人失去照片，有人失去出校记录，有人失去名字。
+@wait 1.0
+liheng(flat)：她失去的是脚。
+@wait 1.4
+@fx heartbeat 1.6
+@set sanity -1
+@set truth +5
+@wait 0.8
+me：什么意思？她的脚还在。
+@wait 1.2
+liheng(flat)：脚在。
+@wait 1.0
+liheng(flat)：但你有没有听见过她的脚步声？
+@wait 1.4
+@fx redflash 0.6
+@sfx sfx_sting
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.0
+你想起来了。
+@wait 0.6
+她进教室的时候，从来没有声音。
+@wait 1.2
+你以为是因为她赤脚。
+@wait 0.8
+但赤脚踩在水磨石地上，也是有声音的。
+@wait 1.0
+@set truth +4
+@wait 0.6
+liheng(flat)：她替人答了一次到，就赔进去一部分。
+@wait 1.2
+liheng(flat)：赔了五年，赔到现在这个样子。
+@wait 1.0
+@set truth +3
+@set route_empathy +3
+@set save_route_score +2
+liheng(flat)：所以她只念，不答。
+@wait 0.8
+liheng(flat)：她每天念四十二个名字，是在守着那个位置不让别人补进去。
+@wait 1.2
+@set truth +5
+@set shenhe_focus +3
+@set save_route_score +3
+liheng(flat)：她一个人守了五年。
+@wait 1.0
+@set memory_echo +2
+@flag flag_xuqing_price
+@flag flag_liheng_pact
+@goto liheng2_end
+
+-- ================================================= 收束
+== liheng2_end
+@bg classroom night
+@bgm bgm_truth
+@clearchars
+@show liheng flat center
+@advtime 5
+他把座位表折起来，塞进书包。
+@sfx sfx_page
+@wait 1.0
+liheng(flat)：我该回去了。
+@wait 0.6
+liheng(flat)：十一点前不回宿舍，宿管要记。
+@wait 1.2
+me：你还怕被记？
+@wait 0.8
+liheng(flat)：怕。
+@wait 1.0
+liheng(flat)：被记，说明还有人在记我。
+@wait 1.4
+@fx heartbeat 1.0
+@set truth +4
+@set memory_echo +2
+@set save_route_score +2
+@wait 0.8
+他站起来，走到门口，手搭在门框上停住。
+@wait 1.2
+liheng(flat)：林昼。
+@wait 0.6
+me：嗯。
+@wait 1.0
+liheng(flat)：明天早读，不管你决定怎么做。
+@wait 0.8
+liheng(flat)：做之前，先看我一眼。
+@wait 1.2
+@set truth +3
+me：看你干什么？
+@wait 1.4
+liheng(flat)：我坐第三排。你在最后一排。
+@wait 1.0
+liheng(flat)：你能看见我。
+@wait 0.6
+liheng(flat)：这就够了。
+@wait 1.2
+@set save_route_score +3
+@set route_empathy +2
+@set memory_echo +2
+@wait 0.8
+> 「你能看见我。这就够了。」
+@wait 1.0
+> 一个已经替两个人死过的人，最后要的只是被看见。
+@wait 1.2
+@set truth +4
+他出去了。门轻轻带上。
+@sfx sfx_door
+@wait 1.0
+你一个人留在教室里。
+@wait 0.6
+灯管还在嗡嗡响。
+@wait 1.2
+你走到自己的座位坐下。
+@wait 0.8
+习惯性地摸了一下桌面。
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+是凉的。
+@wait 1.0
+@set memory_echo +3
+> 第一天你摸的时候，它是凉的。
+> 李恒说他三年前第一天摸的时候，它也是凉的。
+@wait 0.8
+> 这张桌子从来没有被谁焐热过。
+@wait 1.2
+> 因为坐在这儿的人，从来没有一个待够过。
+@set truth +4
+@flag flag_liheng_present
+@clue clue_liheng
+@clearchars
+@goto ch4_prep_hub

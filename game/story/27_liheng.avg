@@ -1,0 +1,272 @@
+-- 支线：李恒（307 第四个室友）
+-- 全篇最沉默的角色。他的线索不靠对话给出，而是靠"他做过什么"。
+-- 影响：truth / save_route_score / 终章他是否替你挡一次
+
+== liheng_hub
+@bg dorm night
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@advtime 15
+307 里的第四个人叫李恒。
+从你搬进来那天起，他一共对你说过四句话。
+> "灯。"（让你关灯）
+> "水开了。"
+> "不是。"（你问他是不是也听见敲门）
+> "睡吧。"
+@set truth +1
+@wait 0.8
+他不参与你们任何一次讨论。
+周叙和梁野争论的时候，他就戴着耳机做题——但你有一次凑近过，耳机里没有声音。
+@wait 0.6
+他成绩很好。年级前十的榜单上，他的名字每次都在。
+@if visited:liheng_hub
+> 你还可以再观察一次。
+@endif
+* [if !visited:liheng_desk] 趁他不在，看他的桌子 -> liheng_desk
+* [if !visited:liheng_headphone] 问他耳机里在听什么 -> liheng_headphone
+* [if !visited:liheng_night] 熄灯后留意他的动静 -> liheng_night
+    @set route_investigate +1
+    @set sanity -1
+* [if !visited:liheng_rank] 去看年级榜单 -> liheng_rank
+* 回去睡 -> liheng_leave
+
+== liheng_desk
+@bg dorm night
+@clearchars
+他去水房了。
+你走到他桌前。
+@wait 0.6
+桌面干净得不像高中生的桌子。
+课本按科目摞成三摞，边缘对齐。笔筒里六支笔，笔尖全部朝下。台灯的角度固定，灯罩上没有灰。
+@set truth +1
+@wait 0.8
+你拉开抽屉。
+@sfx sfx_page
+里面是一摞草稿纸，用长尾夹夹着。
+你抽出最上面几张。
+@wait 1.0
+不是数学题。
+@fx names 0.8
+每一张纸上都画着同一个东西——一张座位表。
+四十一个格子，画得很精确，连讲台的位置都标了。
+每张纸的日期不同，从三个月前开始，几乎每天一张。
+@set truth +3
+@set memory_echo +1
+@wait 0.8
+你快速翻过去。
+前面那些，最后一排靠窗那格是空的。
+从某一张开始，那格里写上了两个字。
+@wait 0.6
+是你的名字。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +2
+你翻到写着你名字的第一张，看日期。
+> 三月十四日。
+你转学来的那天。
+@wait 1.0
+你继续往下翻，翻到最后一张——今天的。
+@wait 0.8
+今天这张，最后一排靠窗那格，又是空的。
+@fx glitch 0.8
+@set sanity -1
+@set memory_echo +3
+@set truth +3
+@clue clue_erased_seat
+@if gore>=2
+@fx bloodhand 0.8
+@endif
+你把纸放回去，长尾夹夹好，位置和刚才一模一样。
+@wait 0.6
+> 他每天数一遍人。
+> 他从三个月前就开始数了——比你来早得多。
+> 而今天他把你划掉了。
+@set truth +2
+@flag flag_liheng_seatmap
+@goto liheng_hub
+
+== liheng_headphone
+@bg dorm night
+@clearchars
+@show liheng flat center
+你走过去，敲了敲他的桌子。
+他摘下一只耳机，看你。没说话，眼神是"有事说事"的那种。
+me：你听什么？
+@wait 1.0
+liheng：没听。
+me：耳机里没声音？
+liheng：嗯。
+me：那戴着干什么？
+@wait 1.2
+他把耳机彻底摘下来，放在桌上。
+liheng：戴着，别人就不跟我说话。
+@set truth +1
+@wait 0.8
+me：你不想跟人说话？
+liheng：想。
+liheng：但说了就得记住。
+me：记住什么？
+@wait 1.4
+他看了你很久。久到你以为这又是一次不会有答案的对话。
+@wait 0.6
+liheng：记住他长什么样。
+liheng：记住他叫什么。
+liheng：记住他坐哪儿。
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +3
+@set memory_echo +1
+liheng：记住了，忘的时候就疼。
+@wait 1.0
+me：你忘过谁？
+@wait 1.2
+他重新把耳机戴上了。
+这一次你看清了——耳机线的插头，根本没插进手机。
+@fx glitch 0.5
+@set truth +2
+@flag flag_liheng_talked
+@clearchars
+@goto liheng_hub
+
+== liheng_night
+@bg dorm dark
+@bgm bgm_horror
+@clearchars
+@advtime 45
+熄灯之后，你没有睡。
+你侧躺着，面朝他的床，眼睛留一条缝。
+@wait 1.0
+十一点二十。
+李恒起来了。
+@sfx sfx_step
+动作很轻，轻到如果你不是特意在看，根本不会发现。
+@wait 0.8
+他没有开灯，也没有拿手机照。
+他摸黑走到门边。
+@fx heartbeat 1.0
+你以为他要开门。
+@wait 1.2
+他没有。
+他蹲下去，把耳朵贴在门板下沿，就是门缝那个位置。
+@wait 1.0
+然后他开始数。
+你听见他极轻的气音，一个数一个数地数。
+@wait 0.6
+> 一。
+> 二。
+> 三。
+@fx heartbeat 1.3
+@set sanity -1
+@set truth +2
+数到三，他停了很久。
+然后又从头数。
+@wait 1.0
+> 一。二。三。
+> 一。二。三。
+他数了七遍。每一遍都停在三。
+@wait 0.8
+第八遍的时候，他数到了四。
+@fx glitch 0.9
+@sfx sfx_breath
+@set sanity -1
+@set memory_echo +2
+他立刻站起来，退回床上，用被子把头蒙住。
+整个过程没有发出一点声音。
+@wait 1.2
+你躺在黑暗里，也不敢动。
+> 三道影子。四个人的脚步声。
+> 他也发现了。
+> 他发现了三个月了，一个字都没说。
+@set truth +3
+@clue clue_headcount
+@flag flag_liheng_counts
+@goto liheng_hub
+
+== liheng_rank
+@bg hallway day
+@bgm bgm_investigate
+@clearchars
+@advtime 10
+年级榜单贴在教学楼一楼大厅，用玻璃框罩着。
+每次月考后更新，红纸黑字，前五十名。
+@wait 0.6
+你找到李恒的名字。
+> 第七名。高二（3）班　李恒
+@wait 0.8
+你顺手往下看。
+你自己的名字不在上面——你才来三天，没参加过考试。
+@wait 0.6
+然后你注意到框子的边缘。
+玻璃框和墙之间有一条缝，缝里塞着东西——是旧的榜单，一层压一层，从来没人清理过。
+@set truth +1
+* 把旧榜单抽出来看 -> liheng_rank_dig
+    @set truth +3
+    @set route_investigate +1
+* 算了 -> liheng_hub
+
+== liheng_rank_dig
+你用指甲把最上面那张旧榜单抠出来。
+@sfx sfx_page
+是上个月的。李恒第七。
+再抽一张，两个月前。李恒第七。
+@wait 0.8
+你一张一张往外抽。
+三个月前，第七。半年前，第七。一年前，第七。
+@fx names 0.8
+@set truth +2
+@wait 1.0
+你抽到最底下那张，纸已经脆了，一碰就掉渣。
+日期是**五年前**。
+@wait 0.6
+你把它展开。
+@fx heartbeat 1.2
+第七名那一行写着：
+> 高二（3）班　沈禾
+@fx glitch 0.9
+@sfx sfx_sting
+@set sanity -1
+@set memory_echo +3
+@set truth +4
+@clue clue_shenhe_name
+@flag flag_shenhe_name_full
+@wait 1.2
+你往上翻一张。四年前的。
+第七名：高二（3）班　（空白）
+@wait 0.6
+再往上，三年前。
+第七名：高二（3）班　（空白）
+@wait 0.8
+连续四年，第七名那一格是空的。
+直到李恒进来，把它填上。
+@set truth +3
+@set memory_echo +2
+@wait 1.0
+> 榜单是学校印的。
+> 印榜单的人，每年都要面对那一格空白。
+> 每年都印，每年都空着，谁都没问过为什么。
+@set truth +2
+@flag flag_liheng_rank
+@if gore>=2
+@fx bloodedge 0.6
+@endif
+@goto liheng_hub
+
+== liheng_leave
+@bg dorm night
+@clearchars
+你没有再管他。
+@if flag_liheng_seatmap or flag_liheng_counts or flag_liheng_talked
+> 但你已经知道了：这间宿舍里，最沉默的那个人，
+> 才是唯一一个一直在数的人。
+@set truth +1
+@else
+> 四个人的宿舍，你只认识两个。
+> 第三个你没兴趣，第四个你没看见。
+@endif
+@wait 0.8
+@goto liheng_return
+
+== liheng_return
+@clearchars
+@goto ch3_deep_hub

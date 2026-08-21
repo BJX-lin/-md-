@@ -1,0 +1,629 @@
+-- 第四章 深挖：内档室的三类核心材料之外
+-- 把"翻档案"这件事做成真正的调查过程：交叉比对、时间线拼合、
+-- 以及最关键的——发现记录者自己也在被记录。
+
+== ch4_deep_hub
+@bg monitor_room dark
+@bgm bgm_truth
+@amb amb_broadcast_static
+@clearchars
+@advtime 15
+监控房比外面冷。
+不是空调那种冷——是那种常年不见光、水泥墙自己散出来的阴冷。你呼出的气在屏幕光里能看见。
+@wait 0.6
+十二台显像管监视器摞成三排。其中五台在放走廊监控，四台是雪花，剩下三台黑着。
+@wait 0.8
+桌上摊着你刚才翻过的东西。
+你原本以为看完录像、名单和日志就够了。
+@wait 0.6
+> 但你现在坐在这儿，反而觉得哪里不对。
+> 不是信息不够。是信息**太整齐了**。
+@set truth +2
+@wait 0.8
+> 有人在维护这个房间。
+> 而维护它的人，一定也在这些材料里留下过痕迹。
+@if visited:ch4_deep_hub
+> 你还能再查一样。
+@endif
+* [if !visited:ch4_deep_cross] 把三份材料交叉比对 -> ch4_deep_cross
+    @set route_investigate +2
+* [if !visited:ch4_deep_tapes] 看看架子上其他的带子 -> ch4_deep_tapes
+    @set route_investigate +2
+* [if !visited:ch4_deep_desk] 翻这张桌子本身 -> ch4_deep_desk
+    @set truth +1
+* [if !visited:ch4_deep_monitor] 检查那三台黑着的屏 -> ch4_deep_monitor
+    @set sanity -1
+* 够了，去拿主控 -> ch4_deep_end
+    @set route_hostility +1
+
+-- ================================================= 交叉比对
+== ch4_deep_cross
+@bg monitor_room dark
+@bgm bgm_investigate
+@clearchars
+@advtime 25
+你把三样东西并排摊在桌上。
+录像带的标签、名单的编号页、日志总册的记录页。
+@wait 0.6
+然后你做了一件之前没做的事：对时间。
+@sfx sfx_page
+@wait 1.0
+> 录像带标签：第 109 号。
+> 名单最后一页：第 109 次。
+> 日志总册最新一条：第 109 次，进行中。
+@wait 0.8
+三者对得上。这没什么奇怪的。
+@wait 0.6
+奇怪的是**日期**。
+@wait 1.0
+@set truth +2
+你把日志翻到"第 108 次"那一页，看结案日期。
+> 结案：3月11日。
+@wait 0.6
+然后你翻到"第 109 次"的起始日期。
+> 起始：3月14日。
+@fx heartbeat 0.9
+@set truth +3
+@wait 1.0
+三月十四日。
+你转学来的那一天。
+@wait 0.8
+> 不是你来了之后，第 109 次才开始。
+> 是第 109 次开始的那天，你来了。
+@set memory_echo +3
+@set sanity -1
+@set truth +3
+@wait 1.0
+* 往前对，看每一次的起始日 -> ch4_deep_cross_a
+    @set truth +5
+    @set memory_echo +3
+* 看两次之间的间隔 -> ch4_deep_cross_b
+    @set truth +4
+    @set route_investigate +2
+
+== ch4_deep_cross_a
+你把日志往前翻，一次一次对起始日期。
+@sfx sfx_page
+@wait 1.0
+> 第 108 次　起始：去年 9月1日
+> 第 107 次　起始：去年 3月3日
+> 第 106 次　起始：前年 9月1日
+> 第 105 次　起始：前年 2月28日
+@wait 0.8
+你看出规律了。
+@set truth +2
+@wait 0.6
+> 每次的起始日，都是开学日，或者……
+> 或者是某个学生转学报到的日子。
+@wait 1.0
+你翻回第 109 次那页，看备注栏。
+@note 第109次　起始：3月14日\n对象：转入生（高二·3）\n备注：本次对象记忆残留偏高。建议提前介入。
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+"对象"。
+不是"学生"，不是"当事人"。是"对象"。
+@wait 0.8
+> 这个词在实验记录里用。
+> 在实验记录里，对象是被观察的那一方。
+@set sanity -1
+@set truth +3
+@flag flag_true_linday_status_known
+@clue clue_109th
+@wait 1.0
+你继续往前翻，找每一次的"对象"栏。
+@fx names 0.8
+@wait 0.8
+> 第 108 次　对象：转入生（高二·3）
+> 第 107 次　对象：转入生（高二·3）
+> 第 106 次　对象：转入生（高二·3）
+> 第 105 次　对象：转入生（高二·3）
+@wait 1.2
+没有名字。一个都没有。
+一百多次记录，"对象"那一栏从来不写名字，只写"转入生"。
+@fx glitch 0.8
+@set sanity -1
+@set memory_echo +4
+@set truth +3
+@wait 1.0
+> 因为名字会变。
+> 只有"转入生"这个身份是不变的。
+> 就像座位表上那一格——人换了很多个，格子一直在。
+@set truth +3
+@clue clue_self_repeat
+@flag flag_saw_self_repeat
+@goto ch4_deep_hub
+
+== ch4_deep_cross_b
+你算两次之间的间隔。
+@wait 0.8
+> 108 → 109：三个月零三天。
+> 107 → 108：五个月零二十九天。
+> 106 → 107：六个月零两天。
+> 105 → 106：六个月零四天。
+@wait 1.0
+前面几次都在半年左右。
+但最近这一次，只隔了三个月零三天。
+@set truth +3
+@wait 0.8
+你继续往前算。
+@wait 1.0
+> 100 → 101：十一个月。
+> 95 → 96：一年零两个月。
+> 90 → 91：一年零七个月。
+@wait 1.2
+@fx heartbeat 1.0
+间隔在缩短。
+从一年多，缩到半年，缩到三个月。
+@set truth +4
+@set sanity -1
+@wait 0.8
+> 越来越快。
+> 就像一个越转越紧的发条。
+@wait 1.0
+你翻到最后一页的空白处。
+那里有人用铅笔写了一行很小的字，被橡皮擦过，但压痕还在。
+你把纸对着屏幕的光斜过来看。
+@wait 1.2
+@note 　　　周期在缩短。第110次可能不会有间隔。
+@fx glitch 0.9
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.0
+> "不会有间隔"。
+> 意思是第 109 次结束的那一刻，第 110 次立刻开始。
+> 意思是不会再有喘息的时间。
+@set truth +2
+@flag flag_cycle_accelerating
+@goto ch4_deep_hub
+
+-- ================================================= 架子上其他的带子
+== ch4_deep_tapes
+@bg monitor_room dark
+@bgm bgm_horror
+@clearchars
+@advtime 20
+你走到墙边的铁架前。
+@bg prop videotape
+架子有五层，全是录像带。老式的那种，塑料壳，每一盒侧面贴着白标签。
+@wait 0.6
+你数了一下：大概两百多盒。
+@set truth +1
+@wait 0.8
+标签上是编号，从 001 开始。
+你顺着编号往后找，找到 109 那一格——空的，因为带子在你手上。
+@wait 1.0
+然后你注意到一件事。
+@wait 0.6
+编号不是连续的。
+@fx heartbeat 0.8
+@set truth +2
+@wait 0.8
+> 001 到 087，连续。
+> 088 到 094，缺失。
+> 095 到 109，连续。
+@wait 1.0
+缺失那七盒的位置，架子上有明显的空档——灰尘的痕迹显示那里原本放过东西，被抽走了。
+@set truth +2
+* 找找有没有被藏起来 -> ch4_deep_tapes_a
+    @set truth +5
+    @set route_investigate +2
+* 随便抽一盘早期的看 -> ch4_deep_tapes_b
+    @set truth +4
+    @set sanity -1
+    @set memory_echo +2
+
+== ch4_deep_tapes_a
+你把架子从头到尾摸了一遍。
+最上层够不着，你搬了把椅子。
+@wait 1.0
+在最上层最里面，靠墙的位置，你摸到七盒带子。
+它们被塞在架子和墙之间的缝里，不是放着，是**塞**着——有人不想让它们被找到，但也没舍得销毁。
+@sfx sfx_page
+@wait 0.8
+你把它们抽出来，吹掉灰。
+@wait 1.0
+标签上是 088 到 094。
+但每一盒的标签，都被人用黑色马克笔划掉了原本的内容，只留下编号。
+@set truth +3
+@wait 0.8
+你把 088 推进录像机。
+@sfx sfx_rewind
+@fx rewind 0.8
+@wait 1.2
+画面出来了。
+不是走廊监控。
+@wait 0.8
+是这间屋子。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +3
+@wait 1.0
+镜头架在门口，俯角，拍的正是你现在站的位置。
+画面里有一个人坐在桌前，背对镜头，正在写东西。
+@wait 0.8
+他写了很久。中间停下来揉了两次眼睛。
+@wait 1.0
+然后他站起来，转身，朝门口走——朝镜头走。
+@wait 1.2
+你看清了他的脸。
+@fx glitch 1.0
+@sfx sfx_sting
+@wait 0.8
+不是你。
+@wait 0.6
+是一个陌生男生，十七八岁，穿着旧款校服。眼下有很重的青黑。
+@set sanity -1
+@set truth +2
+@wait 1.0
+他走到镜头正下方，抬头看了一眼摄像头。
+然后他做了一个口型。
+@wait 1.2
+@note 　别　信　日　志
+@fx heartbeat 1.4
+@set truth +5
+@set memory_echo +3
+@flag flag_hidden_tapes
+@clue clue_rule_gap
+@wait 1.0
+画面到这里断了。后面全是雪花。
+@wait 0.8
+> 088 到 094，七盒。
+> 七个坐过这张桌子的人。
+> 他们都在这间屋子里，对着摄像头留过话。
+@set truth +3
+@wait 0.6
+> 而 095 之后的带子，一盘都没有这种内容。
+> 说明从 095 开始，有人学会了先检查摄像头。
+@set truth +2
+@if gore>=2
+@fx bloodhand 0.7
+@endif
+@goto ch4_deep_hub
+
+== ch4_deep_tapes_b
+你随手抽了一盘早期的——编号 012。
+推进录像机。
+@sfx sfx_rewind
+@fx rewind 0.8
+@wait 1.2
+画面出来。旧楼三楼走廊，黑白，噪点很重。
+时间戳显示的年份，比你出生还早。
+@set truth +2
+@wait 1.0
+画面里是一次点名。
+不是广播——是有个老师站在走廊上，拿着册子，一个一个念。
+学生排成两列，站在教室门口。
+@wait 0.8
+你把音量调大。
+@sfx sfx_broadcast_static
+@wait 1.0
+> "……周建国。"
+> "到。"
+> "李秀兰。"
+> "到。"
+> "……"
+@wait 0.8
+很正常的点名。名字都是老式的，那个年代的名字。
+@wait 1.0
+念到最后，老师停了一下。
+@wait 1.2
+> "还有一个没到。"
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 0.8
+学生里有人小声说了句什么。老师摆摆手，合上册子。
+> "算了。明天再补。"
+@wait 1.0
+画面断了。
+@wait 0.8
+> 这盘带子的年份，比五年前那场火早了二十多年。
+> "还有一个没到"这句话，在沈禾出生之前就有人说过。
+@fx glitch 0.7
+@set truth +4
+@set memory_echo +3
+@set sanity -1
+@wait 1.0
+> 那么沈禾不是第一个。
+> 她只是第一个没能被"补上"的。
+@set truth +3
+@clue clue_terms
+@goto ch4_deep_hub
+
+-- ================================================= 翻桌子
+== ch4_deep_desk
+@bg monitor_room dark
+@bgm bgm_investigate
+@clearchars
+@advtime 10
+你开始翻这张桌子本身。
+铁皮办公桌，三个抽屉，左边那个锁着。
+@wait 0.6
+上面两个抽屉：一盒回形针、半包受潮的饼干、几支干掉的笔、一个搪瓷缸。
+搪瓷缸里有茶垢，缸底还剩一点水。
+@wait 1.0
+你把手指伸进去蘸了一下。
+@fx heartbeat 0.8
+@set sanity -1
+@set truth +2
+是温的。
+@wait 0.8
+> 这间屋子在假墙后面，门是用水泥封了一半的。
+> 而桌上有一缸温水。
+@wait 1.0
+* 撬开锁着的抽屉 -> ch4_deep_desk_a
+    @set truth +5
+    @set taboo_count +1
+* 看桌面下方有没有贴东西 -> ch4_deep_desk_b
+    @set truth +4
+    @set route_investigate +1
+
+== ch4_deep_desk_a
+你找了根回形针，掰直。
+@wait 0.8
+老式抽屉锁很简单，你捅了大概两分钟，"咔"一声开了。
+@sfx sfx_door
+@wait 1.0
+里面只有一样东西。
+@wait 0.6
+一沓照片。彩色的，冲印的那种，边缘发白。
+@sfx sfx_page
+@wait 1.0
+你数了数：一共八张。
+@wait 0.8
+每一张都是同一个构图——教室，最后一排靠窗，一个学生坐在那儿，正在低头写字。
+拍摄角度是从教室后门偷拍的。
+@wait 1.0
+八张照片里，八个不同的人。
+@fx names 0.8
+@set truth +3
+@set memory_echo +3
+@set sanity -1
+@wait 0.8
+你把照片按背面的日期排序。
+最早的一张是十一年前。
+@wait 1.0
+你翻到最后一张。
+@wait 1.2
+@fx heartbeat 1.4
+最后一张是你。
+@fx glitch 1.0
+@set sanity -1
+@set truth +4
+@set memory_echo +4
+@flag flag_saw_self_repeat
+@clue clue_self_repeat
+@wait 1.0
+拍摄日期：三月十四日。
+你转学来的第一天。
+@wait 0.8
+> 你第一天下午才走进那间教室。
+> 而这张照片已经冲印出来了，边缘和其他七张一样发白。
+@set truth +3
+@wait 1.0
+你把八张照片摊开，一张一张看过去。
+@wait 0.8
+八个人的姿势完全一样：低头，右手握笔，左手压着本子，肩膀微微前倾。
+连衣服的褶皱位置都相似。
+@wait 1.0
+> 不是巧合。
+> 是那个位置本身，会把坐上去的人，压成同一个形状。
+@set truth +3
+@set memory_echo +2
+@flag flag_eight_photos
+@if gore>=2
+@fx blooddrip 0.7
+@endif
+@goto ch4_deep_hub
+
+== ch4_deep_desk_b
+你蹲下去，把手伸到桌面下方摸。
+@wait 1.0
+摸到了——桌板底下贴着一张纸，用透明胶粘的，胶已经黄了。
+@sfx sfx_page
+你把它撕下来。
+@wait 0.8
+是一张手绘的图。画在方格纸上，铅笔，画得很仔细。
+@wait 1.0
+画的是这所学校的平面图。
+教学楼、宿舍、操场、食堂、校史馆、旧楼，位置都标得很准。
+@wait 0.8
+但图上多了一些原本不该有的线。
+@fx names 0.6
+@set truth +3
+@wait 1.0
+红色的虚线，从旧楼三层的广播室出发，连到六个地方：
+@wait 0.6
+> 高二（3）班教室
+> 男生宿舍 307
+> 图书馆三楼
+> 校史馆（假墙后）
+> 值班室
+> 学校大门
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+每条线旁边都标了一个数字：
+@wait 0.6
+> 教室：109
+> 307：109
+> 图书馆：109
+> 校史馆：109
+> 值班室：87
+> 大门：0
+@wait 1.4
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+@wait 1.0
+> 前四个地方都是 109。
+> 值班室是 87。
+> 大门是 0。
+@wait 0.8
+你盯着"大门：0"看了很久。
+@wait 1.0
+> 如果这些数字是"到达过的次数"——
+> 那么一百零九次里，没有任何一次走到过大门。
+@fx glitch 0.9
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@flag flag_school_map
+@wait 1.0
+> 一次都没有。
+@set truth +2
+@goto ch4_deep_hub
+
+-- ================================================= 三台黑屏
+== ch4_deep_monitor
+@bg monitor_room dark
+@bgm bgm_horror
+@clearchars
+@advtime 10
+十二台屏，三台是黑的。
+你走过去看。
+@wait 0.8
+不是坏了——电源灯亮着，机器在运行，只是画面全黑。
+@wait 0.6
+你顺着线找到它们对应的摄像头编号：
+> CH-10、CH-11、CH-12。
+@set truth +1
+@wait 1.0
+你在墙上的线路表里找这三个编号。
+@sfx sfx_page
+@wait 0.8
+> CH-10：旧楼三层　走廊
+> CH-11：旧楼三层　广播室（门外）
+> CH-12：旧楼三层　广播室（室内）
+@fx heartbeat 1.0
+@set truth +3
+@set sanity -1
+@wait 1.0
+广播室里面有摄像头。
+@wait 0.8
+* 想办法让它们出画面 -> ch4_deep_monitor_a
+    @set truth +5
+    @set sanity -1
+    @set shenhe_focus +3
+* 不碰，记下这件事 -> ch4_deep_monitor_b
+    @set route_obedience +1
+    @set truth +2
+
+== ch4_deep_monitor_a
+你检查那三台机器。
+线都插着，信号灯是绿的——说明摄像头在传信号，只是显示不出来。
+@wait 0.8
+你调亮度。调到最大。
+@wait 1.2
+@fx static 0.7
+黑屏上浮出一点极淡的灰。
+不是雪花——是有画面的，只是暗到几乎全黑。
+@set truth +2
+@wait 1.0
+你把三台的亮度、对比度全部推到顶。
+@sfx sfx_broadcast_static
+@wait 1.4
+@fx glitch 0.6
+CH-10 出画面了。
+旧楼三层走廊。空的。
+@wait 0.8
+CH-11 出画面了。
+广播室门外。铁门半掩，门缝里有光。
+@wait 1.0
+CH-12。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+广播室内部。
+@wait 0.8
+调音台。麦克风。播音椅。
+@wait 1.0
+椅子上坐着一个人，背对摄像头。
+@wait 0.8
+你看着那个画面，看了大概十秒。
+@wait 1.2
+然后那个人抬起了手，朝摄像头的方向。
+@fx glitch 1.0
+@sfx sfx_sting
+@set sanity -1
+@set memory_echo +3
+@set shenhe_focus +3
+@set truth +4
+不是挥手。
+是伸出食指，指着镜头。
+@wait 1.0
+> 它知道有人在看。
+> 它知道摄像头在哪儿。
+> 它甚至知道，看的人现在就在这间屋子里。
+@wait 0.8
+然后它的手放下了，转回去，继续对着调音台坐着。
+@wait 1.0
+你把三台的亮度调回原位。
+@wait 0.6
+> 有人把这三台的亮度调到了最低。
+> 不是关掉——是调低。
+> 因为关掉会被发现，调低不会。
+@set truth +3
+@flag flag_saw_broadcast_cam
+@wait 0.8
+> 调低的那个人，是想让后来的人看不见。
+> 还是想让自己看不见？
+@set truth +2
+@goto ch4_deep_hub
+
+== ch4_deep_monitor_b
+你没有动那三台机器。
+@wait 0.8
+你把 CH-10、CH-11、CH-12 这三个编号记在手机备忘录里。
+@wait 1.0
+> 广播室里面有摄像头。
+> 这意味着五年前那天晚上，里面发生的事，是被拍下来的。
+> 而那盘带子，不在架子上。
+@set truth +3
+@set memory_echo +1
+@wait 0.8
+> 或者说——它在，只是被标成了别的编号。
+@set truth +1
+@goto ch4_deep_hub
+
+-- ================================================= 收束
+== ch4_deep_end
+@bg monitor_room dark
+@bgm bgm_final
+@clearchars
+你站起来，把桌上的东西收好。
+@wait 0.8
+@if flag_eight_photos
+八张照片你带走了一张——最后那张。
+你没有看第二眼，直接对折塞进内袋。
+@set truth +1
+@endif
+@if flag_school_map
+那张平面图你也带走了。
+"大门：0"这四个字，你想让它一直在你口袋里。
+@set truth +1
+@endif
+@if flag_hidden_tapes
+> "别信日志"。
+> 那个男生对着镜头说这句话的时候，脸上没有恐惧。
+> 只有一种很累的、想让人听见的表情。
+@set truth +2
+@endif
+@wait 1.0
+你回头看了一眼那把椅子——这间屋子里唯一一把椅子。
+@wait 0.8
+> 一百零九个人坐过它。
+> 每一个都在这儿翻过同样的材料，得出过同样的结论。
+> 然后每一个都走出这扇门，去了旧楼。
+@set truth +2
+@set memory_echo +2
+@wait 1.0
+> 你现在也要走出这扇门。
+@wait 0.6
+> 区别只在于：他们不知道自己是第几个。
+> 你知道。
+@set truth +2
+@goto ch4_sc7

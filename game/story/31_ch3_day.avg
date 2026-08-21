@@ -1,0 +1,536 @@
+-- 第三章 · 白天：把支线证据摆到主线上
+-- 设计意图：这一段是「支线与主线交织」的枢纽。
+-- 前面各章的支线发现（李恒的座位表、周芸的车票、老秦的钥匙板、
+-- 许清的名录、图书馆借书卡）在这里第一次被放在一起对照，
+-- 玩家手里握有的支线 flag 越多，能推进的对话层级越深，
+-- 并直接决定第三章夜里梁野被点名时能用几种手段救他。
+
+== ch3_day_hub
+@timeat 3 16:45
+@bg classroom dusk
+@bgm bgm_investigate
+@amb amb_classroom_day
+@clearchars
+@advtime 5
+放学铃响过二十分钟，教室里还剩七八个人。
+@wait 0.8
+雨把天色压得很低，日光灯提前开了，照得每张脸都发青。
+@wait 1.0
+你摊开笔记本，把这三天记下的东西一条一条写出来。
+@sfx sfx_write
+@wait 0.6
+写到第七条的时候，你发现它们不是七件事。
+@wait 1.0
+> 是同一件事的七个切面。
+@set truth +3
+@wait 0.8
+@if visited:ch3_day_hub
+> 还有能对照的东西。
+@endif
+* [if !visited:ch3_day_cross] 把手里的东西摆在一起对照 -> ch3_day_cross
+    @set truth +3
+    @set route_investigate +2
+* [if !visited:ch3_day_zhouxu] 找周叙，把话挑明 -> ch3_day_zhouxu
+    @set trust_zhouxu +1
+* [if !visited:ch3_day_liheng] 找李恒，问他那张座位表 -> ch3_day_liheng
+    @set truth +2
+    @set route_empathy +1
+* [if !visited:ch3_day_liangye and !death:梁野] 看看梁野今天怎么样 -> ch3_day_liangye
+    @set trust_liangye +1
+* 收起本子，等天黑 -> ch3_day_end
+    @set route_obedience +1
+
+-- ================================================= 交叉对照（核心）
+== ch3_day_cross
+@bg classroom dusk
+@bgm bgm_truth
+@clearchars
+@advtime 12
+你把能摊开的都摊开在课桌上。
+@sfx sfx_page
+@wait 1.0
+> 这是你第一次把它们放在一起看。
+@wait 0.8
+@set truth +2
+每一样单独拿出来，都能被解释成巧合。
+@wait 0.6
+但它们在同一张桌子上，就开始互相印证。
+@wait 1.2
+@if item:item_library_card
+@bg prop library_card
+借书卡。姓名栏「梁野」被描过很多遍，墨都晕开了。
+@wait 0.8
+> 他描它，是因为它会褪。
+> 而会褪的东西，说明有个东西在擦。
+@set truth +3
+@set memory_echo +2
+@wait 1.0
+@endif
+@if flag_liheng_seatmap
+@bg classroom dusk
+李恒的座位表草稿。四十一个格子，画了三个月，几乎每天一张。
+@wait 0.8
+> 他不是在记座位。他是在**记谁还在**。
+> 一个每天数人的人，说明他见过数目变化。
+@set truth +3
+@wait 1.0
+@endif
+@if flag_room325
+@bg dorm_door night
+325 房：没有名单，通着电，四个搪瓷缸杯底有水，四张床板是温的。
+@wait 0.8
+> 有四个人住在那儿。他们只是不在名单上。
+@wait 0.6
+@set truth +4
+@set memory_echo +2
+> 名单少人，房间多人。方向是反的。
+@wait 1.0
+@endif
+@if flag_duty_erased
+@bg prop duty
+值日表：周三第四格被修正液盖了不止一层，最下面那层已经发黄。
+@wait 0.8
+> 一层一层盖上去，说明这个位置换过很多次人。
+> 而现在写在最上面的，是你的名字。
+@set truth +3
+@wait 1.0
+@endif
+@if flag_saw_poster or flag_shenhe_name_full
+@bg prop poster
+食堂墙上的寻人启事，一层压一层贴了至少五张。
+@wait 0.8
+> 借书卡的名字会褪。启事被一层层盖住。
+> 方向是一致的：都朝着「这个人没事」去。
+@set truth +4
+@set shenhe_focus +2
+@wait 1.0
+@endif
+@bg classroom dusk
+@wait 0.8
+你往后靠在椅背上。
+@wait 1.0
+> 现在你能说出这套东西的形状了。
+@wait 0.6
+> 它不销毁人。它只是不断修改记录，直到记录变得自洽。
+> 而当记录和现实冲突的时候，被改的永远是现实。
+@fx heartbeat 1.0
+@set truth +5
+@set memory_echo +3
+@wait 1.2
+* 数一数自己手里有几条 -> ch3_day_cross_count
+    @set truth +3
+* 合上本子 -> ch3_day_hub
+    @set route_obedience +1
+
+== ch3_day_cross_count
+@bg classroom dusk
+@clearchars
+你数了数自己确实握在手里的东西。
+@wait 1.0
+-- DSL 的条件求值不支持括号分组，这里用逐条累加的方式判定「四样齐备」
+@set evidence_count =0
+@if flag_liheng_seatmap
+@set evidence_count +1
+@endif
+@if flag_room325
+@set evidence_count +1
+@endif
+@if flag_duty_erased
+@set evidence_count +1
+@endif
+@if flag_saw_poster
+@set evidence_count +1
+@endif
+@if evidence_count>=2
+@flag flag_evidence_ready
+@endif
+@if flag_evidence_ready
+@fx names 0.8
+四样都在。
+@wait 0.8
+> 座位表、325 房、值日表、寻人启事。
+> 四个不同的地方，各自留着一处对不上号的痕迹。
+@wait 1.0
+@set truth +5
+@set save_route_score +4
+> 他们从来没有互相说过。
+> 因为每一个人手里只有一件，单独说出来都像疯话。
+@wait 0.8
+@set truth +3
+> 而你手里有四件。
+@fx heartbeat 1.2
+@set memory_echo +3
+@flag flag_evidence_chain
+@wait 1.0
+> 这是你和他们所有人的区别——不是你更聪明，
+> 是你来得晚，所以你有机会把别人的碎片捡齐。
+@set truth +3
+@set save_route_score +3
+@else
+你数了一遍，缺口很明显。
+@wait 0.8
+> 有些东西你没去拿，有些人你没去问。
+@wait 1.0
+@set truth +2
+> 现在还不算晚。天黑之前，还能再跑一趟。
+@set route_investigate +2
+@endif
+@wait 0.8
+@goto ch3_day_hub
+
+-- ================================================= 周叙：把话挑明
+== ch3_day_zhouxu
+@bg hallway dusk
+@bgm bgm_unease
+@amb amb_hallway
+@clearchars
+@advtime 10
+你在走廊尽头找到周叙。他一个人靠着栏杆，看雨。
+@wait 0.8
+@show zhouxu tired right
+zhouxu(tired)：有事？
+me：有。
+@wait 1.0
+@if flag_evidence_chain
+me：我把这几天的东西对了一遍。
+me：我知道你为什么不转学了。
+@wait 1.2
+@fx heartbeat 0.9
+@set truth +3
+他没有回头。
+@wait 0.8
+zhouxu(tired)：说说看。
+@wait 1.0
+me：因为你姐是在车上没的。离这儿两百公里。
+me：你早就知道转学没用。
+@wait 1.4
+@set truth +4
+@set trust_zhouxu +3
+他沉默了很久，久到你以为他不会回答了。
+@wait 1.0
+zhouxu(tired)：我十六岁那年就想明白了。
+zhouxu(tired)：想明白之后我做了一个决定——既然跑不掉，那就守在原地。
+@wait 0.8
+zhouxu(tired)：至少我在这儿的时候，我们班每天早读，我都替一个人应过到。
+@wait 1.2
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+me：……你替谁应的？
+@wait 1.0
+zhouxu(tired)：第四十二个。
+@wait 0.6
+zhouxu(tired)：许老师念到那儿会停一下。我就在她停的那一秒，很小声地应一下。
+@wait 1.2
+@set shenhe_focus +3
+@set save_route_score +3
+zhouxu(tired)：不敢大声。大声了就是替补。
+@wait 0.8
+zhouxu(tired)：小声的话……我也不知道算不算数。
+@wait 1.0
+@set truth +3
+> 一个人，每天早读，在一秒钟的停顿里，替一个死去五年的人应一声到。
+> 三年了。
+@wait 0.8
+@set memory_echo +2
+@set save_route_score +2
+@flag flag_zhouxu_secret_answer
+@else
+me：你姐姐的事，你为什么不跟别人说？
+@wait 1.2
+zhouxu(tired)：说了有人信吗。
+@wait 0.8
+me：我信。
+@wait 1.0
+zhouxu(tired)：你现在信。
+zhouxu(tired)：等你哪天想不起她叫什么了，你就不信了。
+@wait 1.2
+@set truth +3
+@set trust_zhouxu +1
+zhouxu(tired)：这不是骂你。这是这地方的规矩。
+@wait 0.8
+zhouxu(tired)：你先去把该看的看完。看完了再来找我。
+@set route_investigate +2
+@endif
+@wait 1.0
+@clearchars
+@goto ch3_day_hub
+
+-- ================================================= 李恒：座位表
+== ch3_day_liheng
+@bg classroom dusk
+@bgm bgm_unease
+@clearchars
+@advtime 10
+李恒还在座位上。他不写作业，就那么坐着。
+@wait 0.8
+@show liheng flat center
+你把椅子拖过去，坐在他旁边。
+@sfx sfx_chair
+@wait 1.0
+liheng(flat)：你想问座位表。
+me：你怎么知道。
+liheng(flat)：你昨天翻我抽屉了。
+@wait 1.2
+@set truth +2
+me：……对不起。
+liheng(flat)：没关系。翻的人多了。
+@wait 0.8
+@if flag_liheng_seatmap
+liheng(flat)：你看到今天那张了吗。
+me：看到了。最后一排靠窗那格，是空的。
+@wait 1.0
+liheng(flat)：嗯。
+@wait 0.6
+me：那是我的位置。
+@wait 1.2
+liheng(flat)：我知道。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+@wait 0.8
+me：那你为什么画成空的？
+@wait 1.4
+liheng(flat)：因为我画的是**我看见的**。
+@wait 1.0
+@set truth +5
+@set memory_echo +3
+liheng(flat)：早读的时候我回头看了一眼。你的位置上没有人。
+@wait 0.8
+liheng(flat)：但我知道你在。我能听见你翻书。
+@wait 1.2
+@set sanity -1
+@set shenhe_focus +2
+liheng(flat)：所以我画了个空格。
+liheng(flat)：我画的是眼睛看到的，不是脑子知道的。
+@wait 1.0
+@set truth +4
+> 一个人训练自己只相信眼睛。
+> 因为在这个地方，脑子是会被改的。
+@set memory_echo +2
+@set truth +3
+@flag flag_liheng_saw_empty
+@else
+liheng(flat)：不该看的别看。
+me：为什么？
+liheng(flat)：看了就得记住。
+@wait 1.0
+@set truth +2
+他没有再说话。
+@wait 0.8
+> 你什么都没问出来。
+> 但你注意到他的手一直按在抽屉上——像是怕你再翻一次。
+@set truth +2
+@endif
+@wait 1.0
+@clearchars
+@goto ch3_day_hub
+
+-- ================================================= 梁野：异变前兆
+== ch3_day_liangye
+@bg classroom dusk
+@bgm bgm_horror
+@clearchars
+@advtime 8
+梁野趴在桌上。你走过去的时候他抬起头。
+@wait 0.8
+@show liangye nervous left
+liangye(nervous)：诶。
+@wait 0.6
+他的声音有点哑。
+@wait 1.0
+你注意到几件事。
+@wait 0.8
+@set truth +2
+> 一、他今天把校服拉链拉上了。拉到第三颗扣子的位置。
+> 二、他的头发是湿的，但今天他没出去过。
+> 三、他桌上摊着的书是倒着的，而他刚才在"看"。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+@wait 1.2
+me：你今天……还好吗。
+@wait 1.0
+liangye(nervous)：好啊。
+liangye(nervous)：就是有点困。昨天没睡好。
+@wait 0.8
+me：做梦了？
+@wait 1.4
+他愣了一下。
+@wait 0.8
+liangye(nervous)：做了。
+liangye(nervous)：梦见有人在念名字。念到我的时候我答了。
+@wait 1.2
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+@set shenhe_focus +3
+me：你答了？
+@wait 0.6
+liangye(nervous)：嗯。梦里嘛，随口就答了。
+@wait 1.0
+liangye(nervous)：怎么了？你脸色好难看。
+@wait 1.2
+@set truth +3
+> 周芸的日记里写过：她梦见有人点名，她答了「到」。
+> 六月二十八日早上，她上了那辆车。
+@wait 0.8
+@set memory_echo +3
+@set truth +4
+* 「梦里也算。」告诉他实话 -> ch3_day_ly_warn
+    @set save_route_score +4
+    @set route_empathy +2
+* 什么都不说，别吓他 -> ch3_day_ly_silent
+    @set route_obedience +2
+    @set sanity +2
+
+== ch3_day_ly_warn
+me：梁野，听我说。
+me：梦里也算。
+@wait 1.4
+@fx heartbeat 1.2
+liangye(nervous)：……什么？
+@wait 0.8
+me：不要在任何地方答到。梦里也不行。
+@wait 1.0
+@set truth +3
+@set save_route_score +3
+他看着你，想笑，但没笑出来。
+@wait 0.6
+liangye(nervous)：你别吓我。
+me：我在吓你。
+@wait 1.2
+me：因为吓一吓有用。
+@wait 1.0
+@set save_route_score +3
+@set trust_liangye +3
+他慢慢坐直了。
+@wait 0.8
+liangye(nervous)：那我已经答了怎么办。
+@wait 1.4
+me：所以今晚你别一个人待着。
+@wait 1.0
+@if flag_evidence_chain
+me：今晚查寝，不管听见什么，你都不要开门，也不要出声。
+me：让周叙应。他会应。
+@wait 1.2
+@set truth +3
+@set save_route_score +4
+@flag flag_liangye_warned_deep
+liangye(nervous)：你怎么知道他会应？
+@wait 0.8
+me：因为他替另一个人应了三年。
+@wait 1.0
+@set trust_zhouxu +2
+@set memory_echo +2
+@else
+me：今晚跟紧我和周叙。
+@set save_route_score +2
+@flag flag_liangye_warned
+@endif
+@wait 1.0
+liangye(nervous)：……好。
+@wait 0.6
+liangye(nervous)：林昼。
+liangye(nervous)：谢了。
+@wait 1.2
+@set trust_liangye +2
+> 他这三天说了上百句话，这是第一句正经的。
+@set truth +2
+@clearchars
+@goto ch3_day_hub
+
+== ch3_day_ly_silent
+你把话咽了回去。
+@wait 1.0
+me：没什么。你脸色也不好，早点睡。
+@wait 0.8
+liangye(nervous)：我这不天天早睡嘛。
+@wait 0.6
+他又趴回去了。
+@wait 1.2
+@set sanity +2
+@set truth +1
+> 你告诉自己：说了也只会让他害怕，改变不了什么。
+@wait 0.8
+> 这句话是对的。
+> 但它同时也是老秦、许清、周叙这些年一直在对自己说的话。
+@wait 1.0
+@fx heartbeat 0.8
+@set truth +4
+@set memory_echo +2
+> 这个地方就是这样运转下去的——
+> 每个人都出于善意，选择不说。
+@set truth +3
+@flag flag_liangye_unwarned
+@clearchars
+@goto ch3_day_hub
+
+-- ================================================= 收束
+== ch3_day_end
+@bg classroom dusk
+@bgm bgm_unease
+@clearchars
+@advtime 10
+你把本子合上，塞进书包最里层。
+@wait 1.0
+教室里只剩你一个人了。
+@wait 0.8
+日光灯有一根在闪。亮，灭，亮，灭，灭。
+@sfx sfx_broadcast_click
+@wait 1.2
+@fx heartbeat 0.8
+@set sanity -1
+> 三下，停，两下。
+@wait 0.8
+> 你已经能自动把它翻译成这个节奏了。
+@set truth +2
+@set memory_echo +2
+@wait 1.0
+你站起来，走到最后一排靠窗的位置——你自己的座位。
+@wait 0.6
+你伸手摸了一下椅面。
+@wait 1.2
+@if flag_liheng_saw_empty
+是凉的。
+@wait 0.8
+> 李恒说他回头看的时候，这里没有人。
+> 而你刚从这儿站起来。
+@wait 1.0
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+> 椅面应该是温的。
+@wait 0.8
+> 你在这儿坐了一下午。
+@set truth +3
+@else
+是凉的。
+@wait 0.8
+> 你在这儿坐了一下午。
+> 但你没有多想——第一天你就摸过一次，那时候也是凉的。
+@set truth +2
+@endif
+@wait 1.0
+窗外的天彻底黑了。
+@wait 0.6
+> 今晚查寝是十一点。
+@wait 1.0
+@if flag_liangye_warned_deep
+> 梁野知道该怎么做了。
+> 周叙会应。你要做的是别让自己也出声。
+@set save_route_score +3
+@elif flag_liangye_warned
+> 梁野答应跟紧你们。
+> 但他不知道为什么。
+@set save_route_score +1
+@else
+> 梁野还什么都不知道。
+> 而他在梦里已经答过一次到了。
+@set truth +2
+@endif
+@wait 1.2
+@goto ch3_sc2

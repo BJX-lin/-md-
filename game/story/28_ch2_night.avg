@@ -1,0 +1,1064 @@
+-- 第二章 · 雨夜的宿舍楼
+-- 定位：第二章夜间段。白天问活人问出了矛盾，晚上矛盾开始反过来找你。
+-- 核心：走廊、水房、宿管值班室、307 内部
+-- 接入：ch2_hub2 或旧楼段之后
+
+== ch2_night_hub
+@timeat 2 22:40
+@bg dorm_hall night
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@advtime 5
+雨从傍晚下到现在，没停过。
+@wait 0.8
+宿舍楼的走廊是外廊式的，一边是房门，一边是敞开的栏杆。雨斜着打进来，地上湿了半边。
+@wait 1.0
+熄灯还有二十分钟。走廊灯亮着，是那种老式的圆形吸顶灯，隔一间亮一盏。
+@wait 0.8
+你站在 307 门口，没有马上进去。
+@if visited:ch2_night_hub
+> 熄灯前还有点时间。
+@endif
+* [if !visited:ch2_night_water] 去水房洗漱 -> ch2_night_water
+    @set route_investigate +1
+* [if !visited:ch2_night_hall] 沿着走廊走到头 -> ch2_night_hall
+    @set route_investigate +2
+* [if !visited:ch2_night_guard] 去楼下宿管值班室 -> ch2_night_guard
+    @set truth +2
+* [if !visited:ch2_night_307] 进屋，跟他们待着 -> ch2_night_307
+    @set trust_liangye +1
+* 洗洗睡 -> ch2_night_end
+    @set route_obedience +1
+
+-- ================================================= 水房
+== ch2_night_water
+@bg washroom night
+@bgm bgm_horror
+@amb amb_dorm_night
+@clearchars
+@advtime 12
+水房在走廊尽头，一整排水龙头，对面是一整排镜子。
+@wait 0.8
+这个点还有几个人在洗漱。水声、刷牙声、有人在哼歌。
+@wait 1.0
+你找了个空位，拧开水龙头。
+@sfx sfx_water
+@wait 0.6
+水是凉的。这栋楼的热水只在六点到八点供应。
+@wait 1.0
+你洗了把脸，抬头。
+@wait 0.8
+镜子上有一层水汽。
+@wait 1.0
+* 把水汽擦掉 -> ch2_night_water_a
+    @set truth +4
+    @set sanity -1
+* 不擦，接着洗 -> ch2_night_water_b
+    @set route_obedience +1
+
+== ch2_night_water_a
+你用手背在镜子上抹了一道。
+@sfx sfx_water
+@wait 1.0
+镜子里是你自己，还有身后水房的样子。
+@wait 0.8
+你身后有四个人在洗漱。
+@wait 0.6
+@set truth +1
+你数了一下，因为你现在会下意识地数人。
+@wait 1.2
+四个。
+@wait 0.8
+你转过头，直接看。
+@wait 1.0
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +3
+三个。
+@wait 0.6
+你又转回来看镜子。
+@wait 1.2
+四个。
+@wait 0.8
+@fx glitch 0.7
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+多出来的那个站在最右边，背对着镜子——所以镜子里只能看到他的后脑勺。
+@wait 1.0
+一个背对镜子的人，是不会出现在镜子里的。
+@wait 0.8
+除非他不是被照进去的，是本来就在里面。
+@wait 1.2
+@set truth +3
+你盯着看了三秒。
+@wait 0.6
+然后那个后脑勺，慢慢转了过来。
+@fx heartbeat 1.4
+@sfx sfx_sting
+@set sanity -1
+@wait 1.0
+不是转身。他的身体没有动。
+@wait 0.8
+只有头，在原地转了一百八十度。
+@wait 1.2
+@fx redflash 0.6
+@set sanity -1
+@set truth +4
+@set shenhe_focus +2
+你看清了那张脸。
+@wait 0.8
+很普通，很年轻，是个男生。他没有表情，也没有恶意。
+@wait 1.0
+他只是看着你，然后对口型说了一句话。
+@wait 1.2
+@fx names 0.8
+@set memory_echo +3
+> 你　也　别　替　我　答　到
+@wait 1.4
+@set truth +4
+水龙头哗哗地流。旁边的人还在刷牙，有人在哼歌。
+@wait 0.8
+没有任何人反应。
+@wait 1.0
+你把水龙头关了。
+@sfx sfx_water
+@wait 0.6
+再看镜子，只有三个人。
+@wait 1.0
+> 「你也别替我答到。」
+> "你也"——说明还有别人被交代过同样的话。
+@wait 0.8
+> 说明这句话是一代一代传下来的。
+@set truth +3
+@set memory_echo +2
+@flag flag_mirror_contact
+@clue clue_mirror
+@goto ch2_night_hub
+
+== ch2_night_water_b
+你没有擦镜子。
+@wait 1.0
+@set sanity +2
+@set route_obedience +1
+低着头，把脸洗完，刷牙，漱口。
+@wait 0.8
+整个过程你都没有抬头。
+@wait 1.0
+这不是勇敢，也不算怯懦。只是你今天已经消化不了更多东西了。
+@wait 0.6
+@set truth +1
+临走的时候，你听见身后有人也在洗漱。
+@wait 1.0
+水声很规律。
+@wait 0.8
+你走到门口，回头看了一眼。
+@wait 1.2
+水房里没有人。
+@wait 0.6
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+但最右边那个水龙头开着，水流得很大。
+@wait 1.0
+你站在门口，没有回去关。
+@wait 0.8
+> 不是所有的门你都得推开。
+> 但没推开的门，也不会因此消失。
+@set truth +2
+@goto ch2_night_hub
+
+-- ================================================= 走廊
+== ch2_night_hall
+@bg dorm_hall night
+@bgm bgm_investigate
+@amb amb_rain
+@clearchars
+@advtime 15
+你沿着走廊往里走。
+@wait 0.8
+307、309、311……单号在这一边。走廊很长，尽头拐弯。
+@wait 1.0
+每个门上都贴着一张纸，A4 的，塑封了，写着房间号和住宿人名单。
+@wait 0.6
+@set truth +2
+你一路看过去。
+@wait 1.0
+> 307：周叙、梁野、林昼。三个人。
+> 309：四个人。
+> 311：四个人。
+> 313：四个人。
+@wait 0.8
+你回头看 307 那张。
+@wait 1.2
+三个人，但宿舍是四人间。你今天进去看过，四张床，四个柜子。
+@wait 0.8
+@set truth +2
+少一个人。
+@wait 1.0
+你走近了看 307 的名单。
+@wait 0.6
+@fx names 0.6
+纸是塑封的，所以没法涂改。但你注意到，"林昼"这两个字的字体和上面两个不一样。
+@wait 1.2
+@set truth +3
+周叙、梁野是印刷体。林昼是手写的，用记号笔写在塑封膜外面。
+@wait 0.8
+> 说明这张名单做好的时候，没有你。
+> 也说明——名单上原本有的第四个人，被印刷体印上去过，现在没了。
+@wait 1.0
+* 用指甲刮一下塑封膜 -> ch2_night_hall_a
+    @set truth +4
+    @set route_investigate +2
+* 继续往走廊尽头走 -> ch2_night_hall_b
+    @set truth +3
+    @set sanity -1
+
+== ch2_night_hall_a
+你用指甲在"林昼"那两个字上刮了刮。
+@wait 1.0
+记号笔的墨蹭掉了一点。
+@wait 0.8
+底下的塑封膜里，露出一小块印刷体的笔画。
+@wait 1.2
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+@set memory_echo +2
+你把记号笔的字全部刮掉。
+@wait 0.8
+底下是印刷的名字。塑封在里面，撕不掉，只能盖住。
+@wait 1.0
+> 307：周叙、梁野、李恒。
+@wait 1.4
+@set truth +3
+李恒。
+@wait 0.8
+你今天在班上见过这个人。他坐在第三排，一整天没跟任何人说话。
+@wait 1.0
+他还在。他没有消失。
+@wait 0.8
+@set truth +2
+但他的名字从 307 的名单上被盖掉了，用你的名字。
+@wait 1.2
+@fx glitch 0.7
+@set sanity -1
+@set truth +3
+你回到 307 门口，推门进去。
+@wait 0.6
+四张床。
+@wait 1.0
+周叙的、梁野的、你的。
+@wait 0.8
+第四张床是空的，床板上什么都没有，连褥子都没有。
+@wait 1.0
+@set truth +3
+@set memory_echo +2
+> 一个还在上学的人，被从宿舍名单上挪走了。
+> 而他自己没有搬东西——因为那张床上，从来就没有过东西。
+@wait 0.8
+> 他被挪走的不是床位。
+> 是"住在这里"这件事本身。
+@set truth +4
+@flag flag_liheng_erased
+@flag flag_can_meet_liheng
+@clue clue_liheng
+@goto ch2_night_hub
+
+== ch2_night_hall_b
+@bg hallway flicker
+你继续往前走。
+@wait 1.0
+走廊尽头拐弯，转过去是另一段走廊，通向楼梯间。
+@wait 0.8
+这一段的灯坏了两盏，暗得多。
+@wait 0.6
+@set sanity -1
+雨声在这里格外响，因为栏杆外面就是排水管。
+@wait 1.0
+最尽头那间是 325。
+@wait 0.8
+门上没有名单。
+@wait 1.2
+@set truth +2
+不是被撕了——门上很干净，没有胶带印，没有残纸。
+@wait 0.6
+这扇门从来没有贴过名单。
+@wait 1.0
+* 试着推一下门 -> ch2_night_hall_b2
+    @set truth +5
+    @set sanity -1
+* 转身回去 -> ch2_night_hall_b3
+    @set route_obedience +2
+
+== ch2_night_hall_b2
+你伸手推门。
+@sfx sfx_door
+@wait 1.2
+门开了。没锁。
+@wait 0.8
+里面是一间正常的宿舍。四张床，四个柜子，一张桌子。
+@wait 1.0
+干净，整齐，没有灰。
+@wait 0.6
+@set truth +2
+但没有人住的痕迹——没有被子，没有脸盆，没有衣服。
+@wait 1.0
+你按了一下墙上的开关。
+@sfx sfx_click
+@wait 0.8
+灯亮了。
+@wait 1.2
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +3
+一间空宿舍，通着电，被人打扫着。
+@wait 0.8
+你走进去。
+@wait 1.0
+桌上放着四个搪瓷缸，摆成一排，杯口朝下扣着。
+@wait 0.6
+你翻开一个。
+@wait 1.2
+@sfx sfx_glass
+杯底有水。
+@wait 0.8
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +4
+你翻开第二个、第三个、第四个。
+@wait 0.6
+四个杯底都有水。不多，就是刚喝完扣上、还没干透的那种量。
+@wait 1.0
+你摸了一下床板。
+@wait 0.8
+@set memory_echo +3
+@set truth +3
+是温的。
+@wait 1.2
+@fx glitch 0.9
+@sfx sfx_sting
+@set sanity -1
+四张床板，全是温的。
+@wait 0.8
+你退出去，把门带上。
+@wait 1.0
+> 这间宿舍住着四个人。
+> 他们只是不在名单上。
+@wait 0.8
+> 你忽然想到——如果 325 有四个人不在名单上，
+> 那这栋楼的实际人数，和登记人数，差多少。
+@set truth +4
+@set memory_echo +2
+@flag flag_room325
+@clue clue_room325
+@wait 1.0
+> 你没有再往下想。
+> 因为再想下去，就要面对一个问题：
+> 那些人到底是"多出来的"，还是"被减掉的"。
+@set truth +3
+@goto ch2_night_hub
+
+== ch2_night_hall_b3
+你收回手，转身往回走。
+@wait 1.0
+@set route_obedience +2
+@set sanity +2
+走了几步，你听见身后有开门声。
+@sfx sfx_door
+@wait 0.8
+你没有回头。
+@wait 1.0
+脚步声跟了上来。不快，和你的节奏一样。
+@wait 0.6
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+你走，它走。你停，它停。
+@wait 1.2
+你数了一下自己走了几步。
+@wait 0.8
+> 十二步。
+@wait 0.6
+身后的脚步声也是十二步。
+@wait 1.0
+你走到 307 门口，握住门把手。
+@wait 0.8
+身后安静了。
+@wait 1.2
+你猛地回头。
+@wait 0.6
+@fx redflash 0.5
+@set sanity -1
+走廊是空的。地上有水，是雨打进来的。
+@wait 1.0
+水上有脚印。
+@wait 0.8
+@set truth +4
+@set memory_echo +2
+从走廊尽头一直到你脚边，一串湿脚印。
+@wait 1.2
+你低头看自己的鞋。
+@wait 0.6
+是干的。
+@fx glitch 0.8
+@set sanity -1
+@set truth +3
+@wait 1.0
+> 你没有踩水。
+> 那串脚印不是你的。
+@wait 0.8
+> 而它停在你站的地方。
+@set truth +2
+@flag flag_footsteps
+@goto ch2_night_hub
+
+-- ================================================= 宿管值班室
+== ch2_night_guard
+@bg duty_room night
+@bgm bgm_investigate
+@amb amb_rain
+@clearchars
+@advtime 15
+宿管值班室在一楼楼梯口，玻璃窗，里面亮着灯。
+@wait 0.8
+值班的是个五十来岁的女人，正在看电视，声音开得很小。
+@wait 1.0
+@show dorm_keeper neutral left
+dorm_keeper：还没睡？还有十分钟熄灯。
+me：我今天刚住进来，想问点事。
+@wait 0.8
+dorm_keeper：307 那个？
+me：您知道我？
+@wait 1.0
+dorm_keeper：名单上加了个人，我能不知道。
+@wait 0.6
+她把电视关小了些，示意你说。
+@set truth +1
+@wait 1.0
+* 问 325 房间 -> ch2_night_guard_a
+    @set truth +4
+* 问熄灯后的规矩 -> ch2_night_guard_b
+    @set truth +3
+    @set route_obedience +1
+* 问她在这儿干了多久 -> ch2_night_guard_c
+    @set truth +4
+    @set memory_echo +2
+
+== ch2_night_guard_a
+me：325 是空的吗？
+@wait 1.2
+她的手停在遥控器上。
+@wait 0.8
+dorm_keeper：你去那边了？
+me：走廊走到头，看见那间门上没名单。
+@wait 1.0
+@set truth +2
+dorm_keeper：那间不住人。
+me：为什么？
+@wait 1.2
+dorm_keeper：漏水。
+@wait 0.6
+她答得很快，快得像准备好的。
+@wait 1.0
+me：可是里面很干净。
+@wait 1.4
+她抬头看了你一眼。
+@wait 0.8
+dorm_keeper：你进去了。
+me：门没锁。
+@wait 1.0
+她沉默了几秒，然后叹了口气。
+@wait 0.6
+dorm_keeper：那间我每周打扫一次。
+me：不住人为什么要打扫？
+@wait 1.2
+@set truth +3
+dorm_keeper：上头的规定。
+me：哪个上头？
+@wait 1.0
+dorm_keeper：……
+@wait 0.8
+她想了很久。
+@wait 1.2
+dorm_keeper：我不知道。
+@fx heartbeat 0.9
+@set sanity -1
+@set truth +4
+@wait 0.8
+dorm_keeper：我干这行八年，每周三下午打扫 325。
+dorm_keeper：这事是上一个宿管交代我的。她说是规矩。
+@wait 1.0
+dorm_keeper：我问她为什么，她说她也是听上一个宿管说的。
+@wait 0.6
+@set truth +3
+@set memory_echo +2
+me：那杯子呢？桌上四个搪瓷缸。
+@wait 1.4
+dorm_keeper：我不管杯子。
+@wait 0.8
+dorm_keeper：我扫地，擦窗，换一次床单。杯子不许动。
+@wait 1.0
+me：这也是规矩？
+dorm_keeper：嗯。
+@wait 0.8
+me：杯子里有水。
+@wait 1.4
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+她没有说话。她把电视又调大了一点。
+@wait 1.0
+dorm_keeper：孩子，快熄灯了。
+@wait 0.6
+dorm_keeper：有些活儿你干着干着就不问了。
+dorm_keeper：不问，才干得下去。
+@set truth +3
+@flag flag_room325
+@clue clue_room325
+@clearchars
+@goto ch2_night_hub
+
+== ch2_night_guard_b
+me：熄灯以后有什么规矩吗？
+@wait 1.0
+dorm_keeper：查寝，十一点。别在走廊晃。
+me：还有呢？
+@wait 0.8
+dorm_keeper：还有……
+@wait 1.2
+她想了想，从抽屉里拿出一张纸，推到窗口。
+@sfx sfx_page
+@wait 0.8
+是一张打印的《住宿生守则》，很旧，边角磨圆了。
+@wait 1.0
+@set truth +2
+你扫了一遍，前面都是正常内容：按时熄灯、不得使用大功率电器、爱护公物。
+@wait 0.8
+最后有三条，字体和前面不一样，像是后来加上去的。
+@wait 1.2
+@note 十一、查寝时听到敲门声，须应答。\n十二、查寝结束前，不要照镜子。\n十三、如听到有人在走廊叫你的名字，不要答应。除非叫了三遍。
+@wait 1.4
+@fx heartbeat 1.0
+@set truth +5
+@set memory_echo +2
+me：第十三条是什么意思？
+@wait 0.8
+dorm_keeper：字面意思。
+me：叫三遍就可以答应？
+@wait 1.2
+dorm_keeper：叫三遍的是人。
+@wait 0.6
+@set truth +3
+@set sanity -1
+dorm_keeper：那东西不叫三遍。它叫一遍，等你答。你不答，它就走了。
+@wait 1.0
+me：如果答了呢？
+@wait 1.4
+她看着你，看了很久。
+@wait 0.8
+dorm_keeper：答了就得记住。
+dorm_keeper：记住了，忘的时候就疼。
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.2
+> 这句话你今天听过一次。
+> 李恒说的，一模一样的话。
+@wait 0.8
+> 一个五十岁的宿管，和一个十七岁的学生，说着同一句话。
+@wait 1.0
+> 说明这句话不是他们自己想出来的。
+> 是有人教的。
+@set truth +3
+@item +item_dorm_rules
+@flag flag_dorm_rules
+@clue clue_rules
+@clearchars
+@goto ch2_night_hub
+
+== ch2_night_guard_c
+me：您在这儿干了多久？
+@wait 1.0
+dorm_keeper：八年了。
+me：那您应该经历过不少事。
+@wait 0.8
+dorm_keeper：能有什么事。孩子们打打闹闹，偶尔有生病的。
+@wait 1.0
+me：有没有学生……出过意外？
+@wait 1.4
+她的脸沉下来一点。
+@wait 0.8
+dorm_keeper：你想问哪件？
+@wait 0.6
+@set truth +3
+me：哪件都行。
+@wait 1.2
+dorm_keeper：那我跟你说个事。
+@wait 0.8
+她往椅背上靠了靠。
+@wait 1.0
+dorm_keeper：我刚来那年，也是这个季节，下雨。
+dorm_keeper：半夜有个学生跑下来敲我窗户，说他们宿舍多了一个人。
+@wait 0.8
+@fx heartbeat 0.8
+@set truth +2
+dorm_keeper：我说你数错了。他说没数错，四人间，睡了五个。
+@wait 1.0
+dorm_keeper：我跟他上去看。
+@wait 1.2
+me：几个人？
+@wait 0.8
+dorm_keeper：四个。
+@wait 1.0
+dorm_keeper：他站在门口，一个一个指着数，数出来四个。
+dorm_keeper：他自己也懵了，说刚才明明是五个。
+@wait 0.8
+@set truth +3
+dorm_keeper：我说你做梦呢，回去睡吧。
+@wait 1.2
+她停了一下。
+@wait 0.6
+dorm_keeper：第二天早上，那间宿舍是三个人。
+@fx glitch 0.9
+@sfx sfx_sting
+@set sanity -1
+@set truth +5
+@set memory_echo +3
+@wait 1.4
+me：少了一个？
+dorm_keeper：少了一个。
+@wait 0.8
+me：谁？
+@wait 1.2
+dorm_keeper：……
+@wait 1.0
+dorm_keeper：这就是奇怪的地方。
+dorm_keeper：我记得那天晚上是四个人。第二天是三个人。
+@wait 0.8
+dorm_keeper：但我说不出少的是谁。
+@wait 1.0
+@set truth +3
+dorm_keeper：名单上就是三个人，从来都是三个人。
+dorm_keeper：那间宿舍从开学就住三个人。
+@wait 1.2
+me：那半夜来敲您窗户的那个呢？
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+她愣了一下。
+@wait 0.8
+dorm_keeper：……
+@wait 1.0
+dorm_keeper：我记得有人敲窗户。
+dorm_keeper：我记得我跟他上楼了。
+@wait 0.6
+dorm_keeper：我不记得他长什么样。
+@wait 1.2
+@set memory_echo +3
+@set shenhe_focus +2
+她自己说出来，自己也停住了。
+@wait 0.8
+然后她摇了摇头，像是要把什么甩掉。
+@wait 1.0
+dorm_keeper：算了，八年前的事了，记岔了。
+dorm_keeper：快熄灯了，回去吧。
+@wait 0.8
+@set truth +2
+> 她说"记岔了"。
+> 这是今天第九个人用这个说法。
+@wait 1.0
+> 事情本身被记住了。
+> 人被删掉了。
+@set truth +3
+@set memory_echo +2
+@clue clue_missing_one
+@clearchars
+@goto ch2_night_hub
+
+-- ================================================= 307 内部
+== ch2_night_307
+@bg dorm night
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@advtime 12
+你推门进去。
+@sfx sfx_door
+@wait 0.8
+@show zhouxu neutral right
+周叙坐在桌前看书，台灯只照亮一小块。梁野趴在床上刷手机。
+@wait 1.0
+liangye(normal)：回来啦。外面雨大不大？
+me：挺大。
+liangye(normal)：明天体育课肯定上不成，爽。
+@wait 0.8
+很正常的一句话。你忽然有点感激他。
+@set sanity +5
+@set trust_liangye +1
+@wait 1.0
+zhouxu(neutral)：十点五十了。
+liangye(normal)：知道知道。
+@wait 0.6
+梁野翻了个身，把手机塞枕头底下。
+@wait 1.0
+* 问周叙关于李恒 -> ch2_night_307_a
+    @set truth +4
+    @set trust_zhouxu +1
+* 问他们查寝的事 -> ch2_night_307_b
+    @set truth +3
+* 什么都不问，躺下 -> ch2_night_307_c
+    @set sanity +5
+
+== ch2_night_307_a
+me：周叙，李恒是不是原来住这屋？
+@wait 1.4
+周叙翻书的手停了。
+@wait 0.8
+zhouxu(neutral)：谁跟你说的。
+me：门上的名单，记号笔底下压着他的名字。
+@wait 1.0
+@set truth +2
+他合上书，转过来。
+@wait 0.6
+zhouxu(serious)：你刮了？
+me：刮了。
+@wait 1.2
+zhouxu(serious)：……
+@wait 0.8
+他没有生气，只是很累的样子。
+@wait 1.0
+zhouxu(serious)：他上学期搬走了。
+me：搬去哪儿了？
+zhouxu(serious)：不知道。
+@wait 0.8
+me：同一栋楼，你不知道他搬哪儿去了？
+@wait 1.4
+@set truth +3
+zhouxu(serious)：我问过宿管。宿管说他没登记过住宿。
+@wait 0.8
+zhouxu(serious)：我说他明明住了一年半。宿管说没有记录。
+@wait 1.0
+zhouxu(serious)：我说我天天跟他一屋。宿管说，那你说说他睡哪张床。
+@wait 1.2
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +4
+me：你说不出来？
+@wait 0.8
+zhouxu(serious)：我说得出来。靠门那张。
+@wait 1.0
+zhouxu(serious)：宿管让我看。靠门那张床上有梁野的东西。
+@wait 0.6
+liangye(normal)：诶？我一直睡靠门啊。
+@wait 1.2
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+zhouxu(serious)：你以前睡靠窗。
+liangye(normal)：我没有啊。我从高一就睡靠门。
+@wait 1.0
+两个人对视了几秒。
+@wait 0.8
+梁野先笑了。
+@wait 0.6
+liangye(normal)：班长你记错了吧。
+@wait 1.0
+周叙没说话。
+@wait 1.2
+@set truth +3
+他转回去，重新翻开书。
+@wait 0.8
+过了很久，他说了一句。
+@wait 1.0
+zhouxu(serious)：我没记错。
+zhouxu(serious)：我只是证明不了。
+@wait 0.8
+@set trust_zhouxu +2
+@set truth +3
+> 一个人的记忆，对上所有人的记忆，加上所有的记录。
+> 他必输。
+@wait 1.0
+> 而这个学校最狠的地方在于：它从不否认你的记忆。
+> 它只是让你找不到第二个人证明。
+@set truth +4
+@set memory_echo +2
+@flag flag_liheng_erased
+@flag flag_can_meet_liheng
+@clue clue_liheng
+@clearchars
+@goto ch2_night_hub
+
+== ch2_night_307_b
+me：查寝是什么流程？
+@wait 1.0
+liangye(normal)：宿管上来敲门，你在里面应一声，她就走了。
+me：就这样？
+liangye(normal)：就这样啊。有时候她连门都不开，就听个声。
+@wait 0.8
+zhouxu(neutral)：不是宿管。
+@wait 1.2
+liangye(normal)：啊？
+@wait 0.6
+zhouxu(neutral)：查寝的不是宿管。宿管十点半就锁楼门了，不上楼。
+@wait 1.0
+@set truth +3
+liangye(normal)：那是谁？
+@wait 1.4
+zhouxu(neutral)：值班老师。
+@wait 0.8
+liangye(normal)：哦，那也一样。
+@wait 1.0
+zhouxu(neutral)：不一样。
+@wait 0.6
+他把书放下。
+@wait 1.0
+zhouxu(neutral)：你注意过没有，敲门的节奏。
+@wait 0.8
+liangye(normal)：什么节奏？
+@wait 1.2
+zhouxu(neutral)：三下，停，两下。每次都是。
+@sfx sfx_knock_pattern
+@wait 1.0
+@fx heartbeat 0.9
+@set truth +4
+@set memory_echo +2
+zhouxu(neutral)：一年半，每天晚上，三下停两下。一次都没变过。
+@wait 0.8
+zhouxu(neutral)：人做不到这样。人会有一天敲快了，有一天敲重了。
+@wait 1.0
+@set sanity -1
+@set truth +3
+房间里安静下来。
+@wait 0.6
+梁野的表情第一次不像在开玩笑了。
+@wait 1.2
+@show liangye nervous left
+liangye(nervous)：……那我们应的那一声，是应给谁的。
+@wait 1.0
+zhouxu(neutral)：不知道。
+@wait 0.8
+zhouxu(neutral)：但你必须应。
+@wait 1.0
+me：不应会怎么样？
+@wait 1.4
+zhouxu(neutral)：上学期有一次，梁野睡死了，没应。
+@wait 0.8
+liangye(nervous)：我不记得有这回事。
+@wait 1.0
+zhouxu(neutral)：我知道你不记得。
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@wait 1.2
+zhouxu(neutral)：第二天你上课举手回答问题，许老师没有叫你。
+zhouxu(neutral)：你举了一整节课。她的眼睛从你身上扫过去三次。
+@wait 0.8
+zhouxu(neutral)：下课我问她，她说：那个位置今天没人。
+@wait 1.4
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +5
+liangye(nervous)：……
+liangye(nervous)：别说了。
+@wait 1.0
+zhouxu(neutral)：第三天你就正常了。
+zhouxu(neutral)：所以我没跟你说。
+@wait 0.8
+@set truth +3
+> 漏应一次，消失一天。
+> 而消失的那一天，本人不会知道。
+@wait 1.0
+@set memory_echo +2
+@flag flag_knock_rule
+@clue clue_rules
+@clearchars
+@goto ch2_night_hub
+
+== ch2_night_307_c
+你什么都没问。
+@wait 1.0
+@set sanity +5
+@set route_obedience +1
+洗漱，铺床，躺下。
+@wait 0.8
+床板很硬，褥子很薄。你能感觉到底下的木头。
+@wait 1.0
+你侧过身，手指无意识地摸着床板边缘。
+@wait 0.6
+摸到了刻痕。
+@wait 1.2
+@set truth +2
+你数了一下。
+@wait 0.8
+> 二十四道。
+@wait 1.0
+和梁野说的一样。
+@wait 0.6
+@set sanity -1
+你把手缩回来，闭上眼。
+@wait 1.0
+台灯关了。
+@sfx sfx_click
+@wait 0.8
+黑暗里，梁野的呼吸很快就变均匀了。周叙翻了两次身。
+@wait 1.0
+你听着雨声。
+@wait 0.6
+雨声很催眠。
+@wait 1.2
+你快睡着的时候，听见一个很轻的声音。
+@wait 0.8
+@sfx sfx_write
+@fx heartbeat 0.8
+@set sanity -1
+@set truth +4
+不是雨声。
+@wait 1.0
+是指甲刮木头的声音。很慢，一下，一下。
+@wait 0.8
+就在你身下。
+@wait 1.2
+@set memory_echo +3
+你没有睁眼。
+@wait 0.6
+声音刮了大概十秒，停了。
+@wait 1.0
+> 你第二天早上会去数。
+> 二十五道。
+@set truth +3
+@flag flag_bed_marks
+@clue clue_bed_marks
+@goto ch2_night_hub
+
+-- ================================================= 收束
+== ch2_night_end
+@bg dorm night
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@advtime 20
+熄灯了。
+@sfx sfx_click
+@wait 1.0
+整栋楼的灯一起灭，走廊也黑了。只有安全出口的绿灯还亮着。
+@wait 0.8
+你躺在床上，睁着眼。
+@wait 1.0
+@if flag_mirror_contact or flag_room325 or flag_liheng_erased or flag_footsteps
+今天一天，你收集到的东西已经足够多了。
+@wait 0.6
+@set truth +2
+多到你没办法再用"想多了"来解释。
+@wait 1.0
+你在心里排了一下。
+@wait 0.8
+> 一：这个学校的记录，和这个学校的实际情况，对不上。
+> 二：对不上的方向永远是同一个——记录比实际少。
+> 三：所有人都知道对不上。所有人都选择不提。
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+你想不明白第四条。
+@wait 0.8
+> 四：为什么是我。
+@wait 1.0
+@set truth +2
+@else
+你什么都没查。
+@wait 0.8
+但有些东西不需要你去查。
+@wait 1.0
+@set sanity +5
+@set truth +1
+它们会等到你躺下、闭眼、放松的那一刻，自己找上来。
+@endif
+@wait 1.0
+十一点整，走廊里响起脚步声。
+@sfx sfx_step
+@wait 0.8
+不快，很稳，一步一步。
+@wait 1.0
+在 301 门口停下。
+@wait 0.6
+@sfx sfx_knock_pattern
+@fx heartbeat 0.9
+三下，停，两下。
+@wait 1.2
+里面有人应了一声。
+@wait 0.8
+脚步继续。303。
+@sfx sfx_knock_pattern
+@wait 1.0
+三下，停，两下。
+@wait 0.6
+应答。
+@wait 1.0
+305。
+@sfx sfx_knock_pattern
+@wait 0.8
+三下，停，两下。
+@wait 1.2
+@set sanity -1
+@set truth +2
+应答。
+@wait 0.8
+脚步声到了你们门口。
+@wait 1.4
+停住了。
+@wait 1.0
+@fx heartbeat 1.4
+@set sanity -1
+你屏住呼吸。
+@wait 0.8
+> 三下，停，两下。
+> 你已经准备好应了。
+@wait 1.2
+门外没有敲门声。
+@wait 0.8
+@fx glitch 0.7
+@set sanity -1
+@set truth +4
+脚步停在门口，一动不动。
+@wait 1.0
+一秒，两秒，五秒。
+@wait 0.6
+十秒。
+@wait 1.2
+@set memory_echo +2
+然后脚步继续往前走了。
+@sfx sfx_step
+@wait 0.8
+309。
+@sfx sfx_knock_pattern
+@wait 1.0
+三下，停，两下。
+@wait 0.6
+应答。
+@wait 1.0
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +5
+307 被跳过了。
+@wait 1.2
+黑暗里，周叙的声音很轻，很清楚。
+@wait 0.8
+zhouxu(serious)：都别睡。
+@wait 1.0
+zhouxu(serious)：它记着呢。今天没敲，明天就得敲两遍。
+@wait 0.8
+@set truth +3
+@set trust_zhouxu +1
+> 你不知道敲两遍是什么意思。
+> 第三章你会知道。
+@wait 1.0
+> 敲两遍的意思是——这一间要报两个数。
+@set truth +3
+@set memory_echo +2
+@flag flag_skipped_room
+@goto ch2_hub3

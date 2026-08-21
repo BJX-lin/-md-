@@ -1,0 +1,751 @@
+-- 第三章 深夜支线：查寝之后到天亮之间
+-- 这段时间在原本的剧本里是一句"你在黑暗里躺到天亮"带过的。
+-- 现在把它展开成可探索的四个小时，每个选择都改变第四章的开局状态。
+
+== ch3_deep_hub
+@bg dorm dark
+@bgm bgm_unease
+@amb amb_dorm_night
+@clearchars
+@advtime 25
+查寝过去了。
+门外的脚步声退到走廊尽头，然后就没有了——不是走远，是停在那儿。
+你能感觉到它还在。整栋楼的空气有一种被压住的沉。
+@wait 0.8
+你看了眼手机。
+> 00:41。
+> 离天亮还有五个小时。
+@set truth +1
+@wait 0.6
+三个室友都醒着。你听得出来——睡着的人呼吸有起伏，醒着的人是平的。
+但没有人说话。
+@wait 0.8
+> 这五个小时你得做点什么。
+> 或者说，你得决定什么都不做。
+@if visited:ch3_deep_hub
+> 时间还在走。
+@endif
+* [if !visited:ch3_deep_talk] 跟周叙说话 -> ch3_deep_talk
+    @set truth +2
+* [if !visited:ch3_deep_note] 重读那张规则纸 -> ch3_deep_note
+    @set route_investigate +1
+* [if !visited:ch3_deep_phone] 用手机查五年前的新闻 -> ch3_deep_phone
+    @set route_investigate +2
+* [if !visited:ch3_deep_window] 从窗户往外看 -> ch3_deep_window
+    @set truth +1
+* [if !visited:ch3_deep_bed] 检查自己的床板 -> ch3_deep_bed
+    @set memory_echo +1
+* [if flag_zhouxu_sister and !visited:zhouyun_hub] 让周叙拿出他姐姐的东西 -> zhouyun_hub
+    @set truth +2
+    @set trust_zhouxu +1
+* 闭眼，撑到天亮 -> ch3_deep_end
+    @set route_obedience +2
+
+-- ================================================= 与周叙的夜谈
+== ch3_deep_talk
+@bg dorm dark
+@bgm bgm_truth
+@clearchars
+@show zhouxu tired right
+@advtime 20
+me：周叙。
+上铺没有回应。
+me：我知道你醒着。
+@wait 1.2
+被子动了一下。他翻身，头探出床沿，在黑暗里看你。
+zhouxu(tired)：说。
+@wait 0.6
+你们压着嗓子说话。这种音量在白天什么都听不见，但在此刻的宿舍里，清楚得像贴着耳朵。
+* “你替她答过两次。第三次是什么时候？” -> ch3_deep_talk_a
+    @set truth +4
+    @set trust_zhouxu -1
+* “你姐是谁？” -> ch3_deep_talk_b
+    @set truth +5
+    @set trust_zhouxu +2
+* “你为什么不转学？” -> ch3_deep_talk_c
+    @set truth +3
+    @set trust_zhouxu +1
+* “你觉得我能活到毕业吗？” -> ch3_deep_talk_d
+    @set truth +2
+    @set sanity -1
+
+== ch3_deep_talk_a
+me：你替她答过两次。
+me：第三次是什么时候？
+@wait 1.4
+黑暗里很久没有声音。
+zhouxu(tired)：你怎么知道有第三次。
+me：因为你说"两次"的时候，语气像在报一个数，不像在忏悔。
+me：报数的人，心里有第三个。
+@wait 1.0
+@set truth +2
+他坐了起来。床板吱呀一声。
+zhouxu(dark)：没有第三次。
+zhouxu(dark)：因为第三次不是我答的。
+@wait 0.8
+me：谁答的？
+zhouxu(dark)：上一个坐你那个位置的人。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+zhouxu(dark)：他答完之后，我们班就少了一个。不是他——是别人。
+zhouxu(dark)：一个我到现在都想不起来名字的人。
+@wait 1.0
+zhouxu(dark)：我甚至不确定那个人存在过。
+zhouxu(dark)：但我们班的桌子，从那天起就多了一张。
+@set truth +3
+@set memory_echo +2
+@clue clue_missing_one
+@wait 0.8
+me：多了一张？不是少了？
+zhouxu(tired)：……对。
+zhouxu(tired)：这就是我一直没敢跟人说的地方。
+@wait 1.0
+> 少一个人，会多一张空桌。
+> 这很正常。
+> 但如果那个人从来没存在过，桌子是从哪儿来的？
+@set truth +2
+@goto ch3_deep_talk_end
+
+== ch3_deep_talk_b
+me：你姐是谁？
+@wait 1.2
+他很久没说话。久到你以为他睡了。
+zhouxu(tired)：你从哪儿听来的。
+me：五年前那天晚上，你说你在楼下等你姐。
+me：可你从来没提过她。这三天，一次都没有。
+@wait 1.0
+@set truth +2
+zhouxu(sad)：周芸。
+zhouxu(sad)：高三（2）班。那年她要高考。
+@wait 0.8
+me：她现在在哪儿？
+@wait 1.4
+zhouxu(sad)：不知道。
+me：什么叫不知道？
+zhouxu(sad)：字面意思。
+@fx heartbeat 0.9
+@set sanity -1
+zhouxu(sad)：那年高考完，她说要去省城。我爸妈送她上的车。
+zhouxu(sad)：车站的监控我们后来调过，她确实上了车。
+zhouxu(sad)：省城那边的接站点，她没下车。
+@wait 1.0
+@set truth +4
+@set memory_echo +2
+me：中途下车了？
+zhouxu(sad)：全程五个小时，中间停三个站，每个站的监控都查了。
+zhouxu(sad)：她没下。
+@wait 0.8
+zhouxu(sad)：司机说，从始发站到终点站，车上一直是四十一个人。
+zhouxu(sad)：卖出去四十二张票。
+@fx glitch 0.8
+@set sanity -1
+@set truth +4
+@set memory_echo +3
+@clue clue_missing_one
+@wait 1.2
+> 四十二张票，四十一个人。
+> 和你们班一模一样的算法。
+@wait 0.8
+zhouxu(sad)：所以我没转学。
+zhouxu(sad)：我要是走了，就没人记得她坐过那趟车了。
+@set trust_zhouxu +2
+@set truth +2
+@flag flag_zhouxu_sister
+@goto ch3_deep_talk_end
+
+== ch3_deep_talk_c
+me：你为什么不转学？
+me：你知道这儿有问题，你也有条件走。
+@wait 1.0
+zhouxu(tired)：走了就忘了。
+me：忘了不好吗。
+@wait 1.2
+zhouxu(tired)：好。
+zhouxu(tired)：所以我看着那几个转走的人，一个都没回来找过。
+@set truth +2
+@wait 0.8
+zhouxu(tired)：他们不是不敢回来。
+zhouxu(tired)：他们是真的不记得了。
+zhouxu(tired)：我加过其中一个的微信，去年过年给他发消息，问他还记不记得三班。
+@wait 1.0
+zhouxu(tired)：他回我："哪个三班？"
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+@wait 0.8
+zhouxu(tired)：所以留下来的人，才是记得的人。
+zhouxu(tired)：记得是有代价的。你今天也看见了。
+@set trust_zhouxu +1
+@goto ch3_deep_talk_end
+
+== ch3_deep_talk_d
+me：你觉得我能活到毕业吗。
+@wait 1.4
+他笑了一声。很短，没有笑意。
+zhouxu(tired)：这个问题前面有人问过。
+me：几个？
+zhouxu(tired)：三个。
+@wait 0.8
+me：他们呢。
+zhouxu(tired)：……
+@wait 1.2
+zhouxu(tired)：林昼，我跟你说实话。
+zhouxu(tired)：不是我不想救你。是我不知道怎么算"救成功了"。
+@set truth +2
+zhouxu(tired)：转走了算吗？可他们连三班都不记得了。
+zhouxu(tired)：留下来算吗？留下来就得每年听一次那个名字。
+@wait 1.0
+zhouxu(tired)：我到现在都没想明白，哪种更像活着。
+@set sanity -1
+@set truth +2
+@goto ch3_deep_talk_end
+
+== ch3_deep_talk_end
+@clearchars
+你们都没有再说话。
+过了很久，上铺传来周叙翻身的声音。
+@wait 0.8
+zhouxu(tired)：林昼。
+me：嗯。
+zhouxu(tired)：明天去校史馆。
+zhouxu(tired)：不管你查到什么，别一个人去广播室。
+@set trust_zhouxu +1
+@set truth +1
+@goto ch3_deep_hub
+
+-- ================================================= 重读规则纸
+== ch3_deep_note
+@bg dorm dark
+@bgm bgm_investigate
+@clearchars
+@advtime 15
+你摸黑走到公共桌前，把那张纸抽出来。
+借着窗外的一点光，你重新读一遍。
+@sfx sfx_page
+@note 【307 夜间查寝注意事项】\n一、听见敲门，先数影子。\n二、若门外人数多于影子数，不要回答。\n三、若影子数多于人数，不要开门。\n四、若有人用熟人的声音叫你，先确认床位。\n五、点名时若听见被删除者姓名，保持沉默。\n六、查寝结束前，不要照镜子。
+@wait 1.0
+你把六条读了三遍。
+@wait 0.6
+> 第一遍，你在记。
+> 第二遍，你在验证——今晚发生的事，每一条都对上了。
+> 第三遍，你发现了一个问题。
+@set truth +2
+@wait 1.0
+* 想清楚是什么问题 -> ch3_deep_note_a
+    @set truth +4
+    @set route_investigate +2
+* 太累了，放回去 -> ch3_deep_note_b
+    @set sanity +5
+
+== ch3_deep_note_a
+你盯着第六条。
+> 六、查寝结束前，不要照镜子。
+@wait 1.0
+"查寝结束前"。
+@wait 0.8
+前五条都是在说查寝过程中怎么做。只有第六条，划了一个时间界限。
+@set truth +2
+@wait 0.6
+> 也就是说，查寝**结束之后**，可以照镜子。
+> 写这张纸的人，为什么要特意留这个口子？
+@wait 1.2
+你抬起头。
+公共桌对面的墙上，钉着一面小镜子——洗漱用的，巴掌大，边缘生锈。
+@fx heartbeat 1.0
+@set sanity -1
+你在黑暗里看着它。它反着窗外一点点光，像一只半睁的眼睛。
+@wait 1.0
+> 查寝已经结束了。
+* 照 -> ch3_deep_mirror
+    @set taboo_count +2
+    @set truth +5
+    @set sanity -1
+    @set shenhe_focus +3
+* 不照 -> ch3_deep_note_b
+    @set route_obedience +2
+    @set truth +1
+
+== ch3_deep_mirror
+@bg mirror dark
+@bgm bgm_horror
+@clearchars
+你走过去，站在镜子前面。
+@sfx sfx_water
+镜子太小了，只能照到脸。
+你看着镜子里的自己。
+@wait 1.2
+没有异常。
+眼睛，鼻子，嘴。眼下有青黑，嘴唇有点干。三天没睡好的样子。
+@wait 1.0
+你正要转身——
+@fx flash 0.7
+@sfx sfx_sting
+镜子里的你，眨了一下眼。
+@wait 0.8
+你没有眨。
+@fx glitch 0.9
+@set sanity -1
+@set memory_echo +3
+你屏住呼吸，睁大眼睛，一动不动。
+@wait 1.4
+镜子里的那个人也一动不动。
+你们互相看着。
+@wait 1.2
+然后它开口了。
+没有声音——是口型。
+@wait 0.8
+@note 你　也　别　替　我　答　到
+@fx heartbeat 1.4
+@set truth +4
+@set shenhe_focus +2
+@clue clue_dont_answer
+@wait 1.0
+"你也"。
+@wait 0.6
+> 这两个字的意思是——镜子里那个人，也被人交代过同一句话。
+> 而它现在把这句话，传给下一个。
+@set truth +3
+@set memory_echo +2
+@flag flag_mirror_contact
+@if gore>=2
+@fx bloodcrack 0.8
+镜面上出现一道细纹，从中心往外裂。
+纹路里渗出很细的一线红。
+@set sanity -1
+@endif
+@wait 1.0
+你退开。
+镜子里的人也退开了——这一次是同步的。
+@clearchars
+@goto ch3_deep_hub
+
+== ch3_deep_note_b
+你把纸折好，压回搪瓷缸下面。
+位置和刚才一模一样。
+@wait 0.8
+> 有些东西看懂了不一定是好事。
+> 你今天已经懂得够多了。
+@goto ch3_deep_hub
+
+-- ================================================= 查五年前的新闻
+== ch3_deep_phone
+@bg dorm dark
+@bgm bgm_investigate
+@clearchars
+@advtime 30
+你把手机拿进被窝，把亮度调到最低。
+信号只有一格。宿舍楼的信号一直不好。
+@wait 0.6
+你搜"南栖中学 火灾"。
+@sfx sfx_click
+@wait 1.2
+加载了很久。
+@wait 0.8
+> 搜索结果：0 条
+@set truth +1
+你换了关键词。"南栖中学 2015"、"南栖 学校 事故"、"临川 中学 起火"。
+@wait 1.0
+> 0 条。
+> 0 条。
+> 0 条。
+@wait 0.8
+你搜"南栖中学"。
+@wait 0.6
+这次有结果了——学校官网、招生简章、几篇本地媒体的正面报道、高考喜报。
+最早的一条是三年前的。
+@fx glitch 0.5
+@set truth +2
+@set sanity -1
+@wait 1.0
+> 一所建校四十多年的学校，网上最早的记录只到三年前。
+@wait 0.8
+* 换个思路，搜"沈禾" -> ch3_deep_phone_a
+    @set truth +4
+    @set shenhe_focus +2
+* 搜本地论坛的老帖 -> ch3_deep_phone_b
+    @set truth +5
+    @set route_investigate +2
+* 关机睡觉 -> ch3_deep_phone_c
+    @set sanity +5
+
+== ch3_deep_phone_a
+你输入"沈禾"两个字。
+手指悬在搜索键上停了两秒。
+@wait 1.0
+> 周叙说过：知道全名的人，它会优先叫。
+> 那么在手机上打出这两个字，算不算"知道"？
+@wait 0.8
+你按了。
+@sfx sfx_click
+@wait 1.4
+@fx static 0.6
+页面一直在转圈。
+转了大概二十秒，出来一个提示：
+@note 网络连接超时，请检查网络设置
+@wait 0.8
+你退出去，点开微信。
+消息能收能发。信号是好的。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +3
+@wait 0.6
+你回到浏览器，重新搜"沈禾"。
+@wait 1.0
+> 网络连接超时。
+@wait 0.6
+你搜"沈"。正常。
+你搜"禾"。正常。
+你搜"沈禾"。
+@wait 0.8
+> 网络连接超时。
+@fx glitch 0.8
+@set sanity -1
+@set memory_echo +2
+@set shenhe_focus +2
+@set truth +2
+你把手机扣在胸口。
+心跳很快。
+@wait 1.0
+> 不是网络的问题。
+> 是这两个字连在一起的时候，有什么东西不让它过去。
+@set truth +2
+@goto ch3_deep_hub
+
+== ch3_deep_phone_b
+你想起本地有个论坛，叫"临川吧"，很老了，界面还是十几年前的样式。
+那种地方的老帖没人管，可能还留着。
+@wait 0.8
+你翻了很久。
+用手机翻十年前的论坛帖子是件很痛苦的事——分页要点，图片加载不出来，一半的楼层被删了。
+@wait 1.0
+在第七页，你找到一个帖子。
+@sfx sfx_page
+@note 标题：南栖中学昨晚是不是出事了？\n发帖时间：2015-05-18 06:22\n\n1楼：住旁边小区的，昨晚十点多看见东边那栋楼有火光，消防车来了三辆。\n今早路过，围起来了，说是危房检修。检修用得着消防车？\n\n2楼：我表妹在那读书，说昨晚全校停电，晚自习提前放学。\n\n3楼：+1 我也看见了\n\n4楼：楼主删帖吧，别惹麻烦\n\n5楼：（该内容已被管理员删除）\n\n6楼：（该内容已被管理员删除）\n\n7楼：（该内容已被管理员删除）\n\n8楼：删得挺快啊\n\n9楼：（该内容已被管理员删除）
+@wait 1.4
+@set truth +4
+@clue clue_fire_truth
+你往下翻。
+从第 5 楼开始，一直到第 40 多楼，全是"该内容已被管理员删除"。
+中间偶尔夹一两句"删得挺快"、"怕什么"，然后也被删了。
+@wait 1.0
+最后一楼是三个月之后的。
+@note 47楼：2015-08-30\n我是2楼那个。我表妹开学没回去，转学了。\n她说她不记得班里有谁不见了，但她就是不想回去。\n\n（本帖已锁定，禁止回复）
+@wait 1.2
+@set truth +3
+@set memory_echo +2
+@set sanity -1
+@wait 0.8
+> "她不记得班里有谁不见了，但她就是不想回去。"
+> 和周叙说的一模一样。
+> 忘记是会发生的。但身体会替你记住一部分。
+@set truth +3
+@flag flag_forum_thread
+@wait 0.6
+你截了图。
+然后想了想，又把截图删了。
+@wait 0.8
+> 你不知道为什么要删。
+> 你只是突然觉得，手机里存着这个东西，不太安全。
+@set memory_echo +1
+@goto ch3_deep_hub
+
+== ch3_deep_phone_c
+你把手机关机，塞到枕头底下。
+@wait 0.8
+> 有些事今天晚上想不明白，明天也想不明白。
+> 但今天晚上如果不睡，明天就什么都做不了。
+@set sanity +5
+@goto ch3_deep_hub
+
+-- ================================================= 从窗户往外看
+== ch3_deep_window
+@bg dorm dark
+@bgm bgm_horror
+@clearchars
+@advtime 10
+你爬到窗台边。
+宿舍的窗户是老式的推拉窗，外面装着防盗栏——铁的，锈得厉害，间距大概十五公分。
+@wait 0.6
+从三楼往下看，能看见宿舍楼前的一小片空地，和空地那头的教学楼。
+@wait 0.8
+现在是凌晨一点多。
+教学楼全黑。空地上一盏路灯亮着，照出一个昏黄的圆。
+@wait 1.0
+你正要退回去——
+@fx heartbeat 1.0
+路灯下面站着一个人。
+@wait 1.2
+背对着宿舍楼，面朝教学楼的方向。一动不动。
+距离太远，看不清是谁，只能看出穿的是深色衣服。
+@set sanity -1
+@set truth +2
+* 一直看着 -> ch3_deep_window_a
+    @set truth +4
+    @set sanity -1
+    @set memory_echo +2
+* 数一下它站了多久 -> ch3_deep_window_b
+    @set truth +3
+    @set route_investigate +1
+* 退回床上 -> ch3_deep_window_c
+    @set route_obedience +1
+
+== ch3_deep_window_a
+你趴在窗台上，看着那个人。
+@wait 1.4
+它不动。
+一分钟。两分钟。
+@wait 1.0
+路灯的光有轻微的频闪——老式钠灯都这样。每次闪，那个人的影子就抖一下。
+@wait 0.8
+你数影子。
+@fx heartbeat 1.2
+@wait 1.0
+> 一个人，一道影子。
+> 正常。
+@wait 0.8
+你正要松口气——
+@wait 1.2
+> 影子的方向不对。
+@fx glitch 0.9
+@set sanity -1
+@set truth +3
+路灯在它的**左边**。
+影子应该投向右边。
+@wait 0.8
+可那道影子在它正前方，朝着教学楼的方向铺出去，很长，长得不成比例。
+@wait 1.0
+@set memory_echo +2
+你眨了一下眼。
+@wait 0.6
+影子不见了。
+人还在。
+@fx heartbeat 1.4
+@set sanity -1
+@set truth +2
+你慢慢退下窗台，回到床上，把被子拉过头顶。
+@wait 0.8
+> 你没有再看第二眼。
+> 但你知道它一整晚都在那儿。
+@goto ch3_deep_hub
+
+== ch3_deep_window_b
+你决定给它计时。
+你把手机拿出来，看时间：01:07。
+@wait 0.8
+然后你趴在窗台上等。
+@wait 1.0
+01:15。它还在。
+01:23。它还在。
+01:31。它还在，姿势一模一样。
+@set truth +2
+@wait 0.8
+> 一个人站着不动八分钟，腿会麻。会换重心，会动一下肩膀。
+> 它没有。一次都没有。
+@wait 1.0
+01:40。
+你决定再看最后一分钟就回去睡。
+@wait 1.2
+01:41。
+@fx heartbeat 1.2
+它转过来了。
+@wait 0.8
+不是转身——是整个人在原地转了一百八十度，脚没有动。
+像有人把一张纸片翻了个面。
+@fx glitch 1.0
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+@wait 1.0
+现在它面朝宿舍楼。
+面朝三楼。
+面朝你这扇窗。
+@wait 1.4
+你缩回去，背贴着墙坐在床上，心跳快得耳朵疼。
+@wait 0.8
+> 你手机还亮着。
+> 屏幕的光，从窗户透出去，正好照在你脸上。
+@fx heartbeat 1.6
+@set sanity -1
+你把手机按灭了。
+@set truth +2
+@goto ch3_deep_hub
+
+== ch3_deep_window_c
+你从窗台退下来，回到床上。
+@wait 0.8
+> 有些东西你看它，它就会看你。
+> 这个道理你今天已经学过一次了——在门镜前面。
+@set truth +1
+@goto ch3_deep_hub
+
+-- ================================================= 检查床板
+== ch3_deep_bed
+@bg dorm dark
+@bgm bgm_unease
+@clearchars
+@advtime 10
+你想起床板上那排刻痕。
+第一天晚上你数过：二十三道。上一个住这儿的人，住了二十三天。
+@wait 0.8
+你伸手到床板下面摸。
+@sfx sfx_write
+@wait 1.0
+指腹划过那些凹槽。
+你数：
+> 一、二、三……
+@wait 1.2
+> 二十三。
+> 二十四。
+@wait 0.8
+二十四道。
+最后那道是你自己刻的——第一天早上，天快亮的时候。
+@set memory_echo +1
+@wait 1.0
+你继续往旁边摸。
+@wait 0.8
+@fx heartbeat 1.2
+> 二十五。
+@fx glitch 0.8
+@set sanity -1
+@set truth +3
+@set memory_echo +3
+第二十五道。
+你没有刻过第二十五道。
+@wait 1.2
+你把手机拿出来，打开手电，钻到床下照。
+@wait 1.0
+二十五道刻痕，整整齐齐，五个一组。
+最后那道的木屑还是新的——浅色，没有氧化。
+@wait 0.8
+* 刻第二十六道 -> ch3_deep_bed_a
+    @set taboo_count +2
+    @set memory_echo +3
+    @set truth +2
+* 把第二十五道抹掉 -> ch3_deep_bed_b
+    @set route_hostility +2
+    @set truth +3
+* 什么都不做 -> ch3_deep_bed_c
+    @set route_obedience +1
+    @set truth +1
+
+== ch3_deep_bed_a
+你用指甲，在第二十五道旁边刻了第二十六道。
+@sfx sfx_write
+@wait 1.0
+> 你不知道自己为什么要这么做。
+> 就像第一天早上一样。
+@wait 0.8
+刻完之后你躺回去，看着上铺的床板。
+@wait 1.0
+> 如果明天早上你摸到第二十七道——
+> 那就说明这栋楼里，有人和你在做同一件事。
+> 而且那个人，比你更清楚这个数字要数到几。
+@fx heartbeat 1.0
+@set sanity -1
+@set truth +2
+@flag flag_bed_marks
+@goto ch3_deep_hub
+
+== ch3_deep_bed_b
+你用指甲去抠第二十五道刻痕。
+@wait 1.0
+木头很硬。你抠了很久，指甲劈了，只把凹槽的边缘磨圆了一点。
+@fx bloodhand 0.5
+@if gore>=2
+指尖渗血了，血渗进木纹里，把那道刻痕染成了深色。
+@fx blooddrip 0.6
+@set sanity -1
+@endif
+@wait 0.8
+你退出来看。
+@wait 1.0
+第二十五道更明显了。
+@fx glitch 0.6
+@set sanity -1
+@set truth +3
+@set memory_echo +2
+> 你想把它去掉，结果把它加深了。
+> 这栋楼里的东西大概都是这个逻辑。
+@wait 0.6
+> 反抗会留下痕迹。而痕迹本身，就是它想要的。
+@set truth +2
+@goto ch3_deep_hub
+
+== ch3_deep_bed_c
+你把手收回来，躺平。
+@wait 0.8
+> 二十五道。
+> 你只需要记住这个数字。
+> 明天早上再摸一次，就知道它会不会自己长。
+@set truth +1
+@flag flag_bed_marks
+@goto ch3_deep_hub
+
+-- ================================================= 收束
+-- 深夜路线的收尾拆成两段：
+--   ch3_deep_end   —— 凌晨两点多，先走 ch3_sc9（周叙讲五年前那场火）
+--   ch3_deep_dawn  —— 谈完之后才睡，天亮收束
+-- 这样无论从哪条支线进来，时间都保持单调递增，不会出现
+-- 「已经睡到 05:30，又跳回 02:17 说话」的错乱。
+== ch3_deep_end
+@bg dorm dark
+@bgm bgm_unease
+@clearchars
+@timeat 4 02:05
+@flag flag_deep_route_night
+你躺回床上，但没有闭眼。
+@wait 0.8
+黑暗里，你听见对面床铺的人翻了个身。
+> 周叙也醒着。
+@wait 0.6
+@goto ch3_sc9
+
+== ch3_deep_dawn
+@bg dorm dark
+@bgm bgm_unease
+@clearchars
+@timeat 4 05:30
+你闭上眼。
+@wait 1.0
+你以为自己睡不着，但不知道什么时候还是睡着了——那种很浅的睡，一直知道自己在睡。
+@wait 0.8
+五点半，天开始泛白。
+窗外有鸟叫。宿舍楼下有早起的人在打水，铁桶碰到水泥地的声音。
+@wait 1.0
+这些声音很正常。正常得让人想哭。
+@set sanity +6
+@wait 0.8
+@if flag_bed_marks
+你伸手到床板下面，摸那排刻痕。
+@wait 1.2
+@sfx sfx_write
+> 二十六道。
+@fx heartbeat 1.2
+@set sanity -1
+@set truth +3
+@set memory_echo +3
+@if flag_mirror_contact
+你没有惊讶。
+你只是躺在那儿，想着镜子里那个人说的话。
+@else
+你数了三遍，每次都是二十六。
+@endif
+@wait 0.8
+@endif
+六点二十，起床铃响了。
+@sfx sfx_bell
+@wait 0.6
+@if flag_zhouxu_sister
+周叙比你先起来。他在洗漱台前刷牙，从镜子里看了你一眼。
+> 昨晚他说了周芸的名字。
+> 说完之后他睡得比前两天都沉。
+> 有些东西说出来，是会轻一点的。
+@set trust_zhouxu +1
+@endif
+@wait 0.8
+> 第三天结束了。
+> 你活过了三个晚上。
+@set truth +1
+@goto ch3_sc10
