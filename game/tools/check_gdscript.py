@@ -328,6 +328,35 @@ def main():
                         f"var {name}: <类型> = ...")
                     break
 
+        # 10c. := 最外层表达式直接是返回 Variant 的调用（严格模式
+        #      INFERENCE_ON_VARIANT 视为错误）。只查最外层：转换函数
+        #      （String()/int()/float()/bool()/str()）、as 断言或类型化方法
+        #      包在外面的不报，避免误伤。
+        VARIANT_TOP = re.compile(
+            r"^[\w.\[\]\"']+\.(get|pop_front|pop_back|parse_string)\s*\(")
+        for ln, raw in enumerate(src.split("\n"), 1):
+            st = raw.strip()
+            if st.startswith(("#", "//")):
+                continue
+            m = re.match(r"var\s+([A-Za-z_0-9]+)\s*:=\s*(.+)$", st)
+            if not m:
+                continue
+            name, expr = m.group(1), m.group(2)
+            if " as " in expr:
+                continue
+            parts = [expr]
+            if " if " in expr and " else " in expr:
+                parts = [expr.split(" if ")[0].strip(),
+                         expr.split(" else ", 1)[1].strip()]
+            hit = any(VARIANT_TOP.match(p) for p in parts)
+            if hit:
+                col = raw.index("var ") + 5
+                errors.append(
+                    f"{rel}:{ln}:{col} var {name} := 由 Variant 返回值推断类型"
+                    f"（INFERENCE_ON_VARIANT，严格模式报错）。"
+                    f"请显式标注：var {name}: <类型> = ...，"
+                    f"或包一层 String()/int() 等转换")
+
         # 11. 字典字面量里出现重复键
         #     Godot 报 Key "x" was already used in this dictionary
         #     嵌套字典按缩进层级分组统计，避免跨层误报。

@@ -108,9 +108,10 @@ func _touch(path: String) -> void:
 func _store(path: String, t: Texture2D) -> void:
 	_cache[path] = t
 	_touch(path)
-	while _cache.size() > MAX_CACHE:
-		var oldest := _lru.pop_front()
-		if oldest == path or oldest == "":
+	while _cache.size() > MAX_CACHE and not _lru.is_empty():
+		# 注意：pop_front() 返回 Variant，必须显式标型（严格模式 INFERENCE_ON_VARIANT 视为错误）
+		var oldest: String = _lru.pop_front()
+		if oldest == "" or oldest == path:
 			break
 		_cache.erase(oldest)
 

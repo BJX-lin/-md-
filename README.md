@@ -9,11 +9,11 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.1 分卷下载（无压缩 store 打包，两卷均 <100MB，规避 GitHub 单文件上限）**
+**v1.4.2 分卷下载（无压缩 store 打包，两卷均 <100MB，规避 GitHub 单文件上限）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.1_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.1_part2_assets.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.2_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.2_part2_assets.zip
 ```
 
 > 分卷使用方法：把两个 ZIP **解压到同一个文件夹**即可合并——
@@ -22,7 +22,7 @@ https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.1_
 > 两卷均为 store 无压缩打包，图片/音频本就是压缩格式，不二次压缩以加快打包与校验。
 >
 > 解压后用 Godot Engine 4.7.2 stable 打开 `game/project.godot` 即可运行 / 导出 Android。
-> v1.4.1 为稳定性修复版（多周目闪退 + OOM 防护），详见上方更新日志。
+> v1.4.2 修复严格模式 Variant 推断编译错误；v1.4.1 修复多周目闪退与 OOM，详见上方更新日志。
 
 **历史版本（v1.3.1）** 仍在游戏仓库 `BJX-lin/md` 的 `arena/01a018ff-md` 分支 `dist/` 下：
 
@@ -82,7 +82,18 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.1 更新（本分支最新 · 稳定性修复）
+## v1.4.2 更新（本分支最新 · 兼容性修复）
+
+- **修复严格模式编译错误**：`ArtCache._store()` 中 `var oldest := _lru.pop_front()`
+  由 Variant 推断类型，触发 Godot「INFERENCE_ON_VARIANT（警告视为错误）」解析错误，
+  导致工程无法启动。已改为显式标型 `var oldest: String = ...`（与既有
+  `audio_director.gd` 惯例一致）。
+- **防再犯**：`tools/check_gdscript.py` 新增规则 10c——`:=` 最外层表达式直接是
+  `.get() / .pop_front() / .pop_back() / parse_string()` 时报错（转换函数包裹的
+  合法写法不误报），本轮全库扫描 0 违规。
+- 版本 1.4.2（versionCode 10）。
+
+## v1.4.1 更新（稳定性修复）
 
 - **修复多周目闪退（关键）**：游戏界面对 autoload 信号（`GameState.time_changed /
   var_changed`、`StoryEngine.story_finished`、`Ach.unlocked`）原先用 lambda 连接，
