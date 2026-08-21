@@ -14,16 +14,16 @@ class_name SplashScreen
 
 signal finished
 
-const STAGE_DUR := [6.6, 3.6]
+const STAGE_DUR := [7.6, 7.2]
 const STAGE_MIN_HOLD := 0.35
 const FADE := 0.45
 
-## 合并动画时间轴（秒）· v1.4.21 按反馈放缓：对进更慢、字幕停留更久
-const T_SLIDE := 1.5      # 双图标向中间移动（原 1.1）
-const T_MERGE := 0.6      # 仓鼠淡出/合并闪光（原 0.45）
+## 合并动画时间轴（秒）· v1.4.22 再放缓：所有段落 ≥7 秒
+const T_SLIDE := 1.8      # 双图标向中间移动
+const T_MERGE := 0.7      # 仓鼠淡出/合并闪光
 const T_PULSE := 0.5      # Godot 图标放大（按分镜保持 0.5）
-const T_PULSE_BACK := 0.35 # 放大后复原（原 0.3）
-const T_MARQUEE := 2.4    # 跑马灯扫过（原 1.3，放慢近一倍便于阅读）
+const T_PULSE_BACK := 0.4 # 放大后复原
+const T_MARQUEE := 3.0    # 跑马灯扫过（3 秒慢速）
 
 var _t := 0.0
 var _stage := 0
@@ -256,8 +256,15 @@ func _play_merge_sequence(root: Control) -> void:
 	_play_merge_sequence_deferred.call_deferred(ham, god, flash, credit, band)
 
 func _play_merge_sequence_deferred(ham: Control, god: Control, flash: ColorRect, credit: Label, band: PanelContainer) -> void:
-	var vw := size.x
-	var vh := size.y
+	# 稳定性（v1.4.22）：等控件尺寸就绪再布局（最多 10 帧）。
+	# 此前在尺寸未传播时就计算，拿到陈旧的小尺寸 → 元素围着错误原点摆放，
+	# 表现为图标/字幕不居中。就绪失败时兜底取视口尺寸。
+	var waited := 0
+	while (size.x < 100.0 or size.y < 100.0) and waited < 10:
+		await get_tree().process_frame
+		waited += 1
+	var vw := size.x if size.x >= 100.0 else get_viewport_rect().size.x
+	var vh := size.y if size.y >= 100.0 else get_viewport_rect().size.y
 	var cx := vw * 0.5
 	var cy := vh * 0.5
 	var travel := cx + 180.0
@@ -298,13 +305,13 @@ func _play_merge_sequence_deferred(ham: Control, god: Control, flash: ColorRect,
 	tw.tween_property(god, "scale", Vector2.ONE, T_PULSE_BACK).set_delay(T_SLIDE + T_MERGE + T_PULSE)
 	# 4) 字幕淡入（停留至本段结束）
 	tw.tween_property(credit, "modulate:a", 1.0, 0.4).set_delay(T_SLIDE + T_MERGE + 0.1)
-	# 5) 跑马灯：从右向左扫过屏幕（v1.4.21 放慢近一倍，扫完多停 0.6s 再淡出）
+	# 5) 跑马灯：从右向左扫过屏幕（3 秒慢速，扫完多停 1 秒再淡出）
 	tw.tween_property(band, "modulate:a", 1.0, 0.2).set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK)
 	tw.tween_property(band, "position:x", -band_min.x - 60.0, T_MARQUEE) \
 		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + 0.15) \
 		.set_trans(Tween.TRANS_LINEAR)
 	tw.tween_property(band, "modulate:a", 0.0, 0.25) \
-		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + T_MARQUEE + 0.6)
+		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + T_MARQUEE + 1.0)
 	tw.set_parallel(false)
 
 ## AI 仓鼠图标的代码回落绘制（无贴图时也能成立）
