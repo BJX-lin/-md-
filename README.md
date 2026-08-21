@@ -9,20 +9,20 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.3 分卷下载（无压缩 store 打包，两卷均 <100MB，规避 GitHub 单文件上限）**
+**v1.4.4 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.3_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.3_part2_assets.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.4_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.4_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.4_part3_sprites_audio.zip
 ```
 
-> 分卷使用方法：把两个 ZIP **解压到同一个文件夹**即可合并——
-> Part 1（3.4MB）含 `game/` 工程核心（代码/剧本/UI/图标/工具）与 `docs/`、设计文档；
-> Part 2（98.9MB）含 `game/assets/bg|sprites|audio` 全部美术与音频资源。
-> 两卷均为 store 无压缩打包，图片/音频本就是压缩格式，不二次压缩以加快打包与校验。
+> 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
+> Part 1（3.4MB）工程核心（代码/剧本/UI/图标/工具）+ `docs/` + 设计文档；
+> Part 2（71MB）`game/assets/bg` 全部背景图；
+> Part 3（30MB）`game/assets/sprites|audio` 立绘与音频（含 v1.4.4 新音频）。
 >
 > 解压后用 Godot Engine 4.7.2 stable 打开 `game/project.godot` 即可运行 / 导出 Android。
-> v1.4.3 重编码 bgm_unease 并附音频自检工具与替换指南；历次修复见上方更新日志。
 
 **历史版本（v1.3.1）** 仍在游戏仓库 `BJX-lin/md` 的 `arena/01a018ff-md` 分支 `dist/` 下：
 
@@ -82,7 +82,19 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.3 更新（本分支最新 · 音频）
+## v1.4.4 更新（本分支最新 · 创作者音频实装）
+
+- **实装 16 个替换音频**（素材来自 md 仓库 main 分支上传）：4 首 BGM（主场景/真相/
+  结局坏/调查）+ 4 组环境音（白噪声/蝉鸣/雨声/光电流）+ 8 个音效，统一转码为
+  44.1kHz 单声道 OGG Vorbis（限幅 -3dB），映射表见 `docs/音频替换指南.md`
+- **修复 4 个假扩展名文件**：主场景.ogg / 真相.ogg / 结局坏.mp3 / 调查.mp3 实为
+  视频容器（Theora/AAC），直接放进工程会触发 Godot「Ogg Vorbis decoding failed」；
+  已剥离视频轨只取音频，重新封装为标准 Vorbis
+- 分包调整：资源卷增至两卷（part2 背景 71MB / part3 立绘+音频 30MB），全部 <100MB
+- `tools/check_audio.py` 全目录 55 项自检通过
+- 版本 1.4.4（versionCode 12）
+
+## v1.4.3 更新（音频）
 
 - **重编码 `bgm_unease.ogg`**：从另一开发线的原始 WAV 母带重新编码为标准 Ogg Vorbis
   （22050Hz 单声道 12s），全新字节流。原文件经页结构/完整解码/串号三重校验本身合法，
