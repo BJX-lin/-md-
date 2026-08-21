@@ -73,7 +73,7 @@ liangye(nervous)：等下课再说吧。
 @sfx sfx_bell
 @wait 0.8
 @show xuqing neutral right
-许清抱着名册进来，赤脚，没有声音。
+许清抱着名册进来，脚步没有一点声音。
 @wait 1.0
 她走上讲台，翻开名册。
 @sfx sfx_page

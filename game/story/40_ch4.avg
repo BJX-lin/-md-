@@ -254,13 +254,14 @@ xuqing(stare)：站住。
 她站在展厅中间，离你大概十米。
 你不知道她是什么时候进来的——门口只有一条路，而你们进来之后一直背对着门。
 @wait 0.8
-她没穿鞋。
-脚踩在地砖上，没有一点声音。
-但地砖上留下了浅浅的湿印——一步，一步，一直延伸到她身后的黑暗里。
-@clue clue_xuqing_barefoot
+她的脚步没有一点声音。
+展厅两排射灯从你们身后打过来，你脚下拖着长长的影子。
+她脚下没有。
+> 地砖干干净净，一个人站在那里，地上却空着。
+@clue clue_xuqing_noshadow
 @set truth +1
-你顺着那串湿印往回看。
-> 湿印从展厅深处过来。
+你顺着灯光往她身后看。
+> 没有影子的地方，站着一个人。
 > 而展厅深处是死角，那里没有门。
 @fx heartbeat 1.0
 @set sanity -1
@@ -276,36 +277,35 @@ xuqing(cold)：记住了，也不代表还能活着忘掉。
     @set truth +2
 * [if item:item_log_fragment] “名单是你在维护？” -> ch4_xq_d
     @set truth +3
-* “您的脚不冷吗。” -> ch4_xq_feet
+* “您在那儿站了多久。” -> ch4_xq_shadow
     @set truth +3
     @set trust_xuqing -1
     @set memory_echo +1
 
-== ch4_xq_feet
+== ch4_xq_shadow
 你没有问她是什么。
 你问了一个很小的问题。
 me：许老师。
-me：地砖很凉。您的脚不冷吗。
+me：您在这里，站了多久了。
 @wait 1.2
-许清低头看了看自己的脚。
+她低头看了看自己脚下。
 她看了很久——久到你以为她不打算回答了。
 @wait 1.0
-xuqing(empty)：不冷。
-她说完这两个字，自己也愣了一下。
-xuqing(empty)：……我刚才想说"当然冷"。
+xuqing(empty)：不记得。
+她说完这三个字，自己也愣了一下。
+xuqing(empty)：……我刚才想说“没多久”。
 xuqing(empty)：但话到嘴边，我发现我不知道那是什么感觉了。
 @fx glitch 0.8
 @set sanity -1
 @set truth +3
 @set memory_echo +1
 @state xuqing_state suspected
-她把一只脚抬起来一点，脚底朝上。
-干净的。
-在一栋积了五年灰的楼里，走了这么远，脚底是干净的。
+门口那盏应急灯还亮着，光从你背后打过去，你的影子铺在她和你之间的地砖上。
+她的那一半，空着。
 @wait 0.8
-xuqing(empty)：我以前会穿鞋。
-xuqing(empty)：有一天早上我起来，找不到鞋。
-xuqing(empty)：我找了整整一天。后来就习惯了。
+xuqing(empty)：我以前是有影子的。
+xuqing(empty)：有一天早上我起来，灯亮着，影子不在了。
+xuqing(empty)：我等了它一天。后来就习惯了。
 @set truth +2
 me：那是哪一天？
 @wait 1.0
@@ -617,8 +617,9 @@ zhouxu(sad)：站在监控照不到的那个角。
 你把画面暂停，放大。
 分辨率太低，脸是糊的。
 但你能看清一件事——
-> 她没有穿鞋。
-@clue clue_xuqing_barefoot
+> 救援车的车灯从侧面打过来，画面里每个人脚下都拖着影子。
+> 只有她脚下，是空的。
+@clue clue_xuqing_noshadow
 @set truth +4
 @set sanity -1
 @set memory_echo +1

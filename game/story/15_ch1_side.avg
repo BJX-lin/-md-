@@ -229,7 +229,6 @@
 > 五年前她就在这所学校了。
 > 而且是她一件一件捡回来的。
 @set truth +2
-@clue clue_xuqing_barefoot
 @goto ch1_free_hub
 
 == ch1_lost_dig
@@ -354,7 +353,6 @@
 @fx glitch 0.6
 @set truth +3
 @set memory_echo +2
-@clue clue_xuqing_barefoot
 @goto ch1_free_hub
 
 == ch1_free_end

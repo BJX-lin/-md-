@@ -386,7 +386,7 @@ static func _xuqing_desc() -> String:
 		"revealed": return "已经确认：她五年前就不在名册上了。"
 		"destabilized": return "被你说破了——她只是站得太久的人。"
 		"observer": return "她不再拦你，只是看着。"
-		"suspected": return "她走路没有声音，也从不穿鞋。"
+		"suspected": return "她走路没有声音，灯下没有影子。"
 		_: return "班主任。语文老师。"
 
 static func _shenhe_desc() -> String:

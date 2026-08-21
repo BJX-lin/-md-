@@ -89,9 +89,9 @@ const EMO_FALLBACK := {
 	"sad": ["sad", "tired", "hurt", "fragile", "empty", "calm", "neutral", "normal"],
 	"hurt": ["hurt", "sad", "tired", "calm"],
 	"hollow": ["hollow", "empty", "blank", "void", "calm"],
-	"release": ["release", "faintsmile", "faint_smile", "calm"],
-	"void": ["void", "hollow", "empty", "blank", "calm"],
-	"dead": ["dead", "hollow", "empty", "calm"],
+	"release": ["release", "faintsmile", "faint_smile", "calm", "smile", "normal"],
+	"void": ["void", "hollow", "empty", "blank", "calm", "normal"],
+	"dead": ["dead", "hollow", "empty", "calm", "normal"],
 
 	"warning": ["warning", "nervous", "serious", "normal"],
 	"shocked": ["shocked", "terrified", "scared", "nervous", "normal"],

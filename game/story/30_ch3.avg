@@ -1322,9 +1322,11 @@ zhouxu(sad)：我那年高一。我在楼下等我姐。
 zhouxu(sad)：我看见有人从旧楼一楼跑出来，手里拿着一把锁。
 me：你看清脸了吗？
 zhouxu(sad)：看清了。
-zhouxu(sad)：是穿老师衣服的人。她没有穿鞋。
+zhouxu(sad)：是穿老师衣服的人。
+zhouxu(sad)：消防车的灯从她背后打过来，所有人脚下都有影子。
+zhouxu(sad)：她没有。
 @fx glitch 0.8
-@clue clue_xuqing_barefoot
+@clue clue_xuqing_noshadow
 @clue clue_fire_truth
 @set truth +4
 @set memory_echo +1

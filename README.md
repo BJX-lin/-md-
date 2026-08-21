@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.5 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.6 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.5_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.5_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.5_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.6_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.6_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.6_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,24 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.5 更新（本分支最新 · 开屏与稳定性）
+## v1.4.6 更新（本分支最新 · 开屏合并动画 / 剧本设定调整 / 立绘更新）
+
+- **开屏重做（双图标合并）**：塞博仓鼠(AI) 图标从左、Godot 图标从右向中间移动
+  → 合并闪光后只保留 Godot → **放大 0.5 秒后复原** → **跑马灯字幕带**扫过
+  （作品名 / 塞博仓鼠×AI 制作 / Godot 4.7.2 致意 / 耳机提示）→ 进入作品标示页；
+  点击逐段前进 / Esc 跳过的进入方式保留
+- **剧本设定调整（男频向）**：移除「许清不穿鞋」设定及其全部线索，改为
+  **「灯下无影」**（与"影子数不对"母题呼应，线索总数仍 36）；她的忏悔重写为
+  **停在 22:07 的表**（呼应"十点零七分"广播母题：那晚折返换名册的两分钟）；
+  第四章"脚冷吗"追问分支改为"您在那儿站了多久"；相关监控/目击/旁白全部同步
+- **无歧视复查**：全剧本扫描性别/地域/群体类敏感词（30+ 词根）零命中；
+  沈禾真结局两处"赤脚走出声音"为她本人的高光段落，予以保留
+- **立绘更新**：周叙 / 梁野 / 沈禾 三位核心角色重绘（表情表生成 → 白底抠透明
+  → 768 规格），各保留使用频率最高的 4 个表情，其余旧表情移除、由回退链
+  自动落到新画风；`release/void/dead` 回退链终点补 `normal` 防悬空
+- 版本 1.4.6（versionCode 14）；剧本 564 节点 / 28 脚本 / 线索 36 项校验全绿
+
+## v1.4.5 更新（开屏与稳定性）
 
 - **开屏动画三段式重做**：Godot 引擎致意（新增「该游戏使用 Godot 4.7.2 制作」）→
   制作信息（**塞博仓鼠 🐹 × AI 制作** + AI 生成图标）→ 作品标示
