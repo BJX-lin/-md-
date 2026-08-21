@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.22 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.23 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.22_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.22_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.22_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.23_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.23_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.23_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,18 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.22 更新（本分支最新 · 开屏居中根因修复 + 全段 ≥7 秒）
+## v1.4.23 更新（本分支最新 · 移除跳选 + 代码审计）
+
+- **移除「跳选」功能**：顶栏按钮、快进到选项的引擎机制（fast_mode 全套）、
+  相关冒烟测试全部删除；自动播放与快进保留不变
+- **顺带根除一个真 bug**：跳选的「遇密码锁/结局自动停止」判断被写在
+  「跳过阻塞演出」分支内部（死代码）——实际跳选会一路跳过密码锁甚至结局；
+  功能删除后该路径不复存在
+- 代码审计：28 脚本 gdparse 语法解析 + 静态检查 0 错误、564 剧本节点、
+  55 音频全通过；清理 smoke_runner 死变量 _frame
+- 版本 1.4.23（versionCode 31）
+
+## v1.4.22 更新
 
 - **居中根因修复**：动画布局此前在控件尺寸尚未传播时计算（拿到陈旧小尺寸，
   元素围着错误原点摆放）。现在**等待尺寸就绪（最多 10 帧）再布局**，

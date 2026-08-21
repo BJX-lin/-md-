@@ -3,7 +3,6 @@ extends Node
 ## 用法：godot --headless --path game --script res://tools/smoke_test.gd
 ## 退出码：0 全部通过，1 存在失败。
 
-var _frame := 0
 var _fail := 0
 var _lines: Array = []
 
@@ -96,20 +95,7 @@ func _run() -> void:
 		StoryEngine._append_history("me", "第 %d 行" % i)
 	_check(GameState.history.size() == 400, "回想记录封顶 400（实际 %d）" % GameState.history.size())
 
-	# 10) 跳选（快进到下一选项）：fast 模式下应在选项处自动停止
-	StoryEngine.start("prologue")
-	StoryEngine.fast_mode = true
-	var steps := 0
-	while StoryEngine.fast_mode and steps < 300:
-		StoryEngine.advance()
-		steps += 1
-	_check(not StoryEngine.fast_mode, "跳选模式在遇到选项后自动解除")
-	_check(StoryEngine.waiting_choice, "跳选停止时引擎处于选项等待（实际 %s）" % str(StoryEngine.waiting_choice))
-	# 清理：恢复引擎状态
-	StoryEngine.fast_mode = false
-	StoryEngine.waiting_choice = false
-
-	# 11) 成就系统（v1.4.0）：定义表 / 事件解锁 / 持久化
+	# 10) 成就系统（v1.4.0）：定义表 / 事件解锁 / 持久化
 	_check(Ach.ACHIEVEMENTS.size() == 22, "成就定义表共 22 项（实际 %d）" % Ach.ACHIEVEMENTS.size())
 	GameState.persistent["achievements"] = {}
 	GameState.persistent["clues_seen"] = []
@@ -148,7 +134,7 @@ func _run() -> void:
 	GameState.record_ending("ending_manager")
 	_check(Ach.is_unlocked("ach_looper"), "完成 3 周目 -> 解锁「第 112 次重排」")
 
-	# 12) 番外《天晴》：可完整推进到番外结局
+	# 11) 番外《天晴》：可完整推进到番外结局
 	GameState.reset_run()
 	_lines.clear()
 	StoryEngine.start("extra_sunny_day")

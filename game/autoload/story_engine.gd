@@ -43,8 +43,6 @@ var _cur: Array = []
 var _cur_id: String = ""
 var running := false
 var waiting_choice := false
-## 快进到下一选项模式：跳过文本展示与阻塞演出，遇选项/密码锁/结局停止
-var fast_mode := false
 # Password lock
 var _padlock: Dictionary = {}
 
@@ -271,8 +269,6 @@ func advance() -> void:
 				var l := ins.duplicate(true)
 				l["text"] = _resolve_text(String(l["text"]))
 				_append_history(String(l.get("who", "")), String(l["text"]))
-				if fast_mode:
-					continue
 				line_ready.emit(l)
 				return
 			"branch":
@@ -293,21 +289,10 @@ func advance() -> void:
 					visible.append(d)
 				if visible.is_empty():
 					continue
-				if fast_mode:
-					fast_mode = false
 				waiting_choice = true
 				choices_ready.emit(visible)
 				return
 			"cmd":
-				var cname := String(ins.get("cmd", ""))
-				if fast_mode and cname in ["title", "wait", "roster", "note", "chapter"]:
-					# 快进：跳过阻塞演出；章节号仍需更新（条件判定依赖）
-					if cname == "chapter":
-						var args: Array = ins.get("args", [])
-						GameState.current_chapter = int(_arg(args, 0))
-					continue
-				if fast_mode and cname in ["padlock", "ending"]:
-					fast_mode = false
 				var stop := _exec_cmd(ins)
 				if stop:
 					return
