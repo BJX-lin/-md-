@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.17 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.18 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.17_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.17_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.17_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.18_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.18_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.18_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,16 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.17 更新（本分支最新 · 场景图重绘第 10 批，累计 95/105）
+## v1.4.18 更新（本分支最新 · 🏁 场景图 105/105 全部重绘完成）
+
+- 最终批 10 张：广播门开启缝 / 广播室全景 / 307 湿地板（水不知从哪来）/
+  门房全景 / 实验楼走廊 / 挂钟特写（玻璃里映着空街）/ 白天空走廊 /
+  图书馆暗调 / 书架深黑（没有尽头的过道）/ 主控柜道具（四位机械计数窗）
+- **全部 105 张场景图已换新**：11 批完成，统一"中式校园 + 去饱和冷调 +
+  空镜"风格；分辨率 1376×768、256 色量化，全部经 BG_MAP 接线无需改代码
+- 版本 1.4.18（versionCode 26）
+
+## v1.4.17 更新
 
 - 主视觉 2 张：标题图（蓝调雨夜校门）/ 开场 keyvisual（雨幕中的校园）
 - 夜景系：通往旧楼的小路 / 旧楼夜景（无雨的黑块）/ 天台俯瞰
