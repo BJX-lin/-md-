@@ -160,6 +160,9 @@ func _show_stage(i: int) -> void:
 		_play_merge_sequence(root)
 
 ## 段0：双图标对进 → 合并 → 仅留 Godot → 放大 0.5s 复原 → 跑马灯
+## 稳定性（v1.4.20）：全部元素改为显式像素布局（_play_merge_sequence_deferred
+## 内统一按视口计算），不再依赖中心锚点 + 默认向右生长——
+## 此前文字/字幕带从中点向右展开，导致不居中。
 func _build_merge_stage() -> Control:
 	var c := Control.new()
 	c.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -167,60 +170,46 @@ func _build_merge_stage() -> Control:
 
 	# 合并闪光（初始全透明）
 	var flash := ColorRect.new()
-	flash.set_anchors_preset(Control.PRESET_CENTER)
 	flash.color = Color(0.55, 0.72, 1.0, 0.0)
-	flash.custom_minimum_size = Vector2(360, 360)
+	flash.size = Vector2(360, 360)
 	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	flash.name = "Flash"
 	c.add_child(flash)
 
-	# 仓鼠（AI）图标：居中锚点，起点在屏幕左外
+	# 仓鼠（AI）图标
 	var ham := TextureRect.new()
 	ham.texture = UITex.get_tex("agent_hamster")
 	ham.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	ham.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	ham.custom_minimum_size = Vector2(150, 150)
-	ham.set_anchors_preset(Control.PRESET_CENTER)
-	ham.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	ham.grow_vertical = Control.GROW_DIRECTION_BOTH
+	ham.size = Vector2(150, 150)
 	ham.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ham.pivot_offset = Vector2(75, 75)
 	ham.name = "Hamster"
 	c.add_child(ham)
 	if ham.texture == null:
 		var fb := _draw_hamster_fallback()
 		fb.name = "HamsterFallback"
-		fb.custom_minimum_size = Vector2(150, 150)
-		fb.set_anchors_preset(Control.PRESET_CENTER)
+		fb.size = Vector2(150, 150)
 		c.add_child(fb)
 
-	# Godot 图标：居中锚点，起点在屏幕右外
+	# Godot 图标
 	var god := TextureRect.new()
 	god.texture = UITex.get_tex("godot_mark")
 	god.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	god.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	god.custom_minimum_size = Vector2(128, 128)
-	god.set_anchors_preset(Control.PRESET_CENTER)
-	god.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	god.grow_vertical = Control.GROW_DIRECTION_BOTH
+	god.size = Vector2(128, 128)
 	god.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	god.pivot_offset = Vector2(64, 64)
 	god.name = "Godot"
 	c.add_child(god)
 	if god.texture == null:
 		var fb2 := _draw_godot_fallback()
 		fb2.name = "GodotFallback"
-		fb2.custom_minimum_size = Vector2(140, 140)
-		fb2.set_anchors_preset(Control.PRESET_CENTER)
+		fb2.size = Vector2(140, 140)
 		c.add_child(fb2)
 
-	# 引擎致意字幕（合并后淡入）
+	# 引擎致意字幕（整幅宽，文字水平居中）
 	var credit := Label.new()
 	credit.text = "该游戏使用 Godot 4.7.2 制作"
 	credit.name = "Credit"
-	credit.set_anchors_preset(Control.PRESET_CENTER)
-	credit.offset_top = 110
-	credit.offset_bottom = 150
 	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	credit.add_theme_font_size_override("font_size", 21)
 	credit.add_theme_color_override("font_color", Color(0.62, 0.70, 0.82))
@@ -228,7 +217,7 @@ func _build_merge_stage() -> Control:
 	credit.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(credit)
 
-	# 跑马灯字幕带（初始在屏幕右外）
+	# 跑马灯字幕带（尺寸取自身最小尺寸，位置由布局计算）
 	var band := PanelContainer.new()
 	band.name = "Marquee"
 	var sb := StyleBoxFlat.new()
@@ -245,12 +234,8 @@ func _build_merge_stage() -> Control:
 	ml.add_theme_font_size_override("font_size", 22)
 	ml.add_theme_color_override("font_color", Color(0.78, 0.86, 0.98))
 	band.add_child(ml)
-	band.set_anchors_preset(Control.PRESET_CENTER)
-	band.offset_top = 170
-	band.offset_bottom = 224
 	band.modulate.a = 0.0
 	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	band.size = Vector2(0, 0)
 	c.add_child(band)
 	return c
 
@@ -272,35 +257,50 @@ func _play_merge_sequence(root: Control) -> void:
 
 func _play_merge_sequence_deferred(ham: Control, god: Control, flash: ColorRect, credit: Label, band: PanelContainer) -> void:
 	var vw := size.x
-	var travel := vw * 0.5 + 160.0
-	# 起始：左右屏幕外
-	ham.position.x = size.x * 0.5 - travel - ham.size.x * 0.5
-	god.position.x = size.x * 0.5 + travel - god.size.x * 0.5
+	var vh := size.y
+	var cx := vw * 0.5
+	var cy := vh * 0.5
+	var travel := cx + 180.0
+
+	# —— 显式像素布局（全部以画面中心为基准）——
+	flash.position = Vector2(cx - flash.size.x * 0.5, cy - flash.size.y * 0.5)
+	ham.size = Vector2(150, 150)
+	god.size = Vector2(128, 128)
+	ham.pivot_offset = ham.size * 0.5
+	god.pivot_offset = god.size * 0.5
+	credit.position = Vector2(0, cy + 96)
+	credit.size = Vector2(vw, 44)
+	var band_min := band.get_combined_minimum_size()
+	band.size = band_min
+	band.position = Vector2(vw, cy + 168)
+
+	# 起始：左右屏幕外（垂直方向已按中心对齐）
+	ham.position = Vector2(cx - travel - ham.size.x * 0.5, cy - ham.size.y * 0.5)
+	god.position = Vector2(cx + travel - god.size.x * 0.5, cy - god.size.y * 0.5)
 	ham.modulate.a = 1.0
 	god.modulate.a = 1.0
 
 	var tw := create_tween()
 	tw.set_parallel(true)
-	# 1) 双图标向中间移动
-	tw.tween_property(ham, "position:x",
-		size.x * 0.5 - ham.size.x * 0.5, T_SLIDE).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_property(god, "position:x",
-		size.x * 0.5 - god.size.x * 0.5, T_SLIDE).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	# 1) 双图标向中间移动（终点=画面正中）
+	tw.tween_property(ham, "position:x", cx - ham.size.x * 0.5, T_SLIDE) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(god, "position:x", cx - god.size.x * 0.5, T_SLIDE) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	# 2) 合并：闪光 + 仓鼠淡出（仅保留 Godot）
 	tw.tween_property(flash, "color:a", 0.85, 0.12).set_delay(T_SLIDE)
 	tw.tween_property(flash, "color:a", 0.0, 0.35).set_delay(T_SLIDE + 0.12)
 	tw.tween_property(ham, "modulate:a", 0.0, T_MERGE).set_delay(T_SLIDE)
 	tw.tween_property(ham, "scale", Vector2(1.25, 1.25), T_MERGE).set_delay(T_SLIDE)
-	# 3) Godot 放大 0.5s 后复原
+	# 3) Godot 放大 0.5s 后复原（以自身中心缩放）
 	tw.tween_property(god, "scale", Vector2(1.35, 1.35), T_PULSE).set_delay(T_SLIDE + T_MERGE) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(god, "scale", Vector2.ONE, T_PULSE_BACK).set_delay(T_SLIDE + T_MERGE + T_PULSE)
 	# 4) 字幕淡入
 	tw.tween_property(credit, "modulate:a", 1.0, 0.4).set_delay(T_SLIDE + T_MERGE + 0.1)
-	# 5) 跑马灯：从右向左扫过屏幕
+	# 5) 跑马灯：从右向左扫过屏幕（整条带完全越过左右边缘）
 	tw.tween_property(band, "modulate:a", 1.0, 0.2).set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK)
-	var band_w := maxf(900.0, band.size.x + 80.0)
-	tw.tween_property(band, "position:x", -band_w, T_MARQUEE) \
+	tw.tween_property(band, "position:x", -band_min.x - 60.0, T_MARQUEE) \
 		.set_delay(T_SLIDE + T_MERGE + T_PULSE + T_PULSE_BACK + 0.15) \
 		.set_trans(Tween.TRANS_LINEAR)
 	tw.tween_property(band, "modulate:a", 0.0, 0.25) \

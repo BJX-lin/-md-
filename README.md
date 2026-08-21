@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.19 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.20 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.19_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.19_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.19_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.20_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.20_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.20_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,17 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.19 更新（本分支最新 · 立绘差分扩展 40 张）
+## v1.4.20 更新（本分支最新 · 修复开屏不居中）
+
+- **修复开屏动画不居中**：合并段此前用「中心锚点 + 默认向右生长」排版，
+  致意字幕与跑马灯带会从画面中点向右展开（视觉偏移）。
+  现改为**显式像素布局**：等布局稳定后按视口统一计算画面中心，
+  图标/闪光/字幕/字幕带全部以中心为基准定位；
+  致意字幕整幅宽水平居中，跑马灯按自身最小尺寸从右缘完全扫出左缘
+- 图标垂直/水平起始与终点均以中心 ±半宽计算，旋转缩放 pivot 同步修正
+- 版本 1.4.20（versionCode 28）
+
+## v1.4.19 更新
 
 - **差分扩展**：10 个角色各 +4 表情（共 40 张，累计 92 张立绘），全部以第一代
   中性表情作参考图生成，保证同脸同画风；表情保持克制自然系
