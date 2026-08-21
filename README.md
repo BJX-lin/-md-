@@ -9,11 +9,11 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.2 分卷下载（无压缩 store 打包，两卷均 <100MB，规避 GitHub 单文件上限）**
+**v1.4.3 分卷下载（无压缩 store 打包，两卷均 <100MB，规避 GitHub 单文件上限）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.2_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.2_part2_assets.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.3_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.3_part2_assets.zip
 ```
 
 > 分卷使用方法：把两个 ZIP **解压到同一个文件夹**即可合并——
@@ -22,7 +22,7 @@ https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.2_
 > 两卷均为 store 无压缩打包，图片/音频本就是压缩格式，不二次压缩以加快打包与校验。
 >
 > 解压后用 Godot Engine 4.7.2 stable 打开 `game/project.godot` 即可运行 / 导出 Android。
-> v1.4.2 修复严格模式 Variant 推断编译错误；v1.4.1 修复多周目闪退与 OOM，详见上方更新日志。
+> v1.4.3 重编码 bgm_unease 并附音频自检工具与替换指南；历次修复见上方更新日志。
 
 **历史版本（v1.3.1）** 仍在游戏仓库 `BJX-lin/md` 的 `arena/01a018ff-md` 分支 `dist/` 下：
 
@@ -82,7 +82,19 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.2 更新（本分支最新 · 兼容性修复）
+## v1.4.3 更新（本分支最新 · 音频）
+
+- **重编码 `bgm_unease.ogg`**：从另一开发线的原始 WAV 母带重新编码为标准 Ogg Vorbis
+  （22050Hz 单声道 12s），全新字节流。原文件经页结构/完整解码/串号三重校验本身合法，
+  Godot 端导入失败多为本地副本损坏或 `.godot` 导入缓存损坏——遇此报错先右键
+  Reimport，仍不行删除 `game/.godot/` 重开编辑器全量重导。
+- **新增 `tools/check_audio.py`**：55 个 OGG 的魔数/页结构/EOS/串号唯一性自检，
+  装了 soundfile 则做完整解码验证（当前全目录通过）。
+- **新增 `docs/音频替换指南.md`**：怎么替换/新增 BGM、环境音、音效（同名覆盖即可，
+  文件名即 ID，循环与混音由前缀自动处理），含音量体系与常见问题。
+- 版本 1.4.3（versionCode 11）。
+
+## v1.4.2 更新（兼容性修复）
 
 - **修复严格模式编译错误**：`ArtCache._store()` 中 `var oldest := _lru.pop_front()`
   由 Variant 推断类型，触发 Godot「INFERENCE_ON_VARIANT（警告视为错误）」解析错误，
