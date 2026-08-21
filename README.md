@@ -9,12 +9,12 @@
 
 ## 直接下载（GitHub raw 直链）
 
-**v1.4.7 分卷下载（无压缩 store 打包，三卷均 <100MB）**
+**v1.4.8 分卷下载（无压缩 store 打包，三卷均 <100MB）**
 
 ```
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.7_part1_project.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.7_part2_bg.zip
-https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.7_part3_sprites_audio.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.8_part1_project.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.8_part2_bg.zip
+https://github.com/BJX-lin/-md-/raw/arena/01a0234d-md/dist/The13thPeriod_v1.4.8_part3_sprites_audio.zip
 ```
 
 > 分卷使用方法：三个 ZIP **解压到同一个文件夹**即可合并——
@@ -82,7 +82,16 @@ godot --headless --path game res://tools/smoke_runner.tscn
 文本插值：`{pname}` 玩家名、`{num:truth}` 数值、`{item:item_xxx}` 道具名、
 `{if 条件?A|B}` 条件文本。玩家改名后正文中的「林昼」自动替换为玩家名字。
 
-## v1.4.7 更新（本分支最新 · 全员立绘重绘）
+## v1.4.8 更新（本分支最新 · 表情收敛 + 场景图重绘第 1 批）
+
+- **表情收敛**：老秦/梁野/林昼/男同学/许清 5 组差分重绘为克制自然系
+  （惊恐=僵住、震惊=微怔、怒视=平视凝住，不再夸张变形），共 20 张
+- **场景图重绘启动**（全 104 张计划，每轮 10 张）：第 1 批 5 张已实装——
+  白天教室 / 晚自习教室 / 白天走廊 / 夜走廊 / 307 宿舍夜；
+  统一 16:9 生成 → cover 裁切 1376×768 → 256 色量化（~200-330KB/张，与原库同规格）
+- 版本 1.4.8（versionCode 16）
+
+## v1.4.7 更新
 
 - **13 个角色立绘全部重绘**（2×2 表情表生成 → 纯白底抠透明 → 768 规格）：
   周叙/梁野/沈禾/许清/老秦/李恒/林昼(备用)/？？？/食堂阿姨/宿管阿姨/同学×3
