@@ -17,7 +17,7 @@ func detect(argument: Dictionary) -> Array:
 	for f in KnowledgeBase.FALLACIES:
 		var conf := _score_fallacy(f, text, argument)
 		if conf > 0.0:
-			var cand := f.duplicate(true)
+			var cand: Dictionary = f.duplicate(true)
 			cand["confidence"] = conf
 			scored.append(cand)
 	# 按置信度降序

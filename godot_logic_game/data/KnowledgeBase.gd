@@ -125,7 +125,7 @@ static func pick_dict(arr: Array) -> Dictionary:
 
 # 从 EMOJI 库按场景取一个 emoji（场景不存在则返回空）
 static func emoji(scene: String) -> String:
-	var slot = EMOJI.get(scene)
+	var slot: Variant = EMOJI.get(scene)
 	if slot is Array and not slot.is_empty():
 		return str(slot[randi() % slot.size()])
 	return ""

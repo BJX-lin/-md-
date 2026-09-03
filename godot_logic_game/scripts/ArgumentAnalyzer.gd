@@ -105,7 +105,7 @@ func _hit(text: String, words: Array) -> bool:
 	return false
 
 func _merge(a: Array, b: Array) -> Array:
-	var out := a.duplicate()
+	var out: Array = a.duplicate()
 	for x in b:
 		if not out.has(x):
 			out.append(x)
