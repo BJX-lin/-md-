@@ -672,7 +672,7 @@ func _open_option_popup(title: String, items: Array) -> void:
 	for child in _option_popup_list.get_children():
 		_option_popup_list.remove_child(child)
 		child.queue_free()
-	for item in items:
+	for item: Dictionary in items:
 		var b := Button.new()
 		b.text = str(item.get("label", "选项"))
 		b.custom_minimum_size = Vector2(0, 44)
