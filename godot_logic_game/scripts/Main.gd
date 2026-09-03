@@ -37,7 +37,6 @@ const COL_ACCENT := Color(0.16, 0.67, 0.93)      # TG 蓝 #2AABEE
 const COL_TEXT := Color(0.93, 0.94, 0.97)
 
 var engine := DebateEngine.new()
-var _llm: LocalLLM = null   # 本地 LLM 提供者；默认不启用（回退纯规则）
 
 # 防刷屏状态
 var _last_send_ms := 0
@@ -61,7 +60,9 @@ var _input: LineEdit
 var _ai_bar: ProgressBar
 var _user_bar: ProgressBar
 var _round_lbl: Label
-var _topic_lbl: Label
+var _topic_lbl: Button
+var _topic_detail := ""      # 辩题完整详情（含提示），展开时显示
+var _topic_expanded := false  # 辩题是否展开
 var _settle: Control            # 结算面板
 var _settle_body: RichTextLabel
 var _header_avatar: Button        # 顶栏 AI 头像，可点开换头像
@@ -75,12 +76,12 @@ func _ready() -> void:
 	_build_ui()
 	engine.reset()
 	engine.max_rounds = 12
-	_init_llm()
 	_refresh_hud()
 	# 开场
 	_ai_say("我是「杠精老师 · 逻辑裁判」。你抛观点，我用逻辑漏洞杠你；但你要是拿得出可核验的证据，我也认账让步。 🎬")
 	var topic_msg := engine.setup_topic()
 	_ai_say(topic_msg)
+	_topic_detail = topic_msg
 	_set_topic_label(engine.current_topic)
 	_ai_say("示范：输入「大家都这么做，所以肯定是对的」。卡住就点「求助」，我教你反杀。")
 
@@ -264,11 +265,15 @@ func _build_topic_bar() -> Control:
 	btn.custom_minimum_size = Vector2(84, 32)
 	btn.pressed.connect(_on_next_topic)
 	row.add_child(btn)
-	_topic_lbl = Label.new()
+	# 辩题改为可点击：默认收起显示名称，点击展开完整详情，再点收起
+	_topic_lbl = Button.new()
 	_topic_lbl.text = ""
+	_topic_lbl.flat = true
+	_topic_lbl.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_topic_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_topic_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_topic_lbl.add_theme_color_override("font_color", Color(0.95, 0.8, 0.5))
+	_topic_lbl.pressed.connect(_on_toggle_topic)
 	row.add_child(_topic_lbl)
 	return row
 
@@ -385,7 +390,6 @@ func _build_toolbar() -> Control:
 	row.add_theme_constant_override("separation", 8)
 	row.add_child(_make_tool("求助", Callable(self, "_on_hint")))
 	row.add_child(_make_tool("难度", Callable(self, "_on_cycle_difficulty")))
-	row.add_child(_make_tool("模型", Callable(self, "_on_cycle_llm")))
 	row.add_child(_make_tool("结算", Callable(self, "_on_settle")))
 	row.add_child(_make_tool("导出", Callable(self, "_on_export")))
 	row.add_child(_make_tool("重开", Callable(self, "_on_reset")))
@@ -393,31 +397,6 @@ func _build_toolbar() -> Control:
 
 func _on_hint() -> void:
 	_ai_say(engine.hint())
-
-# ---- LLM 可插拔（默认关闭，回退纯规则）----
-func _init_llm() -> void:
-	_llm = LocalLLM.new()
-	if _llm.has_plugin():
-		_app_toast("[LLM] 检测到本地推理插件。点「模型」启用；未启用走纯规则。")
-	else:
-		_app_toast("[LLM] 未检测到模型插件，使用纯规则引擎。")
-
-func _on_cycle_llm() -> void:
-	if _llm == null:
-		return
-	var cfg := _llm.config
-	cfg.enabled = not cfg.enabled
-	if cfg.enabled:
-		cfg.model_path = "user://model.gguf"
-		var ok: bool = _llm.load_model()
-		engine.set_llm(_llm)
-		if ok:
-			_app_toast("[LLM] 已启用本地模型（已加载）。规则判定 + LLM 润色。")
-		else:
-			_app_toast("[LLM] 已开，但模型未加载。请核对 user://model.gguf 路径。")
-	else:
-		engine.set_llm(null)
-		_app_toast("[LLM] 已关闭，回到纯规则模式。")
 
 func _on_cycle_difficulty() -> void:
 	var opts := ["温和", "毒舌", "归谬狂魔"]
@@ -613,9 +592,19 @@ func _ai_say(msg: String) -> void:
 func _say_player(msg: String) -> void:
 	_add_bubble(msg, false)
 
+# VBoxContainer 没有 clear()，用 queue_free 移除所有消息行
+func _clear_chat() -> void:
+	if _chat == null:
+		return
+	for child in _chat.get_children():
+		_chat.remove_child(child)
+		child.queue_free()
+
 func _add_bubble(text: String, is_ai: bool) -> void:
 	if _chat.get_child_count() > MAX_LOG:
-		_chat.remove_child(_chat.get_child(0))
+		var old := _chat.get_child(0)
+		_chat.remove_child(old)
+		old.queue_free()
 
 	var row := HBoxContainer.new()
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -747,18 +736,22 @@ func _submit(text: String) -> void:
 func _on_next_topic() -> void:
 	var msg := engine.setup_topic()
 	_ai_say(msg + "  " + KnowledgeBase.emoji("open"))
+	_topic_detail = msg
+	_topic_expanded = false
 	_set_topic_label(engine.current_topic)
 	_refresh_hud()
 
 func _on_reset() -> void:
 	engine.reset()
 	engine.max_rounds = 12
-	_chat.clear()
+	_clear_chat()
 	_transcript = ""
 	_refresh_hud()
 	_ai_say("已重开。抛个观点——先来个新辩题。 🔄")
 	var topic_msg := engine.setup_topic()
 	_ai_say(topic_msg + "  " + KnowledgeBase.emoji("open"))
+	_topic_detail = topic_msg
+	_topic_expanded = false
 	_set_topic_label(engine.current_topic)
 
 func _on_close_settle() -> void:
@@ -813,7 +806,21 @@ func _refresh_hud() -> void:
 	_user_bar.value = clampf(pi, 0, 100)
 
 func _set_topic_label(t: String) -> void:
-	_topic_lbl.text = "辩题：「%s」" % t
+	if _topic_lbl == null:
+		return
+	# 收起状态：只显示辩题名，点击展开完整详情
+	_topic_lbl.text = "辩题：「%s」  ⌄" % t
+
+func _on_toggle_topic() -> void:
+	if _topic_lbl == null:
+		return
+	_topic_expanded = not _topic_expanded
+	if _topic_expanded and _topic_detail != "":
+		# 展开：显示完整详情（辩题 + 提示/出处/技战法）
+		_topic_lbl.text = _topic_detail + "  ⌃"
+	else:
+		# 收起
+		_topic_lbl.text = "辩题：「%s」  ⌄" % engine.current_topic
 
 func _app_toast(msg: String) -> void:
 	_ai_say("[b]▸ %s[/b]" % msg)
