@@ -257,12 +257,9 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	var sb := StyleBoxFlat.new()
 	if is_ai:
 		sb.bg_color = Color(0.17, 0.19, 0.25)
-		sb.set_corner_radius_all(12)
-		sb.set_corner_radius_top_left(2)
 	else:
 		sb.bg_color = Color(0.16, 0.42, 0.34)
-		sb.set_corner_radius_all(12)
-		sb.set_corner_radius_top_right(2)
+	sb.set_corner_radius_all(12)
 	sb.set_content_margin_all(10)
 	panel.add_theme_stylebox_override("panel", sb)
 
