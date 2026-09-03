@@ -100,21 +100,30 @@ func respond(user_input: String) -> Dictionary:
 	if not f.is_empty():
 		_ai_score += 1
 		_user_hits += 1
-		return _make_fallacy_response(f)
+		var r := _make_fallacy_response(f)
+		r["text"] = _decorate(r["text"], "hit")
+		return r
 
 	# 2) 用户用到“讲理/证据”类词 -> 加玩家分并夸
 	if _has_good_move(text):
 		_user_score += 1
 		var praise := KnowledgeBase.pick(KnowledgeBase.PRAISE)
-		return _make(_attack_or_socratic(text) + "\n\n" + praise, "有道理？", "", false, true)
+		var r := _make(_attack_or_socratic(text) + "\n\n" + praise, "有道理？", "", false, true)
+		r["text"] = _decorate(r["text"], "good")
+		return r
 
 	# 4) 是疑问 -> 苏格拉底追问
 	if _is_question(text):
-		return _make(_socratic(text), "追问", "", false, false)
+		var r := _make(_socratic(text), "追问", "", false, false)
+		r["text"] = _decorate(r["text"], "ask")
+		return r
 
 	# 5) 兜底：通用攻击（若当前是真议题，带上一句“事实弹药”显专业）
 	var ammo := _fact_ammo()
-	return _make(_attack_or_socratic(text) + ("\n\n" + ammo if not ammo.is_empty() else ""), "拆解", "", false, false)
+	var r := _make(_attack_or_socratic(text) + ("\n\n" + ammo if not ammo.is_empty() else ""), "拆解", "", false, false)
+	var scene := "reductio" if (difficulty >= 2 and r.get("text", "").contains("照你这么说")) else "generic"
+	r["text"] = _decorate(r["text"], scene)
+	return r
 
 # ------------------------------------------------------------
 #  结算判定
@@ -147,6 +156,15 @@ func _make(reply: String, tone: String, tag: String, ai_gain: bool, user_gain: b
 		"ai_gain": ai_gain,
 		"user_gain": user_gain,
 	}
+
+# 给回应文本附加一个 emoji（放在句尾，概率触发以免太吵）
+func _decorate(text: String, scene: String) -> String:
+	if randf() < 0.5:
+		return text
+	var e := KnowledgeBase.emoji(scene)
+	if e.is_empty():
+		return text
+	return text + "  " + e
 
 func _make_fallacy_response(f: Dictionary) -> Dictionary:
 	var reply := ""

@@ -34,7 +34,7 @@ func _ready() -> void:
 	engine.max_rounds = 12
 	_refresh_hud()
 	# 开场
-	_ai_say("我是「杠精老师 · 逻辑裁判」。你输入任何观点，我用逻辑漏洞来杠你。")
+	_ai_say("我是「杠精老师 · 逻辑裁判」。你输入任何观点，我用逻辑漏洞来杠你。 🎬")
 	var topic_msg := engine.setup_topic()
 	_ai_say(topic_msg)
 	_set_topic_label(engine.current_topic)
@@ -342,7 +342,7 @@ func _submit(text: String) -> void:
 
 func _on_next_topic() -> void:
 	var msg := engine.setup_topic()
-	_ai_say(msg)
+	_ai_say(msg + "  " + KnowledgeBase.emoji("open"))
 	_set_topic_label(engine.current_topic)
 	_refresh_hud()
 
@@ -352,9 +352,9 @@ func _on_reset() -> void:
 	_chat.clear()
 	_transcript = ""
 	_refresh_hud()
-	_ai_say("已重开。抛个观点——先来个新辩题。")
+	_ai_say("已重开。抛个观点——先来个新辩题。 🔄")
 	var topic_msg := engine.setup_topic()
-	_ai_say(topic_msg)
+	_ai_say(topic_msg + "  " + KnowledgeBase.emoji("open"))
 	_set_topic_label(engine.current_topic)
 
 func _on_close_settle() -> void:
@@ -364,12 +364,13 @@ func _on_settle() -> void:
 	var s: Dictionary = engine.settle()
 	var verdict := str(s.get("verdict", ""))
 	var verdict_text := str(s.get("text", ""))
-	var icon := "⚖"
+	var icon := "⚖️"
 	if verdict == "ai":
 		icon = "🤖"
 	elif verdict == "user":
 		icon = "🏆"
 	_settle_body.text = (
+		"[color=#ffd98a][b]🏁 本轮结算[/b][/color]\n\n" +
 		"[color=#a6b3d4]共进行回合[/color]  %d\n" % engine.round_count() +
 		"[color=#a6b3d4]杠精 AI 抓到（命中谬误）[/color]  %d\n" % engine.ai_score() +
 		"[color=#a6b3d4]你讲理得分（证据/结构）[/color]  %d\n" % engine.user_score() +
