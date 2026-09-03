@@ -163,17 +163,39 @@ func _reflow_bubbles() -> void:
 	_reflow_queued = false
 	if _chat == null:
 		return
+	var settled := true
+	# 逐条检测文本真实渲染高度，使 VBox 把下一条消息正好排在上一条文本的下方。
 	for child in _chat.get_children():
 		if child is HBoxContainer:
 			for c in child.get_children():
 				var rl := _find_rich(c)
 				if rl != null:
-					var h := rl.get_content_height()
-					if h > 0:
-						rl.custom_minimum_size.y = h
-	# 自动上滑到底
+					_fit_content_height(rl)
+					if rl.size.x <= 0.0:
+						settled = false
+	# 若某气泡宽度还没定（布局未稳定），下一帧再校准一次，确保测到正确高度
+	if not settled:
+		_reflow_queued = true
+		call_deferred("_reflow_bubbles")
+	# 自动上滑到底（新消息压到最下方）
 	if _scroll != null:
 		_scroll.set_deferred("scroll_vertical", 2147483647)
+
+# 检测并回写文本真实高度，避免多行文本最后一行被裁切/压到下方消息。
+# 注意：部分 Godot 版本里 RichTextLabel.get_content_height() 对多行文本会少算最后一行，
+# 因此用“可见行数 × 行高”作为下限兜底，确保下一条消息位于上方文本之下再往下一些。
+func _fit_content_height(rl: RichTextLabel) -> void:
+	if rl == null or not is_instance_valid(rl):
+		return
+	var h := float(rl.get_content_height())
+	if h <= 0.0:
+		return
+	var lines := rl.get_visible_line_count()
+	var line_h := rl.get_line_height()
+	if lines > 0 and line_h > 0.0:
+		h = maxf(h, float(lines) * line_h)
+	# 少量安全间距，让下一条消息与上方文本拉开一点距离
+	rl.custom_minimum_size.y = h + 6.0
 
 func _find_rich(node: Node) -> RichTextLabel:
 	if node is RichTextLabel:
@@ -193,9 +215,7 @@ func _fit_rl_height(rl: RichTextLabel) -> void:
 func _apply_rl_height(rl: RichTextLabel) -> void:
 	if rl == null or not is_instance_valid(rl):
 		return
-	var h := rl.get_content_height()
-	if h > 0:
-		rl.custom_minimum_size.y = h
+	_fit_content_height(rl)
 
 func _make_avatar(tex: Texture2D, size: int) -> TextureRect:
 	var t := TextureRect.new()
@@ -381,8 +401,8 @@ func _build_chat() -> Control:
 
 	_chat = VBoxContainer.new()
 	_chat.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	# 卡片间距略大，让每条消息视觉上独立、不挤在一起
-	_chat.add_theme_constant_override("separation", 14)
+	# 卡片间距更明显：每条消息都排在上一条文本下方，并再往下拉开一段距离
+	_chat.add_theme_constant_override("separation", 18)
 	_scroll.add_child(_chat)
 	# 窗口/视口尺寸变化时重新校准气泡高度，避免换行后重叠
 	_scroll.resized.connect(_queue_reflow)
