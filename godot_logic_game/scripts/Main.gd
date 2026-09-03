@@ -392,7 +392,7 @@ func _on_cycle_llm() -> void:
 	cfg.enabled = not cfg.enabled
 	if cfg.enabled:
 		cfg.model_path = "user://model.gguf"
-		var ok := _llm.load_model()
+		var ok: bool = _llm.load_model()
 		engine.set_llm(_llm)
 		if ok:
 			_app_toast("[LLM] 已启用本地模型（已加载）。规则判定 + LLM 润色。")

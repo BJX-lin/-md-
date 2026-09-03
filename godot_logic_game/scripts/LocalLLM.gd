@@ -38,7 +38,7 @@ func load_model() -> bool:
 		config.model_loaded = false
 		return false
 	# 调用插件 load_model(path, ctx)。不同插件签名可能不同；失败静默返回 false。
-	var ok := _call_plugin("load_model", [config.model_path, config.context_size]) as bool
+	var ok: bool = _call_plugin("load_model", [config.model_path, config.context_size]) as bool
 	config.model_loaded = ok
 	return ok
 
@@ -61,7 +61,7 @@ func generate(prompt: String, max_tokens: int) -> String:
 	if _plugin == null:
 		return ""
 	var n := max_tokens if max_tokens > 0 else config.max_tokens
-	var out := _call_plugin("generate", [prompt, n]) as String
+	var out: String = _call_plugin("generate", [prompt, n]) as String
 	if out == null:
 		return ""
 	return out
@@ -76,5 +76,6 @@ func _call_plugin(method: String, args: Array) -> Variant:
 		return null
 	if not _plugin.has_method(method):
 		return null
-	var ok := _plugin.callv(method, args)  # 封装成 Callable/直接调用
+	# 插件单例是 Variant，callv() 返回类型也是 Variant；显式定型，避免 Godot 无法推断
+	var ok: Variant = _plugin.callv(method, args)
 	return ok
