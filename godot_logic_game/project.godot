@@ -8,7 +8,7 @@ config/name="逻辑辩论文字游戏"
 config/description="基于《逻辑与辩论资料库》的离线文字博弈游戏，纯本地规则引擎，不联网、不接任何 AI。"
 run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.7")
-config/icon="res://icon.svg"
+config/icon="res://assets/icon_game.png"
 
 [display]
 
