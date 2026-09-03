@@ -61,8 +61,10 @@ var _ai_bar: ProgressBar
 var _user_bar: ProgressBar
 var _round_lbl: Label
 var _topic_lbl: Button
-var _topic_detail := ""      # 辩题完整详情（含提示），展开时显示
+var _topic_detail := ""      # 辩题完整详情（含提示）
 var _topic_expanded := false  # 辩题是否展开
+var _topic_popup: Control        # 辩题详情弹层（不挤压聊天区，保证聊天页固定大小）
+var _topic_popup_body: RichTextLabel  # 弹层内的详情正文
 var _settle: Control            # 结算面板
 var _settle_body: RichTextLabel
 var _header_avatar: Button        # 顶栏 AI 头像，可点开换头像
@@ -132,6 +134,10 @@ func _build_ui() -> void:
 	# 头像选择弹层（覆盖层，默认隐藏）
 	_avatar_panel = _build_avatar_panel()
 	add_child(_avatar_panel)
+
+	# 辩题详情弹层（覆盖层，默认隐藏）——展开详情不挤压聊天区，保证聊天页固定大小
+	_topic_popup = _build_topic_popup()
+	add_child(_topic_popup)
 
 func _make_style(bg_color: Color, radius: int, margin: int) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
@@ -299,14 +305,17 @@ func _build_topic_bar() -> Control:
 	btn.custom_minimum_size = Vector2(84, 32)
 	btn.pressed.connect(_on_next_topic)
 	row.add_child(btn)
-	# 辩题改为可点击：默认收起显示名称，点击展开完整详情，再点收起
+	# 辩题为可点击按钮：默认一行显示辩题名（固定高度，不随内容变高）；
+	# 点击后弹出覆盖层显示完整详情，从而聊天页固定大小，不被长辩题挤压。
 	_topic_lbl = Button.new()
 	_topic_lbl.text = ""
 	_topic_lbl.flat = true
 	_topic_lbl.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_topic_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_topic_lbl.clip_text = true                         # 单行，超长省略，保持固定高度
+	_topic_lbl.custom_minimum_size = Vector2(0, 32)     # 固定高度
 	_topic_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_topic_lbl.add_theme_color_override("font_color", Color(0.95, 0.8, 0.5))
+	_topic_lbl.add_theme_font_size_override("font_size", 14)
 	_topic_lbl.pressed.connect(_on_toggle_topic)
 	row.add_child(_topic_lbl)
 	return row
@@ -501,6 +510,68 @@ func _build_settle_panel() -> Control:
 	return overlay
 
 # ------------------------------------------------------------
+#  辩题详情弹层（点击顶部辩题弹出/收起）
+#  作为覆盖层显示完整辩题详情，不改变聊天区布局（聊天页固定大小）
+# ------------------------------------------------------------
+func _build_topic_popup() -> Control:
+	var overlay := Control.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.visible = false
+
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.5)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(dim)
+	# 点暗底收起
+	dim.gui_input.connect(func(ev: InputEvent) -> void:
+		if ev is InputEventMouseButton and ev.pressed:
+			_close_topic_popup())
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(center)
+
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(300, 0)
+	var sb := _make_style(Color(0.12, 0.16, 0.22), 18, 20)
+	panel.add_theme_stylebox_override("panel", sb)
+	center.add_child(panel)
+
+	var inner := VBoxContainer.new()
+	inner.add_theme_constant_override("separation", 12)
+	panel.add_child(inner)
+
+	var title := Label.new()
+	title.text = "辩题详情"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_color_override("font_color", Color(0.95, 0.8, 0.5))
+	title.add_theme_font_size_override("font_size", 18)
+	inner.add_child(title)
+
+	_topic_popup_body = RichTextLabel.new()
+	_topic_popup_body.bbcode_enabled = true
+	_topic_popup_body.fit_content = true
+	_topic_popup_body.scroll_active = false
+	_topic_popup_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_topic_popup_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_topic_popup_body.custom_minimum_size = Vector2(270, 0)
+	_topic_popup_body.add_theme_color_override("default_color", COL_TEXT)
+	inner.add_child(_topic_popup_body)
+
+	var close := Button.new()
+	close.text = "收起"
+	close.custom_minimum_size = Vector2(0, 42)
+	close.pressed.connect(_close_topic_popup)
+	inner.add_child(close)
+
+	return overlay
+
+func _close_topic_popup() -> void:
+	if _topic_popup != null:
+		_topic_popup.visible = false
+	_topic_expanded = false
+
+# ------------------------------------------------------------
 #  头像选择面板（点击头像弹出，分组更换）
 # ------------------------------------------------------------
 func _build_avatar_panel() -> Control:
@@ -647,15 +718,16 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 6)
 
-	# 气泡最大宽度：优先用视口宽度
-	var view_w := 720.0
+	# 微信式气泡宽度：固定上限（不随大屏无限拉伸），文本在卡片内自动换行。
+	# 参考微信约 62% 屏宽、最大 340px；小屏不低于 200px。
+	var avail_w := 720.0
 	var vp := get_viewport()
 	if vp != null:
-		view_w = vp.get_visible_rect().size.x
+		avail_w = vp.get_visible_rect().size.x
 	if _scroll != null:
-		view_w = maxf(view_w, _scroll.size.x)
-	var max_w := maxf(220.0, view_w * 0.72)
-	var min_w := minf(max_w, maxf(170.0, view_w * 0.22))
+		avail_w = maxf(avail_w, _scroll.size.x)
+	var max_w := clampf(avail_w * 0.62, 200.0, 340.0)
+	var min_w := minf(max_w, clampf(avail_w * 0.24, 120.0, 180.0))
 
 	# 圆形头像（可点击换头像）
 	var avatar_tex := _ai_avatar_tex if is_ai else _user_avatar_tex
@@ -779,7 +851,7 @@ func _on_next_topic() -> void:
 	var msg := engine.setup_topic()
 	_ai_say(msg + "  " + KnowledgeBase.emoji("open"))
 	_topic_detail = msg
-	_topic_expanded = false
+	_close_topic_popup()
 	_set_topic_label(engine.current_topic)
 	_refresh_hud()
 
@@ -793,7 +865,7 @@ func _on_reset() -> void:
 	var topic_msg := engine.setup_topic()
 	_ai_say(topic_msg + "  " + KnowledgeBase.emoji("open"))
 	_topic_detail = topic_msg
-	_topic_expanded = false
+	_close_topic_popup()
 	_set_topic_label(engine.current_topic)
 
 func _on_close_settle() -> void:
@@ -854,15 +926,18 @@ func _set_topic_label(t: String) -> void:
 	_topic_lbl.text = "辩题：「%s」  ⌄" % t
 
 func _on_toggle_topic() -> void:
-	if _topic_lbl == null:
+	if _topic_popup == null:
 		return
-	_topic_expanded = not _topic_expanded
-	if _topic_expanded and _topic_detail != "":
-		# 展开：显示完整详情（辩题 + 提示/出处/技战法）
-		_topic_lbl.text = _topic_detail + "  ⌃"
-	else:
-		# 收起
-		_topic_lbl.text = "辩题：「%s」  ⌄" % engine.current_topic
+	# 切换弹出/收起辩题详情（覆盖层，不改变聊天区布局）
+	if _topic_popup.visible:
+		_close_topic_popup()
+		return
+	var detail := _topic_detail if _topic_detail != "" else "辩题：「%s」" % engine.current_topic
+	_topic_popup_body.text = detail
+	_topic_expanded = true
+	_topic_popup.visible = true
+	# 弹层内正文在布局稳定后重新测高，避免多行重叠
+	_fit_rl_height(_topic_popup_body)
 
 func _app_toast(msg: String) -> void:
 	_ai_say("[b]▸ %s[/b]" % msg)
