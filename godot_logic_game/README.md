@@ -6,7 +6,7 @@
 
 它**不是**真正的大模型——因为你要完全不接 AI、不联网。所以这里用的是**本地规则引擎**：
 
-- `KnowledgeBase.gd` 相当于“大脑”，存放了《逻辑与辩论资料库》里的**20+ 种谬误规则**、苏格拉底式追问、归谬/通用攻击模板、辩题库、**真实争议议题知识库**（含各议题的立场锚点/核心冲突/事实弹药）、**经典辩论赛案例库**（人性本善/金钱辩等，含出处与可复用攻防技法）、经典辩手句式（`DEBATE_MOVES`）与结算语。
+- `data/KnowledgeBase.gd` 是**数据聚合入口**，聚合 `data/` 下各子库：`Fallacies.gd`（20+ 种谬误规则）、`Topics.gd`（辩题库）、`DebateMoves.gd`（苏格拉底/通用攻击/归谬/经典辩手句/结算语）、`EvidenceDatabase.gd`（**真实争议议题知识库**：立场锚点/核心冲突/事实弹药）、`CounterExamples.gd`（**经典辩论赛案例库**：人性本善/金钱辩等，含出处与可复用攻防技法）。引擎只需读 `data/KnowledgeBase.gd`，改数据即改玩法。
 - `DebateEngine.gd` 负责“理解”：用关键词 + 正则**侦测**你输入里命中哪种逻辑谬误，命中就给出**「识别 → 拆解 → 反问 → 归谬」**四连击；未命中则切换为**苏格拉底追问 / 通用拆解 / 归谬**。
 - 带**计分、回合、辩题、结算判定**系统。
 
@@ -36,9 +36,15 @@
 |---|---|
 | `project.godot` | 项目配置（手机渲染、竖屏） |
 | `scenes/Main.tscn` | 主场景（挂 Main.gd） |
-| `scripts/Main.gd` | **界面**：聊天气泡、计分、辩题、结算面板、导出 |
-| `scripts/DebateEngine.gd` | **引擎**：侦测谬误 → 四连击 / 兜底；回合与结算 |
-| `scripts/KnowledgeBase.gd` | **数据**：全部谬误规则、追问、归谬、辩题库、结算语 |
+| `scripts/Main.gd` | **界面**：聊天气泡、计分、辩题、结算面板、导出、求助、防刷屏 |
+| `scripts/DebateEngine.gd` | **引擎**：情绪识别 → 侦测谬误 → 四连击 / 兜底；回合与结算 |
+| `data/KnowledgeBase.gd` | **数据聚合入口**：聚合各数据子库，供引擎读取 |
+| `data/Fallacies.gd` | **谬误库**（每条含识别/拆解/反问/归谬） |
+| `data/Topics.gd` | **辩题库** |
+| `data/DebateMoves.gd` | **攻防句式**（苏格拉底/攻击/归谬/结算语） |
+| `data/EvidenceDatabase.gd` | **真实争议议题**（立场/冲突/事实弹药） |
+| `data/CounterExamples.gd` | **经典辩论赛案例库** |
+| `data/KeywordDatabase.gd` | **关键词库**（12 类 + 动作关键词，V2.1 预留） |
 
 ## 怎么运行
 
@@ -71,11 +77,11 @@
 
 ## 怎么拓展（把《资料库》更多内容加进去）
 
-想让它“懂得更多”，**只改 `scripts/KnowledgeBase.gd`、不改引擎**：
+想让它“懂得更多”，**只改 `data/` 下的数据子库、不改引擎**：
 
-- 在 `FALLACIES` 数组加一条 `{ "name", "en", "signals", "regex", "explain", "probe", "reductio" }`，即可多识别一种谬误。
-- 在 `SOCRATIC / ATTACKS / REDUCTIO / PRAISE` 里加句子，让接招更丰富。
-- 在 `TOPICS` 里加 `{ "topic", "ask" }`，增加更多辩题。
+- 在 `data/Fallacies.gd` 的 `FALLACIES` 数组加一条 `{ "name", "en", "signals", "regex", "explain", "probe", "reductio" }`，即可多识别一种谬误。
+- 在 `data/DebateMoves.gd` 的 `SOCRATIC / ATTACKS / REDUCTIO / PRAISE` 里加句子，让接招更丰富。
+- 在 `data/Topics.gd` 的 `TOPICS` 里加 `{ "topic", "ask" }`，增加更多辩题。
 - 想接入真实本地 LLM（如 Ollama/llama.cpp），把 `DebateEngine.respond()` 换成调用本地推理即可——但那属于另一个“接 AI”的方向。
 
 ## 常见问题（排障）
