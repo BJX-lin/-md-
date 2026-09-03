@@ -139,6 +139,23 @@ func _make_style(bg_color: Color, radius: int, margin: int) -> StyleBoxFlat:
 	sb.set_content_margin_all(margin)
 	return sb
 
+# 让 RichTextLabel 高度随内容自适应，避免在容器内换行后文本/时间戳重叠。
+# fit_content 在嵌套容器里的高度测量会滞后/缓存，这里用 get_content_height()
+# 在 resized（宽度变化触发重排）后刷新 custom_minimum_size.y 兜底。
+func _fit_rl_height(rl: RichTextLabel) -> void:
+	rl.fit_content = true
+	rl.scroll_active = false
+	var refresh := Callable(self, "_apply_rl_height").bind(rl)
+	rl.resized.connect(refresh)
+	refresh.call_deferred()
+
+func _apply_rl_height(rl: RichTextLabel) -> void:
+	if rl == null:
+		return
+	var h := rl.get_content_height()
+	if h > 0:
+		rl.custom_minimum_size.y = h
+
 func _make_avatar(tex: Texture2D, size: int) -> TextureRect:
 	var t := TextureRect.new()
 	t.texture = tex
@@ -454,8 +471,10 @@ func _build_settle_panel() -> Control:
 	_settle_body = RichTextLabel.new()
 	_settle_body.bbcode_enabled = true
 	_settle_body.fit_content = true
+	_settle_body.scroll_active = false
 	_settle_body.custom_minimum_size = Vector2(250, 0)
 	inner.add_child(_settle_body)
+	_fit_rl_height(_settle_body)
 
 	var close := Button.new()
 	close.text = "继续 / 关闭"
@@ -640,13 +659,13 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	var msg := RichTextLabel.new()
 	msg.bbcode_enabled = true
 	msg.text = text
-	msg.fit_content = true
-	msg.scroll_active = false
 	msg.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
 	msg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	msg.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	msg.add_theme_color_override("default_color", COL_TEXT)
 	body.add_child(msg)
+	# 关键：在内容/宽度变化后刷新高度，避免文本与时间戳重叠
+	_fit_rl_height(msg)
 
 	var ts := Label.new()
 	ts.text = _now()
