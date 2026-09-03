@@ -250,10 +250,20 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	av.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	av.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
-	# 气泡
+	# 气泡最大宽度：优先用视口宽度（_scroll.size.x 在首次构建时为 0，不可靠）
+	var view_w := 720.0
+	var vp := get_viewport()
+	if vp != null:
+		view_w = vp.get_visible_rect().size.x
+	if _scroll != null:
+		view_w = maxf(view_w, _scroll.size.x)
+	var max_w := maxf(220.0, view_w * 0.78)
+
+	# 气泡面板（宽度上限放在面板上，RichTextLabel 在里面自动换行）
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	panel.custom_maximum_size = Vector2(max_w, 0)
 	var sb := StyleBoxFlat.new()
 	if is_ai:
 		sb.bg_color = Color(0.17, 0.19, 0.25)
@@ -275,12 +285,10 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	msg.bbcode_enabled = true
 	msg.text = text
 	msg.fit_content = true
-	msg.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	# 约束气泡最大宽度，让长文本自动换行，不溢出屏幕
-	var view_w := _scroll.size.x if _scroll != null else 720.0
-	var max_w := maxf(220.0, view_w * 0.78)
-	msg.custom_minimum_size = Vector2(180, 0)
-	msg.custom_maximum_size = Vector2(max_w, 0)
+	msg.scroll_active = false
+	msg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	msg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	msg.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	body.add_child(msg)
 
 	var spacer := Control.new()
@@ -330,7 +338,11 @@ func _submit(text: String) -> void:
 	_input.clear()
 	_say_player(t)
 	var r: Dictionary = engine.respond(t)
-	_ai_say(str(r.get("text", "")))
+	var reply := str(r.get("text", ""))
+	if reply.strip_edges().is_empty():
+		# 兜底：即便引擎意外返回空，也保证 AI 有回应，不出现空气泡
+		reply = KnowledgeBase.pick(KnowledgeBase.ATTACKS)
+	_ai_say(reply)
 	if r.get("hit", false):
 		_app_toast("命中：" + str(r.get("tone", "")))
 	_refresh_hud()
