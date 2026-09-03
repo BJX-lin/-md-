@@ -140,18 +140,52 @@ func _make_style(bg_color: Color, radius: int, margin: int) -> StyleBoxFlat:
 	sb.set_content_margin_all(margin)
 	return sb
 
-# 让 RichTextLabel 高度随内容自适应，避免在容器内换行后文本/时间戳重叠。
-# fit_content 在嵌套容器里的高度测量会滞后/缓存，这里用 get_content_height()
-# 在 resized（宽度变化触发重排）后刷新 custom_minimum_size.y 兜底。
+# ---- 文本高度自适应（卡片式气泡）----
+# RichTextLabel 在 ScrollContainer 嵌套容器里，fit_content 的高度测量会在布局
+# 稳定前就返回旧值，导致多行文本互相重叠。这里统一在“加入容器后的下一帧”
+# 重新测量所有气泡高度（宽度已确定，get_content_height() 才准确），
+# 再把滚动条推到最底实现自动上滑。
+var _reflow_queued := false
+
+func _queue_reflow() -> void:
+	if _reflow_queued:
+		return
+	_reflow_queued = true
+	call_deferred("_reflow_bubbles")
+
+func _reflow_bubbles() -> void:
+	_reflow_queued = false
+	if _chat == null:
+		return
+	for child in _chat.get_children():
+		if child is HBoxContainer:
+			for c in child.get_children():
+				var rl := _find_rich(c)
+				if rl != null:
+					var h := rl.get_content_height()
+					if h > 0:
+						rl.custom_minimum_size.y = h
+	# 自动上滑到底
+	if _scroll != null:
+		_scroll.set_deferred("scroll_vertical", 2147483647)
+
+func _find_rich(node: Node) -> RichTextLabel:
+	if node is RichTextLabel:
+		return node
+	for ch in node.get_children():
+		var r := _find_rich(ch)
+		if r != null:
+			return r
+	return null
+
+# 结算面板里单独一个 RichTextLabel：设置文本后再延迟测一次高度
 func _fit_rl_height(rl: RichTextLabel) -> void:
 	rl.fit_content = true
 	rl.scroll_active = false
-	var refresh := Callable(self, "_apply_rl_height").bind(rl)
-	rl.resized.connect(refresh)
-	refresh.call_deferred()
+	call_deferred("_apply_rl_height", rl)
 
 func _apply_rl_height(rl: RichTextLabel) -> void:
-	if rl == null:
+	if rl == null or not is_instance_valid(rl):
 		return
 	var h := rl.get_content_height()
 	if h > 0:
@@ -338,8 +372,11 @@ func _build_chat() -> Control:
 
 	_chat = VBoxContainer.new()
 	_chat.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_chat.add_theme_constant_override("separation", 10)
+	# 卡片间距略大，让每条消息视觉上独立、不挤在一起
+	_chat.add_theme_constant_override("separation", 14)
 	_scroll.add_child(_chat)
+	# 窗口/视口尺寸变化时重新校准气泡高度，避免换行后重叠
+	_scroll.resized.connect(_queue_reflow)
 	return wrap
 
 func _build_input() -> Control:
@@ -625,17 +662,20 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	var avatar_role := "ai" if is_ai else "user"
 	var avatar := _make_avatar_btn(avatar_tex, 40, avatar_role)
 
-	# 气泡面板
+	# 气泡卡片面板：更大圆角 + 内边距，视觉上独立成卡片
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	panel.custom_minimum_size = Vector2(min_w, 0)
 	panel.custom_maximum_size = Vector2(max_w, 0)
-	panel.add_theme_stylebox_override("panel", _make_style(
-		COL_AI_BUBBLE if is_ai else COL_USER_BUBBLE, 16, 9))
+	var card_sb := StyleBoxFlat.new()
+	card_sb.bg_color = COL_AI_BUBBLE if is_ai else COL_USER_BUBBLE
+	card_sb.set_corner_radius_all(18)
+	card_sb.set_content_margin_all(11)
+	panel.add_theme_stylebox_override("panel", card_sb)
 
 	var body := VBoxContainer.new()
-	body.add_theme_constant_override("separation", 2)
+	body.add_theme_constant_override("separation", 3)
 	panel.add_child(body)
 
 	if is_ai:
@@ -648,13 +688,13 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	var msg := RichTextLabel.new()
 	msg.bbcode_enabled = true
 	msg.text = text
+	msg.fit_content = true
+	msg.scroll_active = false
 	msg.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
 	msg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	msg.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	msg.add_theme_color_override("default_color", COL_TEXT)
 	body.add_child(msg)
-	# 关键：在内容/宽度变化后刷新高度，避免文本与时间戳重叠
-	_fit_rl_height(msg)
 
 	var ts := Label.new()
 	ts.text = _now()
@@ -675,6 +715,8 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 		row.add_child(panel)
 		row.add_child(avatar)
 	_chat.add_child(row)
+	# 加入容器后延迟一帧，等宽度确定再统一校准所有气泡高度并自动上滑
+	_queue_reflow()
 
 	# 记入导出文本（去除 bbcode 标记）
 	_transcript += ("[%s] %s：%s\n" % [_now(), ("杠精AI" if is_ai else "你"), _strip_bbcode(text)])
