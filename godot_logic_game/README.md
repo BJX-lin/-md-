@@ -71,6 +71,19 @@
 - 在 `TOPICS` 里加 `{ "topic", "ask" }`，增加更多辩题。
 - 想接入真实本地 LLM（如 Ollama/llama.cpp），把 `DebateEngine.respond()` 换成调用本地推理即可——但那属于另一个“接 AI”的方向。
 
+## 常见问题（排障）
+
+**现象：点发送后，玩家/AI 气泡只剩昵称、内容空白，或 AI 一连串空气泡。**
+这类问题几乎都来自**旧缓存**或**导入夹层**，并非逻辑缺陷。请按顺序排查：
+
+1. **彻底清掉旧项目**：在手机上删除旧的 `godot_logic_game` 目录，同时删除项目里的 `.godot/` 缓存目录（Godot 会缓存旧编译脚本）。
+2. **重新解压最新 ZIP 到全新空目录**，不要覆盖旧目录：
+   - 下载：`https://github.com/BJX-lin/-md-/raw/arena/01a067bf-md/godot_logic_game_import.zip`
+   - 用 Godot **4.7.2 stable**（Mobile Editor）打开 `godot_logic_game/project.godot`。
+3. 若仍异常，点顶部「重开」确保引擎复位；检查是否命中「导出/结算」等正常弹层。
+
+**说明**：当前版本气泡已改为 Godot 4 可靠布局（宽度上限在 `PanelContainer`，正文用 `RichTextLabel` 自动换行 + `fit_content`），且引擎即使意外返回空也会兜底给一句回应，**不会再出现“只有名字、内容空白”的空气泡**。若解压后 `scripts/Main.gd` 里搜不到 `scroll_active`，说明抓到的是旧版，请重新下载最新 ZIP。
+
 ## 说明
 
 本工程与根目录 `逻辑与辩论资料库/` 配套，语料取自该库。纯本地、零联网、零云端 AI。
