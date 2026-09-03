@@ -15,6 +15,7 @@ const SEND_COOLDOWN_MS := 700   # 发送冷却，防连点/刷屏
 const REPEAT_WINDOW_MS := 3000  # 同一句在窗口内重复则拦截
 
 var engine := DebateEngine.new()
+var _llm: LocalLLM = null   # 本地 LLM 提供者；默认不启用（回退纯规则）
 
 # 防刷屏状态
 var _last_send_ms := 0
@@ -39,6 +40,7 @@ func _ready() -> void:
 	_build_ui()
 	engine.reset()
 	engine.max_rounds = 12
+	_init_llm()
 	_refresh_hud()
 	# 开场
 	_ai_say("我是「杠精老师 · 逻辑裁判」。你抛观点，我用逻辑漏洞杠你；但你要是拿得出可核验的证据，我也认账让步。 🎬")
@@ -165,6 +167,7 @@ func _build_toolbar() -> Control:
 	row.add_theme_constant_override("separation", 8)
 	row.add_child(_make_tool("求助", Callable(self, "_on_hint")))
 	row.add_child(_make_tool("难度", Callable(self, "_on_cycle_difficulty")))
+	row.add_child(_make_tool("模型", Callable(self, "_on_cycle_llm")))
 	row.add_child(_make_tool("结算", Callable(self, "_on_settle")))
 	row.add_child(_make_tool("导出", Callable(self, "_on_export")))
 	row.add_child(_make_tool("重开", Callable(self, "_on_reset")))
@@ -172,6 +175,31 @@ func _build_toolbar() -> Control:
 
 func _on_hint() -> void:
 	_ai_say(engine.hint())
+
+# ---- LLM 可插拔（默认关闭，回退纯规则）----
+func _init_llm() -> void:
+	_llm = LocalLLM.new()
+	if _llm.has_plugin():
+		_app_toast("[LLM] 检测到本地推理插件。点「模型」启用；未启用走纯规则。")
+	else:
+		_app_toast("[LLM] 未检测到模型插件，使用纯规则引擎。")
+
+func _on_cycle_llm() -> void:
+	if _llm == null:
+		return
+	var cfg := _llm.config
+	cfg.enabled = not cfg.enabled
+	if cfg.enabled:
+		cfg.model_path = "user://model.gguf"
+		var ok := _llm.load_model()
+		engine.set_llm(_llm)
+		if ok:
+			_app_toast("[LLM] 已启用本地模型（已加载）。规则判定 + LLM 润色。")
+		else:
+			_app_toast("[LLM] 已开，但模型未加载。请核对 user://model.gguf 路径。")
+	else:
+		engine.set_llm(null)
+		_app_toast("[LLM] 已关闭，回到纯规则模式。")
 
 func _on_cycle_difficulty() -> void:
 	var opts := ["温和", "毒舌", "归谬狂魔"]

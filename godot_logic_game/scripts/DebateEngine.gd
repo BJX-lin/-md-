@@ -18,6 +18,21 @@ var difficulty := 0          # 0温和 1毒舌 2归谬狂魔
 var current_topic := ""      # 当前辩题
 var max_rounds := 12         # 达到后建议结算
 
+# --- LLM 可插拔（默认关闭，纯规则）---
+# 规则引擎负责“想什么”，此层负责“怎么说”。未接入/不可用即回退纯规则。
+var _gen := ResponseGenerator.new()
+
+# 注入一个 LLM 提供者（LocalLLM / 其它）。传 null 或不可用时走纯规则。
+func set_llm(provider: LLMProvider) -> void:
+	_gen.set_llm(provider)
+
+func has_llm() -> bool:
+	return _gen.has_llm()
+
+# 把规则模板文本交给可选 LLM 润色；LLM 不可用时原样返回
+func _naturalize(base_text: String, scene: String, intent: String) -> String:
+	return _gen.naturalize(base_text, intent, current_topic, scene)
+
 # --- 统计 ---
 var _ai_score := 0           # 抓到玩家谬误的次数
 var _user_score := 0         # 玩家讲理/用到证据的次数
@@ -101,7 +116,7 @@ func respond(user_input: String) -> Dictionary:
 	if not emo.is_empty():
 		_user_hits += 1
 		var r := _make(str(emo.get("reply", "")), str(emo.get("tone", "安抚")), "", false, false)
-		r["text"] = _decorate(r["text"], "calm")
+		r["text"] = _decorate(_naturalize(r["text"], "calm", "情绪安抚"), "calm")
 		return r
 
 	# 1) 侦测谬误
@@ -110,7 +125,7 @@ func respond(user_input: String) -> Dictionary:
 		_ai_score += 1
 		_user_hits += 1
 		var r := _make_fallacy_response(f)
-		r["text"] = _decorate(r["text"], "hit")
+		r["text"] = _decorate(_naturalize(r["text"], "hit", str(r.get("tone", ""))), "hit")
 		# 命中后偶尔给出“标准答案/让步”，避免无限杠
 		if randf() < 0.4:
 			var conc := KnowledgeBase.pick(KnowledgeBase.CONCESSIONS)
@@ -123,20 +138,20 @@ func respond(user_input: String) -> Dictionary:
 		_user_score += 1
 		var praise := KnowledgeBase.pick(KnowledgeBase.PRAISE)
 		var r := _make(_attack_or_socratic(text) + "\n\n" + praise, "有道理？", "", false, true)
-		r["text"] = _decorate(r["text"], "good")
+		r["text"] = _decorate(_naturalize(r["text"], "good", "夸奖讲理"), "good")
 		return r
 
 	# 4) 是疑问 -> 苏格拉底追问
 	if _is_question(text):
 		var r := _make(_socratic(text), "追问", "", false, false)
-		r["text"] = _decorate(r["text"], "ask")
+		r["text"] = _decorate(_naturalize(r["text"], "ask", "追问"), "ask")
 		return r
 
 	# 5) 兜底：通用攻击（若当前是真议题，带上一句“事实弹药”显专业）
 	var ammo := _fact_ammo()
 	var r := _make(_attack_or_socratic(text) + ("\n\n" + ammo if not ammo.is_empty() else ""), "拆解", "", false, false)
 	var scene := "reductio" if (difficulty >= 2 and r.get("text", "").contains("照你这么说")) else "generic"
-	r["text"] = _decorate(r["text"], scene)
+	r["text"] = _decorate(_naturalize(r["text"], scene, "拆解"), scene)
 	return r
 
 # 求助 / 见招拆招：给玩家一条原则 + 一条通用反制技巧
