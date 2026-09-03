@@ -1,0 +1,33 @@
+; Engine configuration file.
+; 逻辑辩论文字游戏 · 离线规则式 · Godot 4 手机端
+config_version=5
+
+[application]
+
+config/name="逻辑辩论文字游戏"
+config/description="基于《逻辑与辩论资料库》的离线文字博弈游戏，纯本地规则引擎，不联网、不接任何 AI。"
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.7")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
+textures/default_filters/use_nearest_mipmap_filter=false
+
+[autoload]
+
+;（未使用全局单例，辩论引擎在场景内实例化，保持项目极简。）
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=false

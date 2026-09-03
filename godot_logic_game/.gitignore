@@ -1,0 +1,4 @@
+# Godot 生成的缓存与导入文件
+.godot/
+*.import
+*.uid
