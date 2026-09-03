@@ -142,7 +142,7 @@ func _build_input() -> Control:
 	_input = LineEdit.new()
 	_input.placeholder_text = "输入你的观点，回车或点发送…"
 	_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_input.minimum_size = Vector2(0, 44)
+	_input.custom_minimum_size = Vector2(0, 44)
 	_input.clear_button_enabled = true
 	_input.text_submitted.connect(_on_submit)
 	row.add_child(_input)
