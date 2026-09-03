@@ -1,3 +1,4 @@
+# gdlint: disable=max-file-lines
 extends Control
 
 # ============================================================
@@ -69,9 +70,14 @@ var _settle: Control            # 结算面板
 var _settle_body: RichTextLabel
 var _header_avatar: Button        # 顶栏 AI 头像，可点开换头像
 var _avatar_panel: Control       # 头像选择弹层
+var _option_popup: Control       # 通用“弹出选项”弹层（如选难度）
+var _option_popup_title: Label   # 弹层标题
+var _option_popup_list: VBoxContainer  # 弹层选项列表
 
 # 存档文本（导出用）
 var _transcript := ""
+# 文本高度重排标志（配合 _reflow_bubbles 使用）
+var _reflow_queued := false
 
 func _ready() -> void:
 	_load_textures()
@@ -139,6 +145,10 @@ func _build_ui() -> void:
 	_topic_popup = _build_topic_popup()
 	add_child(_topic_popup)
 
+	# 通用“弹出选项”弹层（覆盖层，默认隐藏）——选难度等
+	_option_popup = _build_option_popup()
+	add_child(_option_popup)
+
 func _make_style(bg_color: Color, radius: int, margin: int) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = bg_color
@@ -151,8 +161,6 @@ func _make_style(bg_color: Color, radius: int, margin: int) -> StyleBoxFlat:
 # 稳定前就返回旧值，导致多行文本互相重叠。这里统一在“加入容器后的下一帧”
 # 重新测量所有气泡高度（宽度已确定，get_content_height() 才准确），
 # 再把滚动条推到最底实现自动上滑。
-var _reflow_queued := false
-
 func _queue_reflow() -> void:
 	if _reflow_queued:
 		return
@@ -182,20 +190,22 @@ func _reflow_bubbles() -> void:
 		_scroll.set_deferred("scroll_vertical", 2147483647)
 
 # 检测并回写文本真实高度，避免多行文本最后一行被裁切/压到下方消息。
-# 注意：部分 Godot 版本里 RichTextLabel.get_content_height() 对多行文本会少算最后一行，
-# 因此用“可见行数 × 行高”作为下限兜底，确保下一条消息位于上方文本之下再往下一些。
+# 注意：Godot 4 里 get_content_height() 对多行文本有时会少算末行，而
+# get_line_height(line) 需要传行号；这里用“可见行数 × 末行高”作下限兜底，
+# 确保下一条消息位于上方文本之下再往下一些。
 func _fit_content_height(rl: RichTextLabel) -> void:
 	if rl == null or not is_instance_valid(rl):
 		return
-	var h := float(rl.get_content_height())
-	if h <= 0.0:
+	var h := rl.get_content_height()
+	if h <= 0:
 		return
 	var lines := rl.get_visible_line_count()
-	var line_h := rl.get_line_height()
-	if lines > 0 and line_h > 0.0:
-		h = maxf(h, float(lines) * line_h)
+	if lines > 1:
+		var line_h := rl.get_line_height(maxi(0, lines - 1))
+		if line_h > 0:
+			h = maxi(h, lines * line_h)
 	# 少量安全间距，让下一条消息与上方文本拉开一点距离
-	rl.custom_minimum_size.y = h + 6.0
+	rl.custom_minimum_size.y = float(h) + 6.0
 
 func _find_rich(node: Node) -> RichTextLabel:
 	if node is RichTextLabel:
@@ -455,7 +465,7 @@ func _build_toolbar() -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	row.add_child(_make_tool("求助", Callable(self, "_on_hint")))
-	row.add_child(_make_tool("难度", Callable(self, "_on_cycle_difficulty")))
+	row.add_child(_make_tool("难度", Callable(self, "_on_pick_difficulty")))
 	row.add_child(_make_tool("结算", Callable(self, "_on_settle")))
 	row.add_child(_make_tool("导出", Callable(self, "_on_export")))
 	row.add_child(_make_tool("重开", Callable(self, "_on_reset")))
@@ -464,10 +474,22 @@ func _build_toolbar() -> Control:
 func _on_hint() -> void:
 	_ai_say(engine.hint())
 
-func _on_cycle_difficulty() -> void:
-	var opts := ["温和", "毒舌", "归谬狂魔"]
-	engine.set_difficulty((engine.difficulty + 1) % 3)
-	_app_toast("难度 → %s" % opts[engine.difficulty])
+# 点击「难度」弹出选项，供挑选（温和/毒舌/归谬狂魔），不再循环切换
+func _on_pick_difficulty() -> void:
+	var names := ["温和", "毒舌", "归谬狂魔"]
+	var items: Array = []
+	for i in names.size():
+		items.append({
+			"label": names[i],
+			"cb": Callable(self, "_set_difficulty").bind(i),
+		})
+	_open_option_popup("选择难度", items)
+
+func _set_difficulty(idx: int) -> void:
+	var names := ["温和", "毒舌", "归谬狂魔"]
+	engine.set_difficulty(idx % 3)
+	_refresh_hud()
+	_app_toast("难度 → %s" % names[idx % 3])
 
 func _make_tool(text: String, cb: Callable) -> Button:
 	var b := Button.new()
@@ -590,6 +612,81 @@ func _close_topic_popup() -> void:
 	if _topic_popup != null:
 		_topic_popup.visible = false
 	_topic_expanded = false
+
+# ------------------------------------------------------------
+#  通用“弹出选项”弹层：选难度等场景，点击按钮弹出数个选项供挑选
+# ------------------------------------------------------------
+func _build_option_popup() -> Control:
+	var overlay := Control.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.visible = false
+
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.5)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(dim)
+	dim.gui_input.connect(func(ev: InputEvent) -> void:
+		if ev is InputEventMouseButton and ev.pressed:
+			overlay.visible = false)
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(center)
+
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(280, 0)
+	var sb := _make_style(Color(0.12, 0.16, 0.22), 18, 20)
+	panel.add_theme_stylebox_override("panel", sb)
+	center.add_child(panel)
+
+	var inner := VBoxContainer.new()
+	inner.add_theme_constant_override("separation", 12)
+	panel.add_child(inner)
+
+	_option_popup_title = Label.new()
+	_option_popup_title.text = "选择"
+	_option_popup_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_option_popup_title.add_theme_color_override("font_color", Color(0.95, 0.8, 0.5))
+	_option_popup_title.add_theme_font_size_override("font_size", 18)
+	inner.add_child(_option_popup_title)
+
+	_option_popup_list = VBoxContainer.new()
+	_option_popup_list.add_theme_constant_override("separation", 8)
+	inner.add_child(_option_popup_list)
+
+	var close := Button.new()
+	close.text = "关闭"
+	close.custom_minimum_size = Vector2(0, 42)
+	close.pressed.connect(func() -> void: overlay.visible = false)
+	inner.add_child(close)
+
+	return overlay
+
+# items: Array of { label: String, cb: Callable }
+func _open_option_popup(title: String, items: Array) -> void:
+	if _option_popup == null:
+		return
+	_option_popup_title.text = title
+	if _option_popup_list == null:
+		return
+	for child in _option_popup_list.get_children():
+		_option_popup_list.remove_child(child)
+		child.queue_free()
+	for item in items:
+		var b := Button.new()
+		b.text = str(item.get("label", "选项"))
+		b.custom_minimum_size = Vector2(0, 44)
+		b.set_meta("cb", item.get("cb", Callable()))
+		b.pressed.connect(_on_option_selected.bind(b))
+		_option_popup_list.add_child(b)
+	_option_popup.visible = true
+
+func _on_option_selected(btn: Button) -> void:
+	if _option_popup != null:
+		_option_popup.visible = false
+	var cb: Callable = btn.get_meta("cb")
+	if cb.is_valid():
+		cb.call()
 
 # ------------------------------------------------------------
 #  头像选择面板（点击头像弹出，分组更换）
