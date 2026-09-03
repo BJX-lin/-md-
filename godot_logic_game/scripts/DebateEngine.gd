@@ -61,14 +61,29 @@ func setup_topic() -> String:
 	var debate = _debate_for(current_topic)
 	if not debate.is_empty():
 		out += "\n（提示：本议题的核心冲突是——%s ）" % str(debate.get("clash", ""))
+	# 若是经典辩论赛辩题，附上出处与核心技战法
+	var c = _case_for(current_topic)
+	if not c.is_empty():
+		out += "\n（典出：%s ）" % str(c.get("source", ""))
+		out += "\n（经典技战法：%s ）" % str(c.get("move", ""))
 	return out
 
 func _debate_for(topic: String) -> Dictionary:
-	var key := topic.replace("\u201c", "").replace("\u201d", "")
+	var key := _clean(topic)
 	for k in KnowledgeBase.DEBATES.keys():
-		if str(k).replace("\u201c", "").replace("\u201d", "") == key:
+		if _clean(str(k)) == key:
 			return KnowledgeBase.DEBATES[k]
 	return {}
+
+func _case_for(topic: String) -> Dictionary:
+	var key := _clean(topic)
+	for k in KnowledgeBase.DEBATE_CASES.keys():
+		if _clean(str(k)) == key:
+			return KnowledgeBase.DEBATE_CASES[k]
+	return {}
+
+func _clean(s: String) -> String:
+	return s.replace("\u201c", "").replace("\u201d", "").replace("「", "").replace("」", "").strip_edges()
 
 # ------------------------------------------------------------
 #  主入口
@@ -188,22 +203,39 @@ func _socratic(text: String) -> String:
 	var tpl := KnowledgeBase.pick(KnowledgeBase.SOCRATIC)
 	return tpl.replace("{kw}", kw)
 
-# 从当前议题库取一句“事实弹药”（约 30% 概率，避免太过重复）
+# 从当前议题库/经典案例库取一句“事实弹药或经典反驳”（约 30% 概率，避免太过重复）
 func _fact_ammo() -> String:
+	if randf() < 0.4:
+		return ""
+	# 经典辩论赛实例：给一句“对方立场里最能用的一句”
+	var c := _case_for(current_topic)
+	if not c.is_empty():
+		var sides: Dictionary = c.get("sides", {})
+		# 挑一个与你当前话题相关、但属于“对方”立场的要点来逼你自圆其说
+		var all_points: Array = []
+		for k in sides.keys():
+			var pts: Array = sides.get(k, [])
+			for p in pts:
+				all_points.append(str(p))
+		if not all_points.is_empty():
+			return "经典视角：「%s」——你如何回应这一面？" % str(KnowledgeBase.pick(all_points))
+	# 否则用真实议题的事实弹药
 	var debate := _debate_for(current_topic)
 	if debate.is_empty():
 		return ""
 	var facts: Array = debate.get("facts", [])
 	if facts.is_empty():
 		return ""
-	# 用个简单“伪随机”不依赖额外状态，避免每条都带
-	if randf() < 0.4:
-		return ""
 	return "补充一点事实：「%s」" % str(KnowledgeBase.pick(facts))
 
 func _attack_or_socratic(text: String) -> String:
 	if difficulty >= 2 and randf() < 0.45:
 		return _reductio(text)
+	# 经典辩手句式（约 20% 概率），让接招更像资历辩手
+	if randf() < 0.2:
+		var kw := _pick_keyword(text)
+		var tpl := KnowledgeBase.pick(KnowledgeBase.DEBATE_MOVES)
+		return tpl.replace("{kw}", kw)
 	return KnowledgeBase.pick(KnowledgeBase.ATTACKS)
 
 func _reductio(text: String) -> String:
