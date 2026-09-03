@@ -56,7 +56,19 @@ func setup_topic() -> String:
 	var t := KnowledgeBase.pick_dict(KnowledgeBase.TOPICS)
 	current_topic = str(t.get("topic", ""))
 	var ask := str(t.get("ask", "你怎么看？"))
-	return "本期辩题：「%s」。%s" % [current_topic, ask]
+	var out := "本期辩题：「%s」。%s" % [current_topic, ask]
+	# 若该辩题在真实议题库里，附上“立场锚点”作提示
+	var debate = _debate_for(current_topic)
+	if not debate.is_empty():
+		out += "\n（提示：本议题的核心冲突是——%s ）" % str(debate.get("clash", ""))
+	return out
+
+func _debate_for(topic: String) -> Dictionary:
+	var key := topic.replace("\u201c", "").replace("\u201d", "")
+	for k in KnowledgeBase.DEBATES.keys():
+		if str(k).replace("\u201c", "").replace("\u201d", "") == key:
+			return KnowledgeBase.DEBATES[k]
+	return {}
 
 # ------------------------------------------------------------
 #  主入口
@@ -85,8 +97,9 @@ func respond(user_input: String) -> Dictionary:
 	if _is_question(text):
 		return _make(_socratic(text), "追问", "", false, false)
 
-	# 5) 兜底：通用攻击
-	return _make(_attack_or_socratic(text), "拆解", "", false, false)
+	# 5) 兜底：通用攻击（若当前是真议题，带上一句“事实弹药”显专业）
+	var ammo := _fact_ammo()
+	return _make(_attack_or_socratic(text) + ("\n\n" + ammo if not ammo.is_empty() else ""), "拆解", "", false, false)
 
 # ------------------------------------------------------------
 #  结算判定
@@ -174,6 +187,19 @@ func _socratic(text: String) -> String:
 	var kw := _pick_keyword(text)
 	var tpl := KnowledgeBase.pick(KnowledgeBase.SOCRATIC)
 	return tpl.replace("{kw}", kw)
+
+# 从当前议题库取一句“事实弹药”（约 30% 概率，避免太过重复）
+func _fact_ammo() -> String:
+	var debate := _debate_for(current_topic)
+	if debate.is_empty():
+		return ""
+	var facts: Array = debate.get("facts", [])
+	if facts.is_empty():
+		return ""
+	# 用个简单“伪随机”不依赖额外状态，避免每条都带
+	if randf() < 0.4:
+		return ""
+	return "补充一点事实：「%s」" % str(KnowledgeBase.pick(facts))
 
 func _attack_or_socratic(text: String) -> String:
 	if difficulty >= 2 and randf() < 0.45:
