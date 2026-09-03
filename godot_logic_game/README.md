@@ -36,8 +36,11 @@
 
 ## 怎么运行
 
-### 桌面预览（最快）
-1. 用 **Godot 4.7.2 stable** 打开本文件夹（`godot_logic_game/project.godot`）。
+### 直接导入（最快，一版即跑）
+在仓库根目录已打包好 **`godot_logic_game_import.zip`**（约 28KB，无需分卷）。解压后用 **Godot 4.7.1 / 4.7.2 stable** 打开 `godot_logic_game/project.godot`，点 ▶ 即刻可玩。
+
+### 桌面预览
+1. 用 **Godot 4.7.1 stable** 打开本文件夹（`godot_logic_game/project.godot`）。
 2. 点 ▶ 运行即可在窗口中玩。
 
 ### 手机端（Android）
