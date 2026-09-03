@@ -18,6 +18,15 @@ var difficulty := 0          # 0温和 1毒舌 2归谬狂魔
 var current_topic := ""      # 当前辩题
 var max_rounds := 12         # 达到后建议结算
 
+# --- V2.1 模块（离线规则增强）---
+var _analyzer := ArgumentAnalyzer.new()
+var _fallacy := FallacyDetector.new()
+var _combat := AICombatDecision.new()
+var _score := ScoreSystem.new()
+var _state := DebateStateMachine.new()
+var _settle := SettlementSystem.new()
+var _export := ExportManager.new()
+
 # --- LLM 可插拔（默认关闭，纯规则）---
 # 规则引擎负责“想什么”，此层负责“怎么说”。未接入/不可用即回退纯规则。
 var _gen := ResponseGenerator.new()
@@ -50,6 +59,25 @@ func reset() -> void:
 	_user_hits = 0
 	_round = 0
 	current_topic = ""
+	_score.reset()
+	_state.reset()
+	_combat.set_difficulty(difficulty)
+
+func set_difficulty(d: int) -> void:
+	difficulty = clampi(d, 0, 2)
+	_combat.set_difficulty(difficulty)
+
+func integrity() -> Dictionary:
+	return _score.integrity_report()
+
+func current_stage_label() -> String:
+	return _state.current_stage_label()
+
+func player_integrity() -> int:
+	return _score.player_integrity
+
+func ai_integrity() -> int:
+	return _score.ai_integrity
 
 func ai_score() -> int:
 	return _ai_score
@@ -110,21 +138,28 @@ func respond(user_input: String) -> Dictionary:
 		_round -= 1
 		return _make("（还没说话呢——抛个观点，我才能杠你。）", "说明", "", false, false)
 
-	# 0) 最高优先：情绪化输入（人身攻击/脏话/极短语/发泄词）
-	#    先安抚+教学，不硬杠；不算逻辑命中，但记为玩家“说错”，拉低结算。
+	# 0) 最高优先：情绪化输入（人身攻击/脏话/极短语/发泄词）-> 安抚+教学，不硬杠
 	var emo := _detect_emotion(text)
 	if not emo.is_empty():
 		_user_hits += 1
+		_score.apply_player_fallacy(0.6)
 		var r := _make(str(emo.get("reply", "")), str(emo.get("tone", "安抚")), "", false, false)
 		r["text"] = _decorate(_naturalize(r["text"], "calm", "情绪安抚"), "calm")
 		return r
 
-	# 1) 侦测谬误
-	var f := _detect_fallacy(text)
-	if not f.is_empty():
+	# 结构解析 + 谬误检测（新 V2.1 模块）
+	var argument := _analyzer.analyze(text)
+	var fallac_cands := _fallacy.detect(argument)
+	argument["_fallacies"] = fallac_cands
+	var top_fallacy: Dictionary = fallac_cands[0] if not fallac_cands.is_empty() else {}
+
+	if not top_fallacy.is_empty():
+		# 命中谬误：用结构化谬误回应 + 计血
+		var severity := float(top_fallacy.get("confidence", 0.5))
 		_ai_score += 1
 		_user_hits += 1
-		var r := _make_fallacy_response(f)
+		_score.apply_player_fallacy(severity)
+		var r := _make_fallacy_response(top_fallacy)
 		r["text"] = _decorate(_naturalize(r["text"], "hit", str(r.get("tone", ""))), "hit")
 		# 命中后偶尔给出“标准答案/让步”，避免无限杠
 		if randf() < 0.4:
@@ -136,6 +171,7 @@ func respond(user_input: String) -> Dictionary:
 	# 2) 用户用到“讲理/证据”类词 -> 加玩家分并夸
 	if _has_good_move(text):
 		_user_score += 1
+		_score.apply_player_good_move()
 		var praise := KnowledgeBase.pick(KnowledgeBase.PRAISE)
 		var r := _make(_attack_or_socratic(text) + "\n\n" + praise, "有道理？", "", false, true)
 		r["text"] = _decorate(_naturalize(r["text"], "good", "夸奖讲理"), "good")
@@ -147,37 +183,36 @@ func respond(user_input: String) -> Dictionary:
 		r["text"] = _decorate(_naturalize(r["text"], "ask", "追问"), "ask")
 		return r
 
-	# 5) 兜底：通用攻击（若当前是真议题，带上一句“事实弹药”显专业）
+	# 5) 兜底：AI 决策（无谬误也有攻击点）+ 事实弹药
+	var decision := _combat.decide(argument)
+	var picked: Dictionary = decision.get("picked", {})
+	var attack_text := str(picked.get("text_hint", KnowledgeBase.pick(KnowledgeBase.ATTACKS)))
 	var ammo := _fact_ammo()
-	var r := _make(_attack_or_socratic(text) + ("\n\n" + ammo if not ammo.is_empty() else ""), "拆解", "", false, false)
-	var scene := "reductio" if (difficulty >= 2 and r.get("text", "").contains("照你这么说")) else "generic"
+	var reply := attack_text
+	if not ammo.is_empty():
+		reply += "\n\n" + ammo
+	var r := _make(reply, "拆解", "", false, false)
+	var scene := "reductio" if (difficulty >= 2 and reply.contains("照你这么说")) else "generic"
 	r["text"] = _decorate(_naturalize(r["text"], scene, "拆解"), scene)
 	return r
 
 # 求助 / 见招拆招：给玩家一条原则 + 一条通用反制技巧
 func hint() -> String:
+	var rb := RebuttalAnalyzer.new()
 	var p := KnowledgeBase.pick(KnowledgeBase.PRINCIPLES)
 	var h := KnowledgeBase.pick(KnowledgeBase.HINTS)
-	return "📖 提示：\n" + p + "\n\n" + h
+	return "📖 提示：\n" + p + "\n\n" + h + "\n\n【反击等级】\n" + rb.describe_levels()
 
 # ------------------------------------------------------------
-#  结算判定
+#  结算判定（V2.1：完整度/得分/反击/让步 + 双输）
 # ------------------------------------------------------------
 func settle() -> Dictionary:
-	# 返回 { verdict: "ai"/"user"/"draw", text }
-	var verdict := "draw"
-	if _user_hits > _user_score + 2:
-		verdict = "ai"
-	elif _user_score > _user_hits + 2:
-		verdict = "user"
-	var text := ""
-	if verdict == "ai":
-		text = KnowledgeBase.pick(KnowledgeBase.VERDICT_AI_WIN)
-	elif verdict == "user":
-		text = KnowledgeBase.pick(KnowledgeBase.VERDICT_USER_WIN)
-	else:
-		text = KnowledgeBase.pick(KnowledgeBase.VERDICT_DRAW)
-	return { "verdict": verdict, "text": text }
+	var ai_hits := 0
+	return _settle.settle(_score, _score.player_integrity, _score.ai_integrity, _score.player_hits, ai_hits)
+
+# 动态提前结束：核心论证崩溃
+func should_early_end() -> bool:
+	return _state.is_final() or _settle.should_early_end(_score.player_integrity, _score.ai_integrity)
 
 # ------------------------------------------------------------
 #  构造回应

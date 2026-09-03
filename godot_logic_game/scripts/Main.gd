@@ -203,7 +203,7 @@ func _on_cycle_llm() -> void:
 
 func _on_cycle_difficulty() -> void:
 	var opts := ["温和", "毒舌", "归谬狂魔"]
-	engine.difficulty = (engine.difficulty + 1) % 3
+	engine.set_difficulty((engine.difficulty + 1) % 3)
 	_app_toast("难度 → %s" % opts[engine.difficulty])
 
 func _make_tool(text: String, cb: Callable) -> Button:
@@ -401,7 +401,7 @@ func _submit(text: String) -> void:
 	if r.get("hit", false):
 		_app_toast("命中：" + str(r.get("tone", "")))
 	_refresh_hud()
-	if engine.should_end():
+	if engine.should_end() or engine.should_early_end():
 		_on_settle()
 
 func _on_next_topic() -> void:
@@ -428,40 +428,45 @@ func _on_settle() -> void:
 	var s: Dictionary = engine.settle()
 	var verdict := str(s.get("verdict", ""))
 	var verdict_text := str(s.get("text", ""))
+	var label := str(s.get("label", ""))
+	var diff := int(s.get("diff", 0))
 	var icon := "⚖️"
 	if verdict == "ai":
 		icon = "🤖"
 	elif verdict == "user":
 		icon = "🏆"
 	var tip := KnowledgeBase.pick(KnowledgeBase.PRINCIPLES)
+	var stage := engine.current_stage_label()
+	var integrity := engine.integrity()
 	_settle_body.text = (
 		"[color=#ffd98a][b]🏁 本轮结算[/b][/color]\n\n" +
-		"[color=#a6b3d4]共进行回合[/color]  %d\n" % engine.round_count() +
-		"[color=#ff9a7a][b]杠精 AI[/b][/color]  命中你 %d 次谬误\n" % engine.ai_score() +
-		"[color=#8fd3a6][b]你[/b][/color]  讲理得分 %d 次（用上证据/论证结构）\n" % engine.user_score() +
-		"[color=#a6b3d4]你掉进逻辑陷阱[/color]  %d 次（含情绪化表达）\n" % engine.user_hits() +
-		"\n[color=#ffd98a][b]%s 判定[/b][/color]  %s\n" % [icon, verdict_text] +
-		"\n[color=#a6b3d4]怎么赢：多给「主张+理由+可核验证据」。你讲理得分 > 掉陷阱次数，就占上风。[/color]\n" +
+		"[color=#a6b3d4]阶段[/color]  %s ｜ 共 %d 回合\n" % [stage, engine.round_count()] +
+		"[color=#ff9a7a][b]杠精 AI[/b][/color]  命中 %d 次谬误 ｜ 论证强度 %d%%\n" % [engine.ai_score(), int(integrity.get("ai_integrity", 100))] +
+		"[color=#8fd3a6][b]你[/b][/color]  讲理 %d 次 ｜ 论证强度 %d%%\n" % [engine.user_score(), int(integrity.get("player_integrity", 100))] +
+		"[color=#a6b3d4]你掉陷阱[/color] %d 次 ｜ 差值 %d\n" % [engine.user_hits(), diff] +
+		"\n[color=#ffd98a][b]%s 判定：%s[/b][/color]\n%s\n" % [icon, label, verdict_text] +
+		"\n[color=#a6b3d4]怎么赢：多给「主张+理由+可核验证据」，并针对攻击点给出有效反击。[/color]\n" +
 		"\n[color=#8fd3a6]复盘：%s[/color]" % tip
 	)
 	_settle.visible = true
 
 func _on_export() -> void:
-	var path := "user://辩论记录_%s.md" % str(int(Time.get_unix_time_from_system()))
-	var f := FileAccess.open(path, FileAccess.WRITE)
-	if f == null:
+	var em := ExportManager.new()
+	var path := em.export_transcript(_transcript)
+	if path.is_empty():
 		_app_toast("导出失败：" + str(FileAccess.get_open_error()))
 		return
-	f.store_string("# 逻辑辩论记录\n\n" + _transcript)
-	f.close()
 	_app_toast("已导出到：" + path)
 
 func _refresh_hud() -> void:
 	var ai := engine.ai_score()
 	var us := engine.user_score()
-	_round_lbl.text = "回合 %d / %d ｜ 你讲理 %d ｜ AI 命中 %d" % [engine.round_count(), engine.max_rounds, us, ai]
-	_ai_bar.value = clampf(ai * 10.0, 0, 100)
-	_user_bar.value = clampf(us * 10.0, 0, 100)
+	var integ := engine.integrity()
+	var pi := int(integ.get("player_integrity", 100))
+	var ai_integ := int(integ.get("ai_integrity", 100))
+	_round_lbl.text = "回合 %d/%d ｜ %s ｜ 论证强度 你%d AI%d" % [engine.round_count(), engine.max_rounds, engine.current_stage_label(), pi, ai_integ]
+	_ai_bar.value = clampf(ai_integ, 0, 100)
+	_user_bar.value = clampf(pi, 0, 100)
 
 func _set_topic_label(t: String) -> void:
 	_topic_lbl.text = "辩题：「%s」" % t

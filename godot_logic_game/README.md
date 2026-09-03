@@ -15,8 +15,8 @@
 它**不是**真正的大模型——因为你要完全不接 AI、不联网。所以这里用的是**本地规则引擎**：
 
 - `data/KnowledgeBase.gd` 是**数据聚合入口**，聚合 `data/` 下各子库：`Fallacies.gd`（20+ 种谬误规则）、`Topics.gd`（辩题库）、`DebateMoves.gd`（苏格拉底/通用攻击/归谬/经典辩手句/结算语）、`EvidenceDatabase.gd`（**真实争议议题知识库**：立场锚点/核心冲突/事实弹药）、`CounterExamples.gd`（**经典辩论赛案例库**：人性本善/金钱辩等，含出处与可复用攻防技法）。引擎只需读 `data/KnowledgeBase.gd`，改数据即改玩法。
-- `DebateEngine.gd` 负责“理解”：用关键词 + 正则**侦测**你输入里命中哪种逻辑谬误，命中就给出**「识别 → 拆解 → 反问 → 归谬」**四连击；未命中则切换为**苏格拉底追问 / 通用拆解 / 归谬**。
-- 带**计分、回合、辩题、结算判定**系统。
+- `DebateEngine.gd` 负责编排，调用一组**离线模块**：`KeywordExtractor`（12 类关键词）→ `ArgumentAnalyzer`（把输入转成结构化论证）→ `FallacyDetector`（按置信度判谬误）→ `AICombatDecision`（生成攻击候选并按权重评分选招）→ `ResponseGenerator`（把结果自然语言化）。未命中谬误时也有攻击点（证据不足/定义不清/因果/范围/反例）。
+- 带**计分、回合、辩题、结算判定**系统：`ScoreSystem`（双方“论证生命值/完整度”+ 回血上限）、`DebateStateMachine`（开场/立论/交锋/交叉质询/结辩）、`SettlementSystem`（四档胜负 + 双输 + 动态提前结束）、`ExportManager`（导出对话）。
 
 所以你“抛出一个观点”，它“用逻辑漏洞来杠你”。这套数据完全取自项目根目录的 `逻辑与辩论资料库/`。
 
