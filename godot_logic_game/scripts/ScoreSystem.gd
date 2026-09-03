@@ -68,7 +68,7 @@ func _repair(current: int, amount: int, cap: int) -> void:
 	# 回血：不超过 per-amount、不越过 MAX、不超每局回血上限
 	var room := MAX_INTEGRITY - current
 	var avail := cap - _repair_used
-	var heal := mini(amount, minimi(room, avail))
+	var heal := mini(amount, mini(room, avail))
 	var new_val := current + heal
 	_repair_used += heal
 	player_integrity = new_val
