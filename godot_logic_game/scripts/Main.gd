@@ -11,8 +11,15 @@ extends Control
 # ============================================================
 
 const MAX_LOG := 400
+const SEND_COOLDOWN_MS := 700   # 发送冷却，防连点/刷屏
+const REPEAT_WINDOW_MS := 3000  # 同一句在窗口内重复则拦截
 
 var engine := DebateEngine.new()
+
+# 防刷屏状态
+var _last_send_ms := 0
+var _last_text := ""
+var _last_text_ms := 0
 
 # UI 节点
 var _chat: VBoxContainer        # 存放消息气泡
@@ -34,11 +41,11 @@ func _ready() -> void:
 	engine.max_rounds = 12
 	_refresh_hud()
 	# 开场
-	_ai_say("我是「杠精老师 · 逻辑裁判」。你输入任何观点，我用逻辑漏洞来杠你。 🎬")
+	_ai_say("我是「杠精老师 · 逻辑裁判」。你抛观点，我用逻辑漏洞杠你；但你要是拿得出可核验的证据，我也认账让步。 🎬")
 	var topic_msg := engine.setup_topic()
 	_ai_say(topic_msg)
 	_set_topic_label(engine.current_topic)
-	_ai_say("示范：输入「大家都这么做，所以肯定是对的」。")
+	_ai_say("示范：输入「大家都这么做，所以肯定是对的」。卡住就点「求助」，我教你反杀。")
 
 # ------------------------------------------------------------
 #  UI 构建
@@ -156,11 +163,15 @@ func _build_input() -> Control:
 func _build_toolbar() -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
+	row.add_child(_make_tool("求助", Callable(self, "_on_hint")))
 	row.add_child(_make_tool("难度", Callable(self, "_on_cycle_difficulty")))
 	row.add_child(_make_tool("结算", Callable(self, "_on_settle")))
 	row.add_child(_make_tool("导出", Callable(self, "_on_export")))
 	row.add_child(_make_tool("重开", Callable(self, "_on_reset")))
 	return row
+
+func _on_hint() -> void:
+	_ai_say(engine.hint())
 
 func _on_cycle_difficulty() -> void:
 	var opts := ["温和", "毒舌", "归谬狂魔"]
@@ -258,11 +269,14 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	if _scroll != null:
 		view_w = maxf(view_w, _scroll.size.x)
 	var max_w := maxf(220.0, view_w * 0.78)
+	# 最小宽度下限：短文本（如“凭什么”）不至于塌成每字一行的竖排
+	var min_w := minf(max_w, maxf(180.0, view_w * 0.24))
 
-	# 气泡面板（宽度上限放在面板上，RichTextLabel 在里面自动换行）
+	# 气泡面板（宽度约束放在面板上：下限保证可读，上限防溢出）
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	panel.custom_minimum_size = Vector2(min_w, 0)
 	panel.custom_maximum_size = Vector2(max_w, 0)
 	var sb := StyleBoxFlat.new()
 	if is_ai:
@@ -286,7 +300,8 @@ func _add_bubble(text: String, is_ai: bool) -> void:
 	msg.text = text
 	msg.fit_content = true
 	msg.scroll_active = false
-	msg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# 中文无空格，用 ARBITRARY 才能在宽度内逐字换行，避免溢出或竖排
+	msg.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
 	msg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	msg.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	body.add_child(msg)
@@ -335,6 +350,18 @@ func _submit(text: String) -> void:
 	var t := text.strip_edges()
 	if t.is_empty():
 		return
+	var now := Time.get_ticks_msec()
+	# 发送冷却：短时间内连点/刷屏，柔和拦截
+	if now - _last_send_ms < SEND_COOLDOWN_MS:
+		_app_toast("稍等，别刷屏——想清楚再发。")
+		return
+	_last_send_ms = now
+	# 重复文本限制：同一句在窗口内重复，拦截并提示换角度/求助
+	if t == _last_text and now - _last_text_ms < REPEAT_WINDOW_MS:
+		_app_toast("这句你刚发过。换个说法，或点「求助」。")
+		return
+	_last_text = t
+	_last_text_ms = now
 	_input.clear()
 	_say_player(t)
 	var r: Dictionary = engine.respond(t)
@@ -378,12 +405,16 @@ func _on_settle() -> void:
 		icon = "🤖"
 	elif verdict == "user":
 		icon = "🏆"
+	var tip := KnowledgeBase.pick(KnowledgeBase.PRINCIPLES)
 	_settle_body.text = (
 		"[color=#ffd98a][b]🏁 本轮结算[/b][/color]\n\n" +
 		"[color=#a6b3d4]共进行回合[/color]  %d\n" % engine.round_count() +
-		"[color=#a6b3d4]杠精 AI 抓到（命中谬误）[/color]  %d\n" % engine.ai_score() +
-		"[color=#a6b3d4]你讲理得分（证据/结构）[/color]  %d\n" % engine.user_score() +
-		"\n[color=#ff9a7a][b]%s 判定[/b][/color]  %s" % [icon, verdict_text]
+		"[color=#ff9a7a][b]杠精 AI[/b][/color]  命中你 %d 次谬误\n" % engine.ai_score() +
+		"[color=#8fd3a6][b]你[/b][/color]  讲理得分 %d 次（用上证据/论证结构）\n" % engine.user_score() +
+		"[color=#a6b3d4]你掉进逻辑陷阱[/color]  %d 次（含情绪化表达）\n" % engine.user_hits() +
+		"\n[color=#ffd98a][b]%s 判定[/b][/color]  %s\n" % [icon, verdict_text] +
+		"\n[color=#a6b3d4]怎么赢：多给「主张+理由+可核验证据」。你讲理得分 > 掉陷阱次数，就占上风。[/color]\n" +
+		"\n[color=#8fd3a6]复盘：%s[/color]" % tip
 	)
 	_settle.visible = true
 
@@ -398,9 +429,11 @@ func _on_export() -> void:
 	_app_toast("已导出到：" + path)
 
 func _refresh_hud() -> void:
-	_round_lbl.text = "回合 %d / %d" % [engine.round_count(), engine.max_rounds]
-	_ai_bar.value = clampf(engine.ai_score() * 10.0, 0, 100)
-	_user_bar.value = clampf(engine.user_score() * 10.0, 0, 100)
+	var ai := engine.ai_score()
+	var us := engine.user_score()
+	_round_lbl.text = "回合 %d / %d ｜ 你讲理 %d ｜ AI 命中 %d" % [engine.round_count(), engine.max_rounds, us, ai]
+	_ai_bar.value = clampf(ai * 10.0, 0, 100)
+	_user_bar.value = clampf(us * 10.0, 0, 100)
 
 func _set_topic_label(t: String) -> void:
 	_topic_lbl.text = "辩题：「%s」" % t

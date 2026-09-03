@@ -95,13 +95,27 @@ func respond(user_input: String) -> Dictionary:
 		_round -= 1
 		return _make("（还没说话呢——抛个观点，我才能杠你。）", "说明", "", false, false)
 
-	# 1) 最高优先：侦测谬误
+	# 0) 最高优先：情绪化输入（人身攻击/脏话/极短语/发泄词）
+	#    先安抚+教学，不硬杠；不算逻辑命中，但记为玩家“说错”，拉低结算。
+	var emo := _detect_emotion(text)
+	if not emo.is_empty():
+		_user_hits += 1
+		var r := _make(str(emo.get("reply", "")), str(emo.get("tone", "安抚")), "", false, false)
+		r["text"] = _decorate(r["text"], "calm")
+		return r
+
+	# 1) 侦测谬误
 	var f := _detect_fallacy(text)
 	if not f.is_empty():
 		_ai_score += 1
 		_user_hits += 1
 		var r := _make_fallacy_response(f)
 		r["text"] = _decorate(r["text"], "hit")
+		# 命中后偶尔给出“标准答案/让步”，避免无限杠
+		if randf() < 0.4:
+			var conc := KnowledgeBase.pick(KnowledgeBase.CONCESSIONS)
+			if not conc.is_empty():
+				r["text"] += "\n\n" + conc
 		return r
 
 	# 2) 用户用到“讲理/证据”类词 -> 加玩家分并夸
@@ -124,6 +138,12 @@ func respond(user_input: String) -> Dictionary:
 	var scene := "reductio" if (difficulty >= 2 and r.get("text", "").contains("照你这么说")) else "generic"
 	r["text"] = _decorate(r["text"], scene)
 	return r
+
+# 求助 / 见招拆招：给玩家一条原则 + 一条通用反制技巧
+func hint() -> String:
+	var p := KnowledgeBase.pick(KnowledgeBase.PRINCIPLES)
+	var h := KnowledgeBase.pick(KnowledgeBase.HINTS)
+	return "📖 提示：\n" + p + "\n\n" + h
 
 # ------------------------------------------------------------
 #  结算判定
@@ -176,6 +196,40 @@ func _make_fallacy_response(f: Dictionary) -> Dictionary:
 		l = l.replace("{reductio}", str(f["reductio"]))
 		reply += l + "\n"
 	return _make(reply.strip_edges(), "命中谬误：" + str(f["name"]), "秒杀", true, false)
+
+# ------------------------------------------------------------
+#  情绪识别（人身攻击/脏话/极短语/发泄词）
+# ------------------------------------------------------------
+func _detect_emotion(text: String) -> Dictionary:
+	var t := text.strip_edges()
+	# 人身攻击 / 脏话
+	for w in KnowledgeBase.INSULT_WORDS:
+		if t.contains(w):
+			return _emo("insult", t)
+	# 极短（≤2 字）——多半是情绪或没想好，不硬杠
+	if t.length() <= 2:
+		return _emo("short", t)
+	# 情绪化 / 挑衅 / 嘲讽短语
+	for w in KnowledgeBase.RHETORIC_WORDS:
+		if t.contains(w):
+			return _emo("rhetoric", t)
+	return {}
+
+func _emo(kind: String, raw: String) -> Dictionary:
+	var pool: Array = []
+	match kind:
+		"insult":
+			pool = KnowledgeBase.EMOTION_INSULT
+		"short":
+			pool = KnowledgeBase.EMOTION_SHORT
+		_:
+			pool = KnowledgeBase.EMOTION_RHETORIC
+	var tpl := KnowledgeBase.pick(pool)
+	return {
+		"reply": tpl.replace("{}", raw),
+		"tone": "情绪安抚",
+		"key": kind,
+	}
 
 # ------------------------------------------------------------
 #  谬误侦测
